@@ -1,0 +1,32 @@
+{
+  "seed": 42,
+  "sampling": "random.Random(42).sample(sorted source file stems, 6), then sorted by stem",
+  "source_benchmark": "lifted_auto_eval",
+  "gold_directory": "lifted",
+  "tasks": [
+    {
+      "id": "crosshair_examples::PEP316::correct_code::arith.py::double",
+      "source_stem": "crosshair_examples_PEP316_correct_code_arith.py_double"
+    },
+    {
+      "id": "crosshair_examples::deal::correct_code::average.py::average",
+      "source_stem": "crosshair_examples_deal_correct_code_average.py_average"
+    },
+    {
+      "id": "crosshair_examples::icontract::correct_code::arith.py::double",
+      "source_stem": "crosshair_examples_icontract_correct_code_arith.py_double"
+    },
+    {
+      "id": "crosshair_examples::icontract::correct_code::showcase.py::even_fibb",
+      "source_stem": "crosshair_examples_icontract_correct_code_showcase.py_even_fibb"
+    },
+    {
+      "id": "crosshair_examples::icontract::correct_code::showcase.py::zip_exact",
+      "source_stem": "crosshair_examples_icontract_correct_code_showcase.py_zip_exact"
+    },
+    {
+      "id": "python_by_contract::correct::aoc2020::day_10_adapter_array.py::compute_result",
+      "source_stem": "python_by_contract_correct_aoc2020_day_10_adapter_array.py_compute_result"
+    }
+  ]
+}
