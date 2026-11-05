@@ -35,6 +35,11 @@ def _typecheck_errors(
         error_details=diagnostics,
     ):
         return []
+    if diagnostics:
+        if any(item.startswith("unsatisfiable preconditions") for item in diagnostics):
+            return ["domain constraints are unsatisfiable"]
+        if any(item.startswith("unsatisfiable contract") for item in diagnostics):
+            return ["postcondition/constraints are unsatisfiable"]
     return ["postcondition/constraints fail Z3 type check"]
 
 

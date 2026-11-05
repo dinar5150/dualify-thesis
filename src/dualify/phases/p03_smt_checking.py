@@ -208,7 +208,7 @@ def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
                 and seq.sort().kind() == z3.Z3_SEQ_SORT
             ):
                 try:
-                    return z3.Contains(seq, z3.Unit(elem))
+                    return z3.Contains(seq, _unit(elem))
                 except z3.Z3Exception:
                     return z3.And(elem >= 0, elem < z3.Length(seq))
         if isinstance(elem, str):
@@ -216,8 +216,25 @@ def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
         if hasattr(elem, "sort"):
             if elem.sort().kind() == z3.Z3_SEQ_SORT:
                 return z3.Contains(seq, elem)
-            return z3.Contains(seq, z3.Unit(elem))
-        return z3.Contains(seq, z3.Unit(elem))
+            return z3.Contains(seq, _unit(elem))
+        return z3.Contains(seq, _unit(elem))
+
+    def _unit(value: Any) -> Any:
+        """Make a Z3 sequence unit, also accepting Python literal values.
+
+        z3.Unit(1) raises AttributeError (int has no ctx_ref). Formula
+        expressions often contain Unit(1) / Unit(3), so coerce Python
+        literals to Z3 expressions before calling z3.Unit.
+        """
+        if isinstance(value, bool):
+            value = z3.BoolVal(value)
+        elif isinstance(value, int):
+            value = z3.IntVal(value)
+        elif isinstance(value, float):
+            value = z3.RealVal(str(value))
+        elif isinstance(value, str):
+            value = z3.StringVal(value)
+        return z3.Unit(value)
 
     def _string_lit(value: Any) -> Any:
         if isinstance(value, str):
@@ -267,6 +284,7 @@ def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
         "PrefixOf": z3.PrefixOf,
         "SuffixOf": z3.SuffixOf,
         "Concat": z3.Concat,
+        "Unit": _unit,
         "floor": _floor,
         "max": _max,
         "min": _min,
@@ -899,6 +917,47 @@ def extraction_parseable(
     return is_parseable(case_spec, extraction, error_details=error_details)
 
 
+_EXTRACTION_SAT_TIMEOUT_MS = 2_000
+
+
+def _contract_satisfiable(
+    constraints: list[Any],
+    postcondition: Any,
+    *,
+    error_details: list[str] | None = None,
+) -> bool:
+    """Reject proven-unsatisfiable contracts; report solver-unknown separately.
+
+    This is an existential feasibility check (there exists at least one
+    input/return satisfying the contract), NOT a proof that the contract
+    correctly implements a function for every valid input.
+    """
+    solver = z3.Solver()
+    solver.set("timeout", _EXTRACTION_SAT_TIMEOUT_MS)
+
+    if constraints:
+        solver.add(*constraints)
+        pre_status = solver.check()
+        if pre_status == z3.unsat:
+            if error_details is not None:
+                error_details.append("unsatisfiable preconditions (Z3: unsat)")
+            return False
+
+    solver.add(postcondition)
+    contract_status = solver.check()
+    if contract_status == z3.unsat:
+        if error_details is not None:
+            error_details.append("unsatisfiable contract (Z3: unsat)")
+        return False
+    if contract_status == z3.unknown:
+        # Incomplete SMT theories / timeouts do not establish unsatisfiability.
+        # Keep the candidate but record that its feasibility is unproven.
+        if error_details is not None:
+            reason = solver.reason_unknown()
+            error_details.append(f"satisfiability unknown (Z3: unknown; {reason[:200]})")
+    return True
+
+
 def is_parseable(
     case_spec: CaseSpec,
     extraction: ExtractionResult,
@@ -942,11 +1001,14 @@ def is_parseable(
         [*normalized_constraints, normalized_post],
     )
     try:
-        for c in normalized_constraints:
-            _safe_eval(c, scope, case_spec.benchmark_id)
-        _safe_eval(normalized_post, scope, case_spec.benchmark_id)
+        parsed_constraints = [
+            _safe_eval(c, scope, case_spec.benchmark_id) for c in normalized_constraints
+        ]
+        parsed_post = _safe_eval(normalized_post, scope, case_spec.benchmark_id)
+        return _contract_satisfiable(
+            parsed_constraints, parsed_post, error_details=error_details
+        )
     except Exception as exc:
         if error_details is not None:
             error_details.append(f"{type(exc).__name__}: {str(exc)[:500]}")
         return False
-    return True
