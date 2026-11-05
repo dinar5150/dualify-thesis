@@ -1,7 +1,7 @@
 import ast
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import z3
 
@@ -920,56 +920,38 @@ def extraction_parseable(
 _EXTRACTION_SAT_TIMEOUT_MS = 2_000
 
 
-def _contract_satisfiable(
-    constraints: list[Any],
-    postcondition: Any,
-    *,
-    error_details: list[str] | None = None,
-) -> bool:
-    """Reject proven-unsatisfiable contracts; report solver-unknown separately.
+@dataclass(frozen=True)
+class FeasibilityResult:
+    """Outcome of an existential Z3 check, separate from parsing."""
 
-    This is an existential feasibility check (there exists at least one
-    input/return satisfying the contract), NOT a proof that the contract
-    correctly implements a function for every valid input.
-    """
+    status: Literal["sat", "unsat_pre", "unsat_contract", "unknown", "invalid"]
+    reason: str = ""
+
+
+def _contract_feasibility(constraints: list[Any], postcondition: Any) -> FeasibilityResult:
+    """Check satisfiability, not functional correctness or gold equivalence."""
     solver = z3.Solver()
     solver.set("timeout", _EXTRACTION_SAT_TIMEOUT_MS)
-
     if constraints:
         solver.add(*constraints)
-        pre_status = solver.check()
-        if pre_status == z3.unsat:
-            if error_details is not None:
-                error_details.append("unsatisfiable preconditions (Z3: unsat)")
-            return False
-
+        if solver.check() == z3.unsat:
+            return FeasibilityResult("unsat_pre")
     solver.add(postcondition)
-    contract_status = solver.check()
-    if contract_status == z3.unsat:
-        if error_details is not None:
-            error_details.append("unsatisfiable contract (Z3: unsat)")
-        return False
-    if contract_status == z3.unknown:
-        # Incomplete SMT theories / timeouts do not establish unsatisfiability.
-        # Keep the candidate but record that its feasibility is unproven.
-        if error_details is not None:
-            reason = solver.reason_unknown()
-            error_details.append(f"satisfiability unknown (Z3: unknown; {reason[:200]})")
-    return True
+    status = solver.check()
+    if status == z3.unsat:
+        return FeasibilityResult("unsat_contract")
+    if status == z3.unknown:
+        return FeasibilityResult("unknown", solver.reason_unknown()[:200])
+    return FeasibilityResult("sat")
 
 
-def is_parseable(
+def _parse_contract(
     case_spec: CaseSpec,
     extraction: ExtractionResult,
     *,
     error_details: list[str] | None = None,
-) -> bool:
-    """Check a contract without raising on malformed formulas.
-
-    When ``error_details`` is provided, append human-readable validation
-    failures while preserving the existing boolean return value. Existing
-    callers and comparison logic remain unchanged.
-    """
+) -> tuple[list[Any], Any] | None:
+    """Convert formulas to Z3 expressions, without running the solver."""
     scope: dict[str, Any] = {}
     known_names: set[str] = set()
     for arg_name, type_name in case_spec.arg_types.items():
@@ -994,7 +976,7 @@ def is_parseable(
     if safety_issues:
         if error_details is not None:
             error_details.extend(str(issue) for issue in safety_issues)
-        return False
+        return None
     _augment_scope_from_formulas(
         scope,
         known_names,
@@ -1005,10 +987,45 @@ def is_parseable(
             _safe_eval(c, scope, case_spec.benchmark_id) for c in normalized_constraints
         ]
         parsed_post = _safe_eval(normalized_post, scope, case_spec.benchmark_id)
-        return _contract_satisfiable(
-            parsed_constraints, parsed_post, error_details=error_details
-        )
+        return parsed_constraints, parsed_post
     except Exception as exc:
         if error_details is not None:
             error_details.append(f"{type(exc).__name__}: {str(exc)[:500]}")
-        return False
+        return None
+
+
+def is_parseable(
+    case_spec: CaseSpec,
+    extraction: ExtractionResult,
+    *,
+    error_details: list[str] | None = None,
+) -> bool:
+    """Return whether the formulas can be parsed into well-typed Z3 expressions."""
+    return _parse_contract(case_spec, extraction, error_details=error_details) is not None
+
+
+def extraction_feasibility(
+    arg_types: dict[str, str],
+    return_type: str,
+    domain_constraints: list[str],
+    postcondition: str,
+) -> FeasibilityResult:
+    """Check whether a parsed extraction has any satisfying input and result.
+
+    Not a proof of semantic correctness. An ``unknown`` result must not be
+    treated as ``unsat``. Parsing stays independent of this solver check.
+    """
+    case_spec = CaseSpec(benchmark_id="", arg_types=arg_types, return_type=return_type)
+    extraction = ExtractionResult(
+        benchmark_id="",
+        args=list(arg_types),
+        return_type=return_type,
+        domain_constraints=list(domain_constraints),
+        postcondition=postcondition,
+        confidence="",
+        notes="",
+    )
+    parsed = _parse_contract(case_spec, extraction)
+    if parsed is None:
+        return FeasibilityResult("invalid", "Z3 expression parsing failed")
+    return _contract_feasibility(*parsed)

@@ -10,6 +10,7 @@ from dualify.phases.p02_code_to_logic import _typecheck_errors as code_validatio
 from dualify.phases.p03_smt_checking import (
     _make_var,
     _safe_eval,
+    extraction_feasibility,
     extraction_parseable,
 )
 
@@ -23,6 +24,16 @@ def test_unit_accepts_python_integer_literals(literal: int) -> None:
     solver = z3.Solver()
     solver.add(expr)
     assert solver.check() == z3.sat
+
+
+def test_unit_represents_sequence_membership_not_dictionary_key_lookup() -> None:
+    # HistogramOfDeltas is currently encoded as a Z3 sequence, not a Python dict.
+    # This checks the helper's actual semantics without claiming key-lookup equivalence.
+    for element, expected in [(1, z3.sat), (2, z3.unsat)]:
+        expr = _safe_eval(f"Contains(Unit({element}), Unit(1))", {}, "")
+        solver = z3.Solver()
+        solver.add(expr)
+        assert solver.check() == expected
 
 
 def test_original_compute_result_expression_is_parseable() -> None:
@@ -43,11 +54,13 @@ def test_rejects_unsatisfiable_universal_and_bounds() -> None:
         "And(Length(ret) == n, ForAll([i], "
         "And(0 <= i, i < Length(ret), ret[i] % 2 == 0)))"
     )
-    assert not extraction_parseable(
+    assert extraction_parseable(
         {"n": "int"}, "List[int]", ["n >= 0"], formula,
         error_details=details,
-    )
-    assert any("unsatisfiable contract" in d for d in details), details
+    ), details
+    assert extraction_feasibility(
+        {"n": "int"}, "List[int]", ["n >= 0"], formula,
+    ).status == "unsat_contract"
 
 
 def test_accepts_guarded_quantifier() -> None:
@@ -60,24 +73,31 @@ def test_accepts_guarded_quantifier() -> None:
         {"n": "int"}, "List[int]", ["n >= 0"], formula,
         error_details=details,
     ), details
+    assert extraction_feasibility(
+        {"n": "int"}, "List[int]", ["n >= 0"], formula,
+    ).status == "sat"
 
 
 def test_rejects_contradictory_preconditions() -> None:
     details: list[str] = []
-    assert not extraction_parseable(
+    assert extraction_parseable(
         {"n": "int"}, "int", ["n > 0", "n < 0"], "ret == n",
         error_details=details,
-    )
-    assert any("unsatisfiable preconditions" in d for d in details), details
+    ), details
+    assert extraction_feasibility(
+        {"n": "int"}, "int", ["n > 0", "n < 0"], "ret == n",
+    ).status == "unsat_pre"
 
 
 def test_rejects_simple_postcondition_contradiction() -> None:
     details: list[str] = []
-    assert not extraction_parseable(
+    assert extraction_parseable(
         {"x": "int"}, "int", [], "And(ret == 0, ret == 1)",
         error_details=details,
-    )
-    assert any("unsatisfiable contract" in d for d in details), details
+    ), details
+    assert extraction_feasibility(
+        {"x": "int"}, "int", [], "And(ret == 0, ret == 1)",
+    ).status == "unsat_contract"
 
 
 @pytest.mark.parametrize("validation", [spec_validation, code_validation])
@@ -115,5 +135,6 @@ def test_unknown_satisfiability_is_recorded_but_not_rejected(monkeypatch) -> Non
 
     monkeypatch.setattr(smt.z3, "Solver", UnknownSolver)
     details: list[str] = []
-    assert smt._contract_satisfiable([], True, error_details=details)
-    assert details == ["satisfiability unknown (Z3: unknown; timeout)"]
+    result = smt._contract_feasibility([], True)
+    assert result.status == "unknown"
+    assert result.reason == "timeout"

@@ -62,6 +62,11 @@ it writes a report; it is not necessarily counted as a failed case. A false
 inspect the reason. Gold scoring applies to the final extraction, including any
 fallback or degradation, so interpret it together with health fields.
 
+Limitations: `HistogramOfDeltas` currently maps to a Z3 sequence. `Contains(histo,
+Unit(1))` tests sequence membership, **not** whether key `1` is present in a
+Python dictionary. A parseable or satisfiable candidate is not necessarily a
+semantically correct contract. Keep this distinction when interpreting scores.
+
 The existing runner does not implement pass@k or independent sampling controls;
 future experiments need separate samples, unique task IDs, and a selection
 policy that does not consult gold. This subset does not change those mechanisms.

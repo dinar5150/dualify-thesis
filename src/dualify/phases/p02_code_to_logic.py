@@ -11,43 +11,17 @@ from dualify.formula_parser import (
     validate_formula,
 )
 from dualify.ollama_client import LLMClient
+from dualify.phases.extraction_common import (
+    repair_prompt_payload,
+    trace_entry,
+    typecheck_errors,
+)
 from dualify.phases.formula_prompt_rules import REPAIR_FORMULA_RULES, SAFE_SUBSET_EXTRA_RULES
-from dualify.phases.p03_smt_checking import extraction_parseable
 from dualify.types import ExtractionResult
 
 
-def _typecheck_errors(
-    domain_constraints: list[str],
-    postcondition: str,
-    arg_types: dict[str, str] | None,
-    return_type: str,
-    *,
-    diagnostics: list[str] | None = None,
-) -> list[str]:
-    """Check Z3 types and optionally collect details for extraction traces.
+_typecheck_errors = typecheck_errors
 
-    The generic error returned to the repair prompt is intentionally unchanged.
-    """
-    if not arg_types:
-        return []
-    if extraction_parseable(
-        arg_types, return_type, domain_constraints, postcondition,
-        error_details=diagnostics,
-    ):
-        return []
-    if diagnostics:
-        if any(item.startswith("unsatisfiable preconditions") for item in diagnostics):
-            return ["domain constraints are unsatisfiable"]
-        if any(item.startswith("unsatisfiable contract") for item in diagnostics):
-            return ["postcondition/constraints are unsatisfiable"]
-    return ["postcondition/constraints fail Z3 type check"]
-
-
-def _llm_error_label(exc: Exception) -> str:
-    """Log the exception kind and HTTP status, never response bodies or API keys."""
-    status = getattr(getattr(exc, "response", None), "status_code", None)
-    label = type(exc).__name__
-    return f"{label} (HTTP {status})" if isinstance(status, int) else label
 
 _INFIX_BOOL_PATTERN = re.compile(r"\s(And|Or)\s")
 _RET_SELF_EQ_PATTERN = re.compile(r"^\s*ret\s*==\s*ret\s*$")
@@ -249,7 +223,7 @@ Errors to fix:
 {json.dumps(errors, ensure_ascii=False)}
 
 Current invalid JSON:
-{json.dumps(payload, ensure_ascii=False)}
+{json.dumps(repair_prompt_payload(payload), ensure_ascii=False)}
 """
     return client.generate_json(repair_prompt)
 
@@ -378,12 +352,7 @@ Additional context:
 """
     allowed_args = _extract_signature_args(signature)
     extra_symbols = _extract_self_symbols(function_source + "\n" + extra_context)
-    initial_llm_error = ""
-    try:
-        raw_payload = client.generate_json(prompt)
-    except Exception as exc:
-        initial_llm_error = _llm_error_label(exc)
-        raw_payload = {}
+    raw_payload = client.generate_json(prompt)
     payload = _normalize_payload_formulas(_coerce_payload(raw_payload, allowed_args, return_type))
     errors = _validate_payload(payload, allowed_args, extra_symbols)
     initial_z3_details: list[str] = []
@@ -392,20 +361,11 @@ Additional context:
             payload["domain_constraints"], payload["postcondition"], arg_types, return_type,
             diagnostics=initial_z3_details,
         )
-    payload["extraction_trace"]["initial"] = {
-        "domain_constraints": list(payload["domain_constraints"]),
-        "postcondition": payload["postcondition"],
-        "errors": list(errors),
-        "z3_diagnostics": initial_z3_details,
-        **({"llm_error": initial_llm_error} if initial_llm_error else {}),
-    }
+    payload["extraction_trace"]["initial"] = trace_entry(
+        payload, errors, initial_z3_details
+    )
     if errors:
-        repair_llm_error = ""
-        try:
-            repaired_raw = _repair_payload(client, payload, errors, signature, return_type)
-        except Exception as exc:
-            repair_llm_error = _llm_error_label(exc)
-            repaired_raw = {}
+        repaired_raw = _repair_payload(client, payload, errors, signature, return_type)
         repaired_payload = _normalize_payload_formulas(
             _coerce_payload(repaired_raw, allowed_args, return_type)
         )
@@ -419,29 +379,20 @@ Additional context:
                 return_type,
                 diagnostics=repair_z3_details,
             )
-        payload["extraction_trace"]["repair"] = {
-            "domain_constraints": list(repaired_payload["domain_constraints"]),
-            "postcondition": repaired_payload["postcondition"],
-            "errors": list(repair_errors),
-            "z3_diagnostics": repair_z3_details,
-            **({"llm_error": repair_llm_error} if repair_llm_error else {}),
-        }
+        payload["extraction_trace"]["repair"] = trace_entry(
+            repaired_payload, repair_errors, repair_z3_details
+        )
         if not repair_errors:
             repaired_payload["extraction_trace"] = dict(payload["extraction_trace"])
             payload = repaired_payload
         else:
-            safe_llm_error = ""
-            try:
-                safe_raw = _safe_subset_repair_payload(
-                    client=client,
-                    signature=signature,
-                    return_type=return_type,
-                    function_source=function_source,
-                    extra_context=extra_context,
-                )
-            except Exception as exc:
-                safe_llm_error = _llm_error_label(exc)
-                safe_raw = {}
+            safe_raw = _safe_subset_repair_payload(
+                client=client,
+                signature=signature,
+                return_type=return_type,
+                function_source=function_source,
+                extra_context=extra_context,
+            )
             safe_payload = _normalize_payload_formulas(
                 _coerce_payload(safe_raw, allowed_args, return_type)
             )
@@ -455,13 +406,9 @@ Additional context:
                     return_type,
                     diagnostics=safe_z3_details,
                 )
-            payload["extraction_trace"]["safe_repair"] = {
-                "domain_constraints": list(safe_payload["domain_constraints"]),
-                "postcondition": safe_payload["postcondition"],
-                "errors": list(safe_errors),
-                "z3_diagnostics": safe_z3_details,
-                **({"llm_error": safe_llm_error} if safe_llm_error else {}),
-            }
+            payload["extraction_trace"]["safe_repair"] = trace_entry(
+                safe_payload, safe_errors, safe_z3_details
+            )
             if not safe_errors:
                 safe_payload["confidence"] = "low"
                 safe_payload["notes"] = "Recovered via safe-subset repair after validation failure."
