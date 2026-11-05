@@ -123,11 +123,15 @@ def _rewrite_expression(expr: str, benchmark_id: str) -> str:
     ):
         return "True"
 
-    rewritten = re.sub(
-        rf"\b{re.escape(benchmark_id)}\s*\([^)]*\)",
-        "ret",
-        rewritten,
-    )
+    # An empty benchmark ID is used by extraction_parseable().  Do not run
+    # the function-call replacement in that case: the regex would otherwise
+    # match any call's parentheses and corrupt valid expressions such as If(...).
+    if benchmark_id:
+        rewritten = re.sub(
+            rf"\b{re.escape(benchmark_id)}\s*\([^)]*\)",
+            "ret",
+            rewritten,
+        )
     rewritten = re.sub(r"\bEven\s*\(\s*([^()]+)\s*\)", r"((\1) % 2 == 0)", rewritten)
     rewritten = rewritten.replace("/\\", " and ")
     rewritten = rewritten.replace("\\/", " or ")
@@ -871,6 +875,8 @@ def extraction_parseable(
     return_type: str,
     domain_constraints: list[str],
     postcondition: str,
+    *,
+    error_details: list[str] | None = None,
 ) -> bool:
     """Whether the given formulas survive Z3 type-checking under these arg types.
 
@@ -890,10 +896,21 @@ def extraction_parseable(
         confidence="",
         notes="",
     )
-    return is_parseable(case_spec, extraction)
+    return is_parseable(case_spec, extraction, error_details=error_details)
 
 
-def is_parseable(case_spec: CaseSpec, extraction: ExtractionResult) -> bool:
+def is_parseable(
+    case_spec: CaseSpec,
+    extraction: ExtractionResult,
+    *,
+    error_details: list[str] | None = None,
+) -> bool:
+    """Check a contract without raising on malformed formulas.
+
+    When ``error_details`` is provided, append human-readable validation
+    failures while preserving the existing boolean return value. Existing
+    callers and comparison logic remain unchanged.
+    """
     scope: dict[str, Any] = {}
     known_names: set[str] = set()
     for arg_name, type_name in case_spec.arg_types.items():
@@ -916,6 +933,8 @@ def is_parseable(case_spec: CaseSpec, extraction: ExtractionResult) -> bool:
     )
     safety_issues = _validate_formula_safety(normalized_extraction)
     if safety_issues:
+        if error_details is not None:
+            error_details.extend(str(issue) for issue in safety_issues)
         return False
     _augment_scope_from_formulas(
         scope,
@@ -926,6 +945,8 @@ def is_parseable(case_spec: CaseSpec, extraction: ExtractionResult) -> bool:
         for c in normalized_constraints:
             _safe_eval(c, scope, case_spec.benchmark_id)
         _safe_eval(normalized_post, scope, case_spec.benchmark_id)
-    except Exception:
+    except Exception as exc:
+        if error_details is not None:
+            error_details.append(f"{type(exc).__name__}: {str(exc)[:500]}")
         return False
     return True

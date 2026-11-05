@@ -21,13 +21,28 @@ def _typecheck_errors(
     postcondition: str,
     arg_types: dict[str, str] | None,
     return_type: str,
+    *,
+    diagnostics: list[str] | None = None,
 ) -> list[str]:
-    """Z3 type-check gate: catch syntactically-valid but type-broken formulas."""
+    """Check Z3 types and optionally collect details for extraction traces.
+
+    The generic error returned to the repair prompt is intentionally unchanged.
+    """
     if not arg_types:
         return []
-    if extraction_parseable(arg_types, return_type, domain_constraints, postcondition):
+    if extraction_parseable(
+        arg_types, return_type, domain_constraints, postcondition,
+        error_details=diagnostics,
+    ):
         return []
     return ["postcondition/constraints fail Z3 type check"]
+
+
+def _llm_error_label(exc: Exception) -> str:
+    """Log the exception kind and HTTP status, never response bodies or API keys."""
+    status = getattr(getattr(exc, "response", None), "status_code", None)
+    label = type(exc).__name__
+    return f"{label} (HTTP {status})" if isinstance(status, int) else label
 
 _INFIX_BOOL_PATTERN = re.compile(r"\s(And|Or)\s")
 _RET_SELF_EQ_PATTERN = re.compile(r"^\s*ret\s*==\s*ret\s*$")
@@ -358,45 +373,59 @@ Additional context:
 """
     allowed_args = _extract_signature_args(signature)
     extra_symbols = _extract_self_symbols(function_source + "\n" + extra_context)
+    initial_llm_error = ""
     try:
         raw_payload = client.generate_json(prompt)
-    except Exception:
+    except Exception as exc:
+        initial_llm_error = _llm_error_label(exc)
         raw_payload = {}
     payload = _normalize_payload_formulas(_coerce_payload(raw_payload, allowed_args, return_type))
     errors = _validate_payload(payload, allowed_args, extra_symbols)
+    initial_z3_details: list[str] = []
     if not errors:
         errors = _typecheck_errors(
-            payload["domain_constraints"], payload["postcondition"], arg_types, return_type
+            payload["domain_constraints"], payload["postcondition"], arg_types, return_type,
+            diagnostics=initial_z3_details,
         )
     payload["extraction_trace"]["initial"] = {
         "domain_constraints": list(payload["domain_constraints"]),
         "postcondition": payload["postcondition"],
         "errors": list(errors),
+        "z3_diagnostics": initial_z3_details,
+        **({"llm_error": initial_llm_error} if initial_llm_error else {}),
     }
     if errors:
+        repair_llm_error = ""
         try:
             repaired_raw = _repair_payload(client, payload, errors, signature, return_type)
-        except Exception:
+        except Exception as exc:
+            repair_llm_error = _llm_error_label(exc)
             repaired_raw = {}
         repaired_payload = _normalize_payload_formulas(
             _coerce_payload(repaired_raw, allowed_args, return_type)
         )
         repair_errors = _validate_payload(repaired_payload, allowed_args, extra_symbols)
+        repair_z3_details: list[str] = []
         if not repair_errors:
             repair_errors = _typecheck_errors(
                 repaired_payload["domain_constraints"],
                 repaired_payload["postcondition"],
                 arg_types,
                 return_type,
+                diagnostics=repair_z3_details,
             )
         payload["extraction_trace"]["repair"] = {
             "domain_constraints": list(repaired_payload["domain_constraints"]),
             "postcondition": repaired_payload["postcondition"],
             "errors": list(repair_errors),
+            "z3_diagnostics": repair_z3_details,
+            **({"llm_error": repair_llm_error} if repair_llm_error else {}),
         }
         if not repair_errors:
+            repaired_payload["extraction_trace"] = dict(payload["extraction_trace"])
             payload = repaired_payload
         else:
+            safe_llm_error = ""
             try:
                 safe_raw = _safe_subset_repair_payload(
                     client=client,
@@ -405,23 +434,28 @@ Additional context:
                     function_source=function_source,
                     extra_context=extra_context,
                 )
-            except Exception:
+            except Exception as exc:
+                safe_llm_error = _llm_error_label(exc)
                 safe_raw = {}
             safe_payload = _normalize_payload_formulas(
                 _coerce_payload(safe_raw, allowed_args, return_type)
             )
             safe_errors = _validate_payload(safe_payload, allowed_args, extra_symbols)
+            safe_z3_details: list[str] = []
             if not safe_errors:
                 safe_errors = _typecheck_errors(
                     safe_payload["domain_constraints"],
                     safe_payload["postcondition"],
                     arg_types,
                     return_type,
+                    diagnostics=safe_z3_details,
                 )
             payload["extraction_trace"]["safe_repair"] = {
                 "domain_constraints": list(safe_payload["domain_constraints"]),
                 "postcondition": safe_payload["postcondition"],
                 "errors": list(safe_errors),
+                "z3_diagnostics": safe_z3_details,
+                **({"llm_error": safe_llm_error} if safe_llm_error else {}),
             }
             if not safe_errors:
                 safe_payload["confidence"] = "low"
