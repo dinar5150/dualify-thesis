@@ -11,23 +11,17 @@ from dualify.formula_parser import (
     validate_formula,
 )
 from dualify.ollama_client import LLMClient
+from dualify.phases.extraction_common import (
+    repair_prompt_payload,
+    trace_entry,
+    typecheck_errors,
+)
 from dualify.phases.formula_prompt_rules import REPAIR_FORMULA_RULES, SAFE_SUBSET_EXTRA_RULES
-from dualify.phases.p03_smt_checking import extraction_parseable
 from dualify.types import ExtractionResult
 
 
-def _typecheck_errors(
-    domain_constraints: list[str],
-    postcondition: str,
-    arg_types: dict[str, str] | None,
-    return_type: str,
-) -> list[str]:
-    """Z3 type-check gate: catch syntactically-valid but type-broken formulas."""
-    if not arg_types:
-        return []
-    if extraction_parseable(arg_types, return_type, domain_constraints, postcondition):
-        return []
-    return ["postcondition/constraints fail Z3 type check"]
+_typecheck_errors = typecheck_errors
+
 
 _INFIX_BOOL_PATTERN = re.compile(r"\s(And|Or)\s")
 _RET_SELF_EQ_PATTERN = re.compile(r"^\s*ret\s*==\s*ret\s*$")
@@ -229,7 +223,7 @@ Errors to fix:
 {json.dumps(errors, ensure_ascii=False)}
 
 Current invalid JSON:
-{json.dumps(payload, ensure_ascii=False)}
+{json.dumps(repair_prompt_payload(payload), ensure_ascii=False)}
 """
     return client.generate_json(repair_prompt)
 
@@ -358,71 +352,63 @@ Additional context:
 """
     allowed_args = _extract_signature_args(signature)
     extra_symbols = _extract_self_symbols(function_source + "\n" + extra_context)
-    try:
-        raw_payload = client.generate_json(prompt)
-    except Exception:
-        raw_payload = {}
+    raw_payload = client.generate_json(prompt)
     payload = _normalize_payload_formulas(_coerce_payload(raw_payload, allowed_args, return_type))
     errors = _validate_payload(payload, allowed_args, extra_symbols)
+    initial_z3_details: list[str] = []
     if not errors:
         errors = _typecheck_errors(
-            payload["domain_constraints"], payload["postcondition"], arg_types, return_type
+            payload["domain_constraints"], payload["postcondition"], arg_types, return_type,
+            diagnostics=initial_z3_details,
         )
-    payload["extraction_trace"]["initial"] = {
-        "domain_constraints": list(payload["domain_constraints"]),
-        "postcondition": payload["postcondition"],
-        "errors": list(errors),
-    }
+    payload["extraction_trace"]["initial"] = trace_entry(
+        payload, errors, initial_z3_details
+    )
     if errors:
-        try:
-            repaired_raw = _repair_payload(client, payload, errors, signature, return_type)
-        except Exception:
-            repaired_raw = {}
+        repaired_raw = _repair_payload(client, payload, errors, signature, return_type)
         repaired_payload = _normalize_payload_formulas(
             _coerce_payload(repaired_raw, allowed_args, return_type)
         )
         repair_errors = _validate_payload(repaired_payload, allowed_args, extra_symbols)
+        repair_z3_details: list[str] = []
         if not repair_errors:
             repair_errors = _typecheck_errors(
                 repaired_payload["domain_constraints"],
                 repaired_payload["postcondition"],
                 arg_types,
                 return_type,
+                diagnostics=repair_z3_details,
             )
-        payload["extraction_trace"]["repair"] = {
-            "domain_constraints": list(repaired_payload["domain_constraints"]),
-            "postcondition": repaired_payload["postcondition"],
-            "errors": list(repair_errors),
-        }
+        payload["extraction_trace"]["repair"] = trace_entry(
+            repaired_payload, repair_errors, repair_z3_details
+        )
         if not repair_errors:
+            repaired_payload["extraction_trace"] = dict(payload["extraction_trace"])
             payload = repaired_payload
         else:
-            try:
-                safe_raw = _safe_subset_repair_payload(
-                    client=client,
-                    signature=signature,
-                    return_type=return_type,
-                    function_source=function_source,
-                    extra_context=extra_context,
-                )
-            except Exception:
-                safe_raw = {}
+            safe_raw = _safe_subset_repair_payload(
+                client=client,
+                signature=signature,
+                return_type=return_type,
+                function_source=function_source,
+                extra_context=extra_context,
+            )
             safe_payload = _normalize_payload_formulas(
                 _coerce_payload(safe_raw, allowed_args, return_type)
             )
             safe_errors = _validate_payload(safe_payload, allowed_args, extra_symbols)
+            safe_z3_details: list[str] = []
             if not safe_errors:
                 safe_errors = _typecheck_errors(
                     safe_payload["domain_constraints"],
                     safe_payload["postcondition"],
                     arg_types,
                     return_type,
+                    diagnostics=safe_z3_details,
                 )
-            payload["extraction_trace"]["safe_repair"] = {
-                "domain_constraints": list(safe_payload["domain_constraints"]),
-                "postcondition": safe_payload["postcondition"],
-                "errors": list(safe_errors),
-            }
+            payload["extraction_trace"]["safe_repair"] = trace_entry(
+                safe_payload, safe_errors, safe_z3_details
+            )
             if not safe_errors:
                 safe_payload["confidence"] = "low"
                 safe_payload["notes"] = "Recovered via safe-subset repair after validation failure."

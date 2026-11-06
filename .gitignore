@@ -45,3 +45,7 @@ conferences/
 
 # Local clone scratch area
 repos/
+
+# Windows / WSL metadata
+*:Zone.Identifier
+*.Zone.Identifier
