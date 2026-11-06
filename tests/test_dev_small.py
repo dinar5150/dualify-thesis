@@ -35,11 +35,8 @@ def test_dev_small_manifest_sources_and_gold() -> None:
             lookup_gold_contract(case.benchmark_id, gold, source_file=case.file).benchmark_id
             == entry["id"]
         )
-        source = (BENCHMARK / "lifted_auto_eval" / f"{stem}.py").read_text()
-        if stem == "crosshair_examples_PEP316_correct_code_arith.py_double":
-            source = source.replace("\n    post: len(_) == len(items) * 2\n", "\n")
-        assert (DEV / f"{stem}.py").read_text() == source
-        assert "post: len(_) == len(items) * 2" not in case.function_source
+        clean_source = (BENCHMARK / "lifted_auto_eval_clean" / f"{stem}.py").read_text()
+        assert (DEV / f"{stem}.py").read_text() == clean_source
 
 
 class OfflineClient:

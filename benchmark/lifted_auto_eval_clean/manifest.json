@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "source": "lifted_auto_eval",
+  "gold": "lifted",
+  "cases": [
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_arith.py__assert_double_swap_does_nothing",
+      "source_blob": "8bd8dee680050812d1fd49eb36bcfe7a2f2acaf2",
+      "clean_blob": "0caa01a2e77aca094a278ed8bb941eb4ae6e19c2",
+      "gold_blob": "f7dd6e339eeeb9d9bdd99dc8b5fcc21d72bc7de2"
+    },
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_arith.py_double",
+      "source_blob": "c73857872f0450bf43367144a26a3d455f713cea",
+      "clean_blob": "942c36617daac1108ce950edf961fd54c71dfcc6",
+      "gold_blob": "0ae28c1d77a47a9e9619963243db2cb4b220fab6"
+    },
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_arith.py_perimiter_length",
+      "source_blob": "ec513f8a60feaf9fd544d847c106d26857cf7776",
+      "clean_blob": "0550ad89784647378f264ca8c693eb7ef98a6efe",
+      "gold_blob": "552bf4131f02d80af818e088f9d58db17e0227ac"
+    },
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_arith.py_swap",
+      "source_blob": "1bce13038515bbeaea312bbcf3ffef7ee99de5c0",
+      "clean_blob": "04870252031611e519faac3887e8a8d93acd91ad",
+      "gold_blob": "41c2acb48d50ab4ba26d024e56a164793a17be01"
+    },
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_chess.py_ChessPiece_can_move_to",
+      "source_blob": "3af6d651cdd9b00fcf1830b3825a616cf59bed56",
+      "clean_blob": "7a8c95977aebf393db30f092ea3267d58ce456a8",
+      "gold_blob": "5a4bdb092a1f0e4f8f43448fb6631d06da8665bf"
+    },
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_numpy_examples.py_unit_normalize",
+      "source_blob": "ba8b13dfd72df8b7686b5457eafd3bdefd57530d",
+      "clean_blob": "511fed7e71d17ce6226d4fc58a21a01d6d7a548f",
+      "gold_blob": "e0ce6ca18434283cdf190a028e4a297e7dc372d0"
+    },
+    {
+      "stem": "crosshair_examples_PEP316_correct_code_showcase.py_even_fibb",
+      "source_blob": "0bd670263eb8ad0facc9d2e952b6f3b71550d86d",
+      "clean_blob": "f764ac91ecee29b2537518e218b2c2a3f47a5943",
+      "gold_blob": "257dafc133a15fe6448b315de8c4059ff3711190"
+    },
+    {
+      "stem": "crosshair_examples_deal_correct_code_average.py_average",
+      "source_blob": "40fcb78407348f46161d0a9f3a46f816bea6dbde",
+      "clean_blob": "40fcb78407348f46161d0a9f3a46f816bea6dbde",
+      "gold_blob": "624389e717dec0f023966bc182697015ad502a9c"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_arith.py_double",
+      "source_blob": "f22c1c3c40f3f92e120a56ec507fcd9089b7b7d7",
+      "clean_blob": "f22c1c3c40f3f92e120a56ec507fcd9089b7b7d7",
+      "gold_blob": "200adb3c7dec31efc32cb2c7db4470c0f701543e"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_arith.py_perimiter_length",
+      "source_blob": "c4022f3598a36afb3ce2aa1e30fb7b3723c87ad9",
+      "clean_blob": "c4022f3598a36afb3ce2aa1e30fb7b3723c87ad9",
+      "gold_blob": "4952e8cc003b225d7d2dfd047ac2dd9c136cf7c8"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_arith.py_swap",
+      "source_blob": "27e69026231d6d90607d9f59ad40490ddc3c2716",
+      "clean_blob": "27e69026231d6d90607d9f59ad40490ddc3c2716",
+      "gold_blob": "ea8c6a82dd0983faf500a7f6891af6e971902f25"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_showcase.py_compute_grade",
+      "source_blob": "f068e58a93354d985718fda02ca107572d3e2cd0",
+      "clean_blob": "f068e58a93354d985718fda02ca107572d3e2cd0",
+      "gold_blob": "4149cbe157785f4f79e7a0469c61327fa0484fcb"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_showcase.py_csv_first_column",
+      "source_blob": "0e20504814bd67c2fd06c73db9f004bebcfe821c",
+      "clean_blob": "0e20504814bd67c2fd06c73db9f004bebcfe821c",
+      "gold_blob": "04e4ebf2863a303d4a6cb000e740d8051306d1e8"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_showcase.py_duplicate_list",
+      "source_blob": "d8454956fc928da65a78f61cfc36d5c03ef14bd1",
+      "clean_blob": "d8454956fc928da65a78f61cfc36d5c03ef14bd1",
+      "gold_blob": "e1fe5c2af5d3ffbe8af68866ccd358ddbf649fd3"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_showcase.py_even_fibb",
+      "source_blob": "0d23cd9f63f96c256e7e89bfbc6a4b1e8d4aa521",
+      "clean_blob": "0d23cd9f63f96c256e7e89bfbc6a4b1e8d4aa521",
+      "gold_blob": "849898614b18332fa090552b3935e5e6cdb52a0a"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_showcase.py_zip_exact",
+      "source_blob": "ff32042bcec7cbba7dad528b0f17dc06400415db",
+      "clean_blob": "ff32042bcec7cbba7dad528b0f17dc06400415db",
+      "gold_blob": "6148ab4f151be41fed28c8123d1958406216ad9b"
+    },
+    {
+      "stem": "crosshair_examples_icontract_correct_code_showcase.py_zipped_pairs",
+      "source_blob": "9574411a6931b8c51fa0e733bf418f75eb33def6",
+      "clean_blob": "9574411a6931b8c51fa0e733bf418f75eb33def6",
+      "gold_blob": "aa1c01ccebdff7df5b6ebfadf29fc053146c6829"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_10_adapter_array.py_compute_result",
+      "source_blob": "12f3d0ca95a60932e4911154f1b1248d2aa8daf2",
+      "clean_blob": "12f3d0ca95a60932e4911154f1b1248d2aa8daf2",
+      "gold_blob": "5ae5eab58c2d92fab8609809b81c2652e6d6e617"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_10_adapter_array.py_parse",
+      "source_blob": "6af003344c68101b5f2d2991bc545528869105ce",
+      "clean_blob": "6af003344c68101b5f2d2991bc545528869105ce",
+      "gold_blob": "03cc169f8261cb7bf524de60a2bbb77d90c86bcc"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_11_seating_system.py_list_neighbourhood",
+      "source_blob": "5950afec8bd246d161bc2fa0873db75f8df05ee5",
+      "clean_blob": "5950afec8bd246d161bc2fa0873db75f8df05ee5",
+      "gold_blob": "f603d161f06ec2e39a0469b3444701da00522d86"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_13_shuttle_search.py_find_departure",
+      "source_blob": "1991e0b52ca0e2be590a805e383fecf5bbac0df3",
+      "clean_blob": "1991e0b52ca0e2be590a805e383fecf5bbac0df3",
+      "gold_blob": "959556e2c5b5652f808345d43b5177e71b747292"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_13_shuttle_search.py_next_departure",
+      "source_blob": "db0be72cf2ba6180c74ac77b7d128c46167688f4",
+      "clean_blob": "db0be72cf2ba6180c74ac77b7d128c46167688f4",
+      "gold_blob": "da6c827897e0fead38a0256ac59db898bbb398dc"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_17_conway_cubes.py_count_active",
+      "source_blob": "49867ea375d252edd7f3478eacb0c3cb075c8c90",
+      "clean_blob": "49867ea375d252edd7f3478eacb0c3cb075c8c90",
+      "gold_blob": "06ac8fb3e294805b6aa421d1e2c5e98fedb23980"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_18_operation_order.py_extract_expression",
+      "source_blob": "9bc2976cb8753db3b83340e35d201ea56381f119",
+      "clean_blob": "9bc2976cb8753db3b83340e35d201ea56381f119",
+      "gold_blob": "8e2d06cec077422017e47937d4ced46ee974af99"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_1_report_repair.py_find_pair_with_sum",
+      "source_blob": "0091a914946d6413a88dfa4cf09a679407e65261",
+      "clean_blob": "0091a914946d6413a88dfa4cf09a679407e65261",
+      "gold_blob": "81f81f8ae0c1a5bc62413377f565941e6a27c6f1"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_20_jurassic_jigsaw.py_reverse_side",
+      "source_blob": "157c094416d9e433b30ce6c87b393596974cfa9c",
+      "clean_blob": "157c094416d9e433b30ce6c87b393596974cfa9c",
+      "gold_blob": "3c8ad92e2a72e84656b03a472e68078f88a9e042"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_22_crab_combat.py_compute_score",
+      "source_blob": "0fa557b149ccac27c49de3ef92e9fb951d740db6",
+      "clean_blob": "0fa557b149ccac27c49de3ef92e9fb951d740db6",
+      "gold_blob": "75758768b1312c0ff4f48c1f88139e1b9fdc1a49"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_25_combo_breaker.py_transform",
+      "source_blob": "391afc464e62e143f638073187934059f53ea744",
+      "clean_blob": "391afc464e62e143f638073187934059f53ea744",
+      "gold_blob": "e4e12603f40b0f2b70c4c3304df7abec0f5621d4"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_2_password_philosophy.py_verify",
+      "source_blob": "2a83b69077704aaf73b7e135ba19c66e2c6e8c42",
+      "clean_blob": "2a83b69077704aaf73b7e135ba19c66e2c6e8c42",
+      "gold_blob": "e2b430a408e0e1fbb75c1af6e43d83b120264d59"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_count_trees",
+      "source_blob": "c2b7b2d2b7d375c8d586cc241e7614b414240076",
+      "clean_blob": "c2b7b2d2b7d375c8d586cc241e7614b414240076",
+      "gold_blob": "fa99e097310c59825881b0e5e07bc512eb1e1a0e"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_parse_input",
+      "source_blob": "b61487aab4fbaf577e915a811a67ba3c6220774a",
+      "clean_blob": "b61487aab4fbaf577e915a811a67ba3c6220774a",
+      "gold_blob": "1aac031dbb4d4629e24e59886fe9cceabbe638d2"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_5_binary_boarding.py_apply",
+      "source_blob": "39983a7c2cd53a0ecfe4ff102718e87e22852a3f",
+      "clean_blob": "39983a7c2cd53a0ecfe4ff102718e87e22852a3f",
+      "gold_blob": "c4f983e22dbdb1f17c06d62084562efe07f8b3d3"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_column",
+      "source_blob": "4aaf5969a11cc18bc13828609c04b839c88381a8",
+      "clean_blob": "4aaf5969a11cc18bc13828609c04b839c88381a8",
+      "gold_blob": "129d4e9e57b9c755881ba5ed9092e4a6cbbfef97"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_id",
+      "source_blob": "e1b66c508b39e48c0c1fff4760be95e4779feb6f",
+      "clean_blob": "e1b66c508b39e48c0c1fff4760be95e4779feb6f",
+      "gold_blob": "105bf7257098ae2d85005acdcddc432515a92775"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row",
+      "source_blob": "769dd55ef07466f2c8a4353c1767bd47793f0a49",
+      "clean_blob": "769dd55ef07466f2c8a4353c1767bd47793f0a49",
+      "gold_blob": "f911767a59c322539254d1126c93f8ee53fab43e"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row_and_column",
+      "source_blob": "97d7c445f9748a873e84a3a7149daeeb811f4aa2",
+      "clean_blob": "97d7c445f9748a873e84a3a7149daeeb811f4aa2",
+      "gold_blob": "764bc18cdc2c00d15dd724f224e7cd30633b069b"
+    },
+    {
+      "stem": "python_by_contract_correct_aoc2020_day_9_encoding_error.py_solve",
+      "source_blob": "b3e378c016df1c7096ad0a8400ee002fa845883d",
+      "clean_blob": "b3e378c016df1c7096ad0a8400ee002fa845883d",
+      "gold_blob": "de904fc8de2a1bfbfac41ba318769430860cb448"
+    },
+    {
+      "stem": "python_by_contract_correct_ethz_eprog_2019_exercise_03_problem_01.py_compute",
+      "source_blob": "666aec26aa3484b858cf0817e276a248fd0d9d08",
+      "clean_blob": "666aec26aa3484b858cf0817e276a248fd0d9d08",
+      "gold_blob": "33c4a04c3dcca886c44fd12115c91bf3a8888280"
+    },
+    {
+      "stem": "python_by_contract_correct_ethz_eprog_2019_exercise_05_problem_04.py_Entry_duration",
+      "source_blob": "8bb18659c8de74e10de9b522f68b98ae3fb15f35",
+      "clean_blob": "8bb18659c8de74e10de9b522f68b98ae3fb15f35",
+      "gold_blob": "ec6c242d33c4a368f0ec514bfd47bf9cca785c5f"
+    },
+    {
+      "stem": "python_by_contract_correct_ethz_eprog_2019_exercise_08_problem_05.py_simulate",
+      "source_blob": "27439b63639a8cd586faadc69e772c773779f0c0",
+      "clean_blob": "27439b63639a8cd586faadc69e772c773779f0c0",
+      "gold_blob": "b5d63872cf299bc39425583aef6546680a5c01f2"
+    }
+  ]
+}
