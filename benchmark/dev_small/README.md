@@ -9,14 +9,15 @@ name, and the runner uses the source file stem to resolve each original YAML in
 runner `benchmark_id` but different file stems and gold IDs. Use the manifest
 ID or `gold_scoring.gold_benchmark_id`, not the short name, when joining results.
 
-These are copies of the original snippets, with one intentional change: the
-PEP316 `double` docstring's formal `post:` directive is removed because it
-expresses the reference contract and the code extractor receives the source.
-The natural-language requirement and implementation are retained. Gold YAMLs
-are read from the original directory only for evaluation, after generation;
-they are not copied into this directory or supplied to prompts. Consequently,
-results for this one case are not strictly input-identical to a full benchmark
-run. The original benchmark and all 40 reference YAMLs remain unchanged.
+These six files match the corresponding inputs in
+`benchmark/lifted_auto_eval_clean/`. This clean version removes formal PEP 316
+`pre:` and `post:` lines from function docstrings before generation. For the
+selected six tasks, the PEP 316 `double` is the only changed source. The
+natural-language requirements and implementation are retained. Gold YAMLs are
+read from `benchmark/lifted/` only for evaluation after generation; they are
+not copied here or supplied to prompts. The original benchmark and all 40
+gold YAMLs remain unchanged. See the clean benchmark README and manifest for
+the frozen 40-task input protocol.
 
 Set `GROQ_API_KEY` in your shell without putting the key in a command, file, or
 transcript. An existing nonempty `DUALIFY_API_KEY` takes precedence, so unset it
