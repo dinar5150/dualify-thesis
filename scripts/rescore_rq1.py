@@ -72,6 +72,17 @@ def rescore(folder: Path, output: Path | None = None) -> Path:
     destination.mkdir(parents=True)
     _write_json(destination / "samples.json", {"tasks": tasks})
     _write_json(destination / "metrics.json", metrics)
+    if cfg["benchmark"] == "lifted_auto_eval_clean":
+        dev_stems = _expected_stems(ROOT, "dev_small")
+        holdout_tasks = [
+            task for task in tasks if Path(task["source_file"]).stem not in dev_stems
+        ]
+        if len(holdout_tasks) != len(expected - dev_stems):
+            raise ValueError("Holdout task count differs from frozen split")
+        _write_json(
+            destination / "metrics_holdout.json",
+            summarize_samples(holdout_tasks, tuple(cfg["ks"])),
+        )
     _write_csv_files(destination, tasks, metrics)
     _write_json(destination / "rescore_metadata.json", {
         "source_results": str(folder),

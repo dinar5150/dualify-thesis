@@ -228,40 +228,72 @@ def score_extraction_against_gold(
     gold_extraction = _extraction_from_gold(gold)
     smt = check_equivalence(case_spec, gold_extraction, extraction)
     relation = contract_relation(case_spec, gold_extraction, extraction)
-    # Both checks produce sound proofs when they return unsat, but Z3 may
-    # return unknown for a different encoding of the same obligation.
-    # Reconcile proven results. Never promote a candidate on `unknown` alone.
-    pre_relation = relation["pre"]
-    post_relation = relation["post"]
+    # Both checkers can return different degrees of evidence when Z3 is
+    # incomplete on sequences or quantifiers. Reconcile only *proved* facts.
+    diagnostics = smt.diagnostics or {}
+    statuses = diagnostics.get("solver_status", {})
+    if not isinstance(statuses, dict):
+        statuses = {}
+
+    def refine_strength(
+        current: str, xor_status: Any, generated_to_gold: Any, gold_to_generated: Any
+    ) -> str:
+        if current != "undetermined" or xor_status != "sat":
+            return current
+        # XOR=sat proves strict difference, so one valid implication is enough
+        # to identify direction even when the reverse query returned unknown.
+        if generated_to_gold == "unsat" and gold_to_generated != "unsat":
+            return "generated_stronger"
+        if gold_to_generated == "unsat" and generated_to_gold != "unsat":
+            return "generated_weaker"
+        if generated_to_gold == "sat" and gold_to_generated == "sat":
+            return "incomparable"
+        return current
+
+    pre_relation = refine_strength(
+        relation["pre"],
+        statuses.get("pre_mismatch_check"),
+        statuses.get("pre_code_implies_pre_spec"),
+        statuses.get("pre_spec_implies_pre_code"),
+    )
+    post_relation = refine_strength(
+        relation["post"],
+        statuses.get("post_mismatch_check"),
+        statuses.get("code_post_implies_spec_post"),
+        statuses.get("spec_post_implies_code_post"),
+    )
+    definite = {"generated_stronger", "generated_weaker", "incomparable"}
+    mismatch_proven = (
+        statuses.get("pre_mismatch_check") == "sat"
+        or statuses.get("post_mismatch_check") == "sat"
+    )
     equivalent = smt.equivalent
     reason = smt.reason
     if equivalent:
-        if pre_relation in {"generated_stronger", "generated_weaker", "incomparable"} or post_relation in {
-            "generated_stronger", "generated_weaker", "incomparable"
-        }:
-            # Contradictory *definite* SMT evidence must not count as success.
+        if mismatch_proven or pre_relation in definite or post_relation in definite:
+            # Conflicting proofs must be investigated, never counted as pass.
             equivalent = False
             reason = "oracle_conflict"
         else:
             pre_relation = "equivalent"
             post_relation = "equivalent"
-    elif (
-        reason == "solver_unknown"
-        and pre_relation == "equivalent"
-        and post_relation == "equivalent"
-        and (smt.diagnostics or {}).get("post_well_formedness") == "ok"
-    ):
-        # Two proved implications in each direction establish equivalence,
-        # even if the XOR query returned unknown.
-        equivalent = True
-        reason = "equivalent_via_implications"
-    elif reason == "solver_unknown" and (
-        pre_relation in {"generated_stronger", "generated_weaker", "incomparable"}
-        or post_relation in {"generated_stronger", "generated_weaker", "incomparable"}
-    ):
-        # A model for either failed implication proves non-equivalence,
-        # even if the aggregate XOR check was inconclusive.
-        reason = "non_equivalent_via_implications"
+    elif reason == "solver_unknown":
+        if (
+            pre_relation == "equivalent"
+            and post_relation == "equivalent"
+            and diagnostics.get("post_well_formedness") == "ok"
+        ):
+            if mismatch_proven:
+                reason = "oracle_conflict"
+            else:
+                # Both implication directions are proven for pre and post.
+                equivalent = True
+                reason = "equivalent_via_implications"
+        elif pre_relation in definite or post_relation in definite:
+            reason = "non_equivalent_via_implications"
+        elif mismatch_proven:
+            # Direction is unknown, but XOR=sat already proves difference.
+            reason = "non_equivalent_via_xor"
     return GoldScoreResult(
         qualname=gold.qualname,
         gold_benchmark_id=gold.benchmark_id,

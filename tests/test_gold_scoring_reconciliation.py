@@ -64,3 +64,51 @@ def test_conflicting_definite_proofs_are_reported(monkeypatch):
     result = _score(monkeypatch, check=check, post="generated_stronger")
     assert not result.contract_equivalent
     assert result.reason == "oracle_conflict"
+
+
+def test_xor_sat_and_one_valid_implication_proves_generated_stronger(monkeypatch):
+    check = SmtResult(
+        "x", False, "solver_unknown", None,
+        diagnostics={
+            "post_well_formedness": "ok",
+            "solver_status": {
+                "post_mismatch_check": "sat",
+                "spec_post_implies_code_post": "unknown",
+                "code_post_implies_spec_post": "unsat",
+            },
+        },
+    )
+    result = _score(monkeypatch, check=check, post="undetermined")
+    assert not result.contract_equivalent
+    assert result.post_relation == "generated_stronger"
+    assert result.reason == "non_equivalent_via_implications"
+
+
+def test_xor_sat_without_direction_proves_non_equivalence(monkeypatch):
+    check = SmtResult(
+        "x", False, "solver_unknown", None,
+        diagnostics={
+            "post_well_formedness": "ok",
+            "solver_status": {
+                "post_mismatch_check": "sat",
+                "spec_post_implies_code_post": "unknown",
+                "code_post_implies_spec_post": "unknown",
+            },
+        },
+    )
+    result = _score(monkeypatch, check=check)
+    assert not result.contract_equivalent
+    assert result.reason == "non_equivalent_via_xor"
+
+
+def test_conflicting_xor_and_implications_never_pass(monkeypatch):
+    check = SmtResult(
+        "x", False, "solver_unknown", None,
+        diagnostics={
+            "post_well_formedness": "ok",
+            "solver_status": {"post_mismatch_check": "sat"},
+        },
+    )
+    result = _score(monkeypatch, check=check, post="equivalent")
+    assert not result.contract_equivalent
+    assert result.reason == "oracle_conflict"

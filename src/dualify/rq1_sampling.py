@@ -98,6 +98,8 @@ def outcome_from_gold(
     """
     if score.get("skipped"):
         return "skipped"
+    if score.get("reason") == "oracle_conflict":
+        return "oracle_conflict"
     if used_fallback:
         return "fallback"
     if weak:
@@ -266,7 +268,10 @@ def _initial_score(case: dict[str, Any], channel: str, gold: dict[str, Any], *, 
         "domain_constraints": pre,
         "errors": initial.get("errors", []),
         "gold": result,
-        "outcome": outcome_from_gold(result, weak=_is_weak_postcondition(post)),
+        "outcome": (
+            "invalid" if initial.get("errors")
+            else outcome_from_gold(result, weak=_is_weak_postcondition(post))
+        ),
     }
 
 

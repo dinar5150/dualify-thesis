@@ -1,7 +1,7 @@
 import ast
 import re
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 import z3
 
@@ -208,7 +208,7 @@ def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
                 and seq.sort().kind() == z3.Z3_SEQ_SORT
             ):
                 try:
-                    return z3.Contains(seq, z3.Unit(elem))
+                    return z3.Contains(seq, _unit(elem))
                 except z3.Z3Exception:
                     return z3.And(elem >= 0, elem < z3.Length(seq))
         if isinstance(elem, str):
@@ -216,8 +216,25 @@ def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
         if hasattr(elem, "sort"):
             if elem.sort().kind() == z3.Z3_SEQ_SORT:
                 return z3.Contains(seq, elem)
-            return z3.Contains(seq, z3.Unit(elem))
-        return z3.Contains(seq, z3.Unit(elem))
+            return z3.Contains(seq, _unit(elem))
+        return z3.Contains(seq, _unit(elem))
+
+    def _unit(value: Any) -> Any:
+        """Make a Z3 sequence unit, also accepting Python literal values.
+
+        z3.Unit(1) raises AttributeError (int has no ctx_ref). Formula
+        expressions often contain Unit(1) / Unit(3), so coerce Python
+        literals to Z3 expressions before calling z3.Unit.
+        """
+        if isinstance(value, bool):
+            value = z3.BoolVal(value)
+        elif isinstance(value, int):
+            value = z3.IntVal(value)
+        elif isinstance(value, float):
+            value = z3.RealVal(str(value))
+        elif isinstance(value, str):
+            value = z3.StringVal(value)
+        return z3.Unit(value)
 
     def _string_lit(value: Any) -> Any:
         if isinstance(value, str):
@@ -267,6 +284,7 @@ def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
         "PrefixOf": z3.PrefixOf,
         "SuffixOf": z3.SuffixOf,
         "Concat": z3.Concat,
+        "Unit": _unit,
         "floor": _floor,
         "max": _max,
         "min": _min,
@@ -729,18 +747,35 @@ def check_equivalence(
     # Step 1a from scheme:
     # if pre mismatch, classify PRE_CODE vs PRE_SPEC and finish early.
     if preconditions_mismatch:
-        if not spec_implies_code:
+        # XOR=sat proves a mismatch, but does not always determine its
+        # direction. A single proven implication is enough to establish
+        # strict strength; otherwise do not turn unknown into False.
+        if (
+            code_implies_spec_status == z3.unsat
+            and spec_implies_code_status != z3.unsat
+        ):
+            reason = "case_pre_code"
+        elif (
+            spec_implies_code_status == z3.unsat
+            and code_implies_spec_status != z3.unsat
+        ):
+            reason = "case_pre_spec"
+        elif spec_implies_code_status == z3.sat and code_implies_spec_status == z3.sat:
+            # Incomparable preconditions: retain Dualify's primary-label precedence.
+            reason = "case_pre_code"
+        else:
             return SmtResult(
                 benchmark_id=case_spec.benchmark_id,
                 equivalent=False,
-                reason="case_pre_code",
+                reason="solver_unknown",
                 counterexample=preconditions_counterexample,
                 diagnostics=diagnostics,
+                well_formedness="solver_unknown_pre_direction",
             )
         return SmtResult(
             benchmark_id=case_spec.benchmark_id,
             equivalent=False,
-            reason="case_pre_spec",
+            reason=reason,
             counterexample=preconditions_counterexample,
             diagnostics=diagnostics,
         )
@@ -929,18 +964,41 @@ def extraction_parseable(
     return is_parseable(case_spec, extraction, error_details=error_details)
 
 
-def is_parseable(
+_EXTRACTION_SAT_TIMEOUT_MS = 2_000
+
+
+@dataclass(frozen=True)
+class FeasibilityResult:
+    """Outcome of an existential Z3 check, separate from parsing."""
+
+    status: Literal["sat", "unsat_pre", "unsat_contract", "unknown", "invalid"]
+    reason: str = ""
+
+
+def _contract_feasibility(constraints: list[Any], postcondition: Any) -> FeasibilityResult:
+    """Check satisfiability, not functional correctness or gold equivalence."""
+    solver = z3.Solver()
+    solver.set("timeout", _EXTRACTION_SAT_TIMEOUT_MS)
+    if constraints:
+        solver.add(*constraints)
+        if solver.check() == z3.unsat:
+            return FeasibilityResult("unsat_pre")
+    solver.add(postcondition)
+    status = solver.check()
+    if status == z3.unsat:
+        return FeasibilityResult("unsat_contract")
+    if status == z3.unknown:
+        return FeasibilityResult("unknown", solver.reason_unknown()[:200])
+    return FeasibilityResult("sat")
+
+
+def _parse_contract(
     case_spec: CaseSpec,
     extraction: ExtractionResult,
     *,
     error_details: list[str] | None = None,
-) -> bool:
-    """Check a contract without raising on malformed formulas.
-
-    When ``error_details`` is provided, append human-readable validation
-    failures while preserving the existing boolean return value. Existing
-    callers and comparison logic remain unchanged.
-    """
+) -> tuple[list[Any], Any] | None:
+    """Convert formulas to Z3 expressions, without running the solver."""
     scope: dict[str, Any] = {}
     known_names: set[str] = set()
     for arg_name, type_name in case_spec.arg_types.items():
@@ -965,18 +1023,56 @@ def is_parseable(
     if safety_issues:
         if error_details is not None:
             error_details.extend(str(issue) for issue in safety_issues)
-        return False
+        return None
     _augment_scope_from_formulas(
         scope,
         known_names,
         [*normalized_constraints, normalized_post],
     )
     try:
-        for c in normalized_constraints:
-            _safe_eval(c, scope, case_spec.benchmark_id)
-        _safe_eval(normalized_post, scope, case_spec.benchmark_id)
+        parsed_constraints = [
+            _safe_eval(c, scope, case_spec.benchmark_id) for c in normalized_constraints
+        ]
+        parsed_post = _safe_eval(normalized_post, scope, case_spec.benchmark_id)
+        return parsed_constraints, parsed_post
     except Exception as exc:
         if error_details is not None:
             error_details.append(f"{type(exc).__name__}: {str(exc)[:500]}")
-        return False
-    return True
+        return None
+
+
+def is_parseable(
+    case_spec: CaseSpec,
+    extraction: ExtractionResult,
+    *,
+    error_details: list[str] | None = None,
+) -> bool:
+    """Return whether the formulas can be parsed into well-typed Z3 expressions."""
+    return _parse_contract(case_spec, extraction, error_details=error_details) is not None
+
+
+def extraction_feasibility(
+    arg_types: dict[str, str],
+    return_type: str,
+    domain_constraints: list[str],
+    postcondition: str,
+) -> FeasibilityResult:
+    """Check whether a parsed extraction has any satisfying input and result.
+
+    Not a proof of semantic correctness. An ``unknown`` result must not be
+    treated as ``unsat``. Parsing stays independent of this solver check.
+    """
+    case_spec = CaseSpec(benchmark_id="", arg_types=arg_types, return_type=return_type)
+    extraction = ExtractionResult(
+        benchmark_id="",
+        args=list(arg_types),
+        return_type=return_type,
+        domain_constraints=list(domain_constraints),
+        postcondition=postcondition,
+        confidence="",
+        notes="",
+    )
+    parsed = _parse_contract(case_spec, extraction)
+    if parsed is None:
+        return FeasibilityResult("invalid", "Z3 expression parsing failed")
+    return _contract_feasibility(*parsed)
