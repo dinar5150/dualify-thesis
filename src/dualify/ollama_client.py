@@ -103,6 +103,25 @@ class OpenAICompatibleClient:
             raise ValueError("Completion response text is not a string")
         return text
 
+    @staticmethod
+    def _api_error_detail(response: requests.Response) -> str:
+        """Show the provider's error message without logging the prompt or API key."""
+        try:
+            data = response.json()
+        except (ValueError, requests.RequestException):
+            data = None
+        if isinstance(data, dict):
+            error = data.get("error", data)
+            if isinstance(error, dict):
+                message = error.get("message", "")
+                code = error.get("code") or error.get("type")
+                detail = f"{code}: {message}" if code else str(message)
+            else:
+                detail = str(error)
+        else:
+            detail = response.text or "No error details returned"
+        return " ".join(detail.split())[:1200]
+
     def _post_with_retry(self, url: str, payload: dict) -> requests.Response:
         """POST with exponential backoff on rate limits / transient server errors.
 
@@ -124,6 +143,8 @@ class OpenAICompatibleClient:
                 )
             except requests.RequestException as exc:
                 last_exc = exc
+                if attempt == self.max_retries - 1:
+                    break
                 delay = min(self.backoff_base_sec * (2**attempt), self.max_backoff_sec)
                 print(
                     f"[dualify-llm] request error (attempt {attempt + 1}/{self.max_retries}): "
@@ -134,6 +155,9 @@ class OpenAICompatibleClient:
                 continue
             last_response = response
             if response.status_code in (429, 500, 502, 503, 504):
+                # The last attempt has already failed: don't sleep needlessly.
+                if attempt == self.max_retries - 1:
+                    return response
                 retry_after = response.headers.get("Retry-After")
                 default_delay = self.backoff_base_sec * (2**attempt)
                 try:
@@ -166,8 +190,11 @@ class OpenAICompatibleClient:
         )
 
     def generate_json(self, prompt: str, temperature: float = 0.0) -> dict:
+        # Keep the existing request payloads and mode order unchanged: an RQ1
+        # transcript may already contain calls made with these settings.
         prefer_chat = self._prefers_chat_mode()
         attempts = [True, False] if prefer_chat else [False, True]
+        errors: list[str] = []
         last_exc: Exception | None = None
 
         for chat_mode in attempts:
@@ -201,16 +228,39 @@ class OpenAICompatibleClient:
                 choices = body.get("choices", [])
                 if not isinstance(choices, list) or not choices:
                     raise ValueError("Completion response has no choices")
-                text = self._extract_choice_text(choices[0], chat_mode=chat_mode)
-                self._debug_raw("chat" if chat_mode else "completion", text)
-                return _extract_json_object(text)
-            except Exception as exc:
+                choice = choices[0]
+                if choice.get("finish_reason") == "length":
+                    raise ValueError("Output truncated at max_tokens=1024")
+                generated = self._extract_choice_text(choice, chat_mode=chat_mode)
+                self._debug_raw("chat" if chat_mode else "completion", generated)
+                return _extract_json_object(generated)
+            except requests.HTTPError as exc:
                 last_exc = exc
-                continue
+                response = exc.response
+                if response is None:
+                    errors.append(f"{endpoint}: {exc}")
+                    continue
+                detail = self._api_error_detail(response)
+                errors.append(f"{endpoint}: HTTP {response.status_code}: {detail}")
+                # Authentication and exhausted rate limits aren't fixed by
+                # switching from text completions to chat (or vice versa).
+                if response.status_code in (401, 403, 429):
+                    raise RuntimeError(
+                        "LLM API request failed after retries:\n  "
+                        + "\n  ".join(errors)
+                    ) from exc
+            except requests.RequestException as exc:
+                last_exc = exc
+                errors.append(f"{endpoint}: {type(exc).__name__}: {exc}")
+                break
+            except (ValueError, TypeError, KeyError) as exc:
+                last_exc = exc
+                errors.append(f"{endpoint}: {type(exc).__name__}: {exc}")
 
-        if last_exc is not None:
-            raise last_exc
-        raise RuntimeError("No completion mode succeeded")
+        raise RuntimeError(
+            "LLM API failed in both completion modes:\n  "
+            + "\n  ".join(errors)
+        ) from last_exc
 
     def healthcheck(self) -> None:
         url = f"{self.base_url}/v1/models"

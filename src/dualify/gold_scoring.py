@@ -228,16 +228,50 @@ def score_extraction_against_gold(
     gold_extraction = _extraction_from_gold(gold)
     smt = check_equivalence(case_spec, gold_extraction, extraction)
     relation = contract_relation(case_spec, gold_extraction, extraction)
+    # Both checks produce sound proofs when they return unsat, but Z3 may
+    # return unknown for a different encoding of the same obligation.
+    # Reconcile proven results. Never promote a candidate on `unknown` alone.
+    pre_relation = relation["pre"]
+    post_relation = relation["post"]
+    equivalent = smt.equivalent
+    reason = smt.reason
+    if equivalent:
+        if pre_relation in {"generated_stronger", "generated_weaker", "incomparable"} or post_relation in {
+            "generated_stronger", "generated_weaker", "incomparable"
+        }:
+            # Contradictory *definite* SMT evidence must not count as success.
+            equivalent = False
+            reason = "oracle_conflict"
+        else:
+            pre_relation = "equivalent"
+            post_relation = "equivalent"
+    elif (
+        reason == "solver_unknown"
+        and pre_relation == "equivalent"
+        and post_relation == "equivalent"
+        and (smt.diagnostics or {}).get("post_well_formedness") == "ok"
+    ):
+        # Two proved implications in each direction establish equivalence,
+        # even if the XOR query returned unknown.
+        equivalent = True
+        reason = "equivalent_via_implications"
+    elif reason == "solver_unknown" and (
+        pre_relation in {"generated_stronger", "generated_weaker", "incomparable"}
+        or post_relation in {"generated_stronger", "generated_weaker", "incomparable"}
+    ):
+        # A model for either failed implication proves non-equivalence,
+        # even if the aggregate XOR check was inconclusive.
+        reason = "non_equivalent_via_implications"
     return GoldScoreResult(
         qualname=gold.qualname,
         gold_benchmark_id=gold.benchmark_id,
         in_fragment=True,
         pre_exact=pre_exact,
         post_exact=post_exact,
-        contract_equivalent=smt.equivalent,
-        reason=smt.reason,
-        pre_relation=relation["pre"],
-        post_relation=relation["post"],
+        contract_equivalent=equivalent,
+        reason=reason,
+        pre_relation=pre_relation,
+        post_relation=post_relation,
     )
 
 
