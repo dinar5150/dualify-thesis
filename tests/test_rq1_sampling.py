@@ -133,6 +133,15 @@ def test_orchestration_saves_all_samples_without_llm(monkeypatch, tmp_path: Path
         def healthcheck(self):
             pass
 
+        def retry_diagnostics(self):
+            return {
+                "json_validate_failed": {
+                    "max_attempts": 3,
+                    "validation_error_responses": 2,
+                    "additional_requests": 2,
+                }
+            }
+
     class FakeRecorder:
         def __init__(self, inner, transcript_path, model, base_url, provider):
             self.inner = inner
@@ -239,5 +248,8 @@ def test_orchestration_saves_all_samples_without_llm(monkeypatch, tmp_path: Path
     meta = json.loads((output / "metadata.json").read_text())
     assert meta["status"] == "completed"
     assert meta["completed_samples"] == 2
+    assert meta["api_retry"]["scope"] == "full_live_run"
+    assert meta["api_retry"]["json_validate_failed"]["max_attempts"] == 3
+    assert meta["api_retry"]["json_validate_failed"]["additional_requests"] == 2
     assert len(meta["dataset_sha256"]["source_files"]) == 2
     assert len(meta["dataset_sha256"]["gold_files"]) == 2

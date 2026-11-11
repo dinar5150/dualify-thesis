@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol
 
 import requests
@@ -66,6 +66,24 @@ class OpenAICompatibleClient:
     max_retries: int = 6
     backoff_base_sec: float = 2.0
     max_backoff_sec: float = 60.0
+    json_mode_max_attempts: int = 3
+    json_validation_failures: int = field(default=0, init=False)
+    json_retry_requests: int = field(default=0, init=False)
+    json_retry_recoveries: int = field(default=0, init=False)
+    json_retry_exhaustions: int = field(default=0, init=False)
+
+    def retry_diagnostics(self) -> dict[str, object]:
+        """Only live Groq JSON-mode retries are counted, not transcript replays."""
+        return {
+            "json_validate_failed": {
+                "trigger": "Groq chat HTTP 400 with code/type json_validate_failed",
+                "max_attempts": self.json_mode_max_attempts,
+                "validation_error_responses": self.json_validation_failures,
+                "additional_requests": self.json_retry_requests,
+                "recovered_calls": self.json_retry_recoveries,
+                "exhausted_calls": self.json_retry_exhaustions,
+            }
+        }
 
     def _headers(self) -> dict[str, str]:
         headers = {"Content-Type": "application/json"}
@@ -121,6 +139,48 @@ class OpenAICompatibleClient:
         else:
             detail = response.text or "No error details returned"
         return " ".join(detail.split())[:1200]
+
+    @staticmethod
+    def _is_json_validation_failure(response: requests.Response) -> bool:
+        if response.status_code != 400:
+            return False
+        try:
+            body = response.json()
+        except (ValueError, requests.RequestException):
+            return False
+        error = body.get("error") if isinstance(body, dict) else None
+        return isinstance(error, dict) and (
+            error.get("code") == "json_validate_failed"
+            or error.get("type") == "json_validate_failed"
+        )
+
+    def _post_groq_json_with_retry(self, url: str, payload: dict) -> requests.Response:
+        """Retry only the intermittent Groq JSON-validation response."""
+        for attempt in range(1, self.json_mode_max_attempts + 1):
+            response = self._post_with_retry(url, payload)
+            if not self._is_json_validation_failure(response):
+                if attempt > 1 and response.ok:
+                    self.json_retry_recoveries += 1
+                    print(
+                        f"[dualify-llm] Groq JSON request recovered on attempt {attempt}",
+                        flush=True,
+                    )
+                return response
+            self.json_validation_failures += 1
+            if attempt == self.json_mode_max_attempts:
+                self.json_retry_exhaustions += 1
+                print(
+                    f"[dualify-llm] Groq JSON validation failed after {attempt} attempts",
+                    flush=True,
+                )
+                return response
+            self.json_retry_requests += 1
+            print(
+                f"[dualify-llm] Groq json_validate_failed "
+                f"(attempt {attempt}/{self.json_mode_max_attempts}); retrying",
+                flush=True,
+            )
+        raise AssertionError("unreachable: JSON attempt count must be positive")
 
     def _post_with_retry(self, url: str, payload: dict) -> requests.Response:
         """POST with exponential backoff on rate limits / transient server errors.
@@ -190,10 +250,11 @@ class OpenAICompatibleClient:
         )
 
     def generate_json(self, prompt: str, temperature: float = 0.0) -> dict:
-        # Keep the existing request payloads and mode order unchanged: an RQ1
-        # transcript may already contain calls made with these settings.
+        # Groq only supports chat completions. Keep payloads unchanged so
+        # previously recorded successful response transcripts remain replayable.
+        is_groq = "groq.com" in self.base_url.lower()
         prefer_chat = self._prefers_chat_mode()
-        attempts = [True, False] if prefer_chat else [False, True]
+        attempts = [True] if is_groq else ([True, False] if prefer_chat else [False, True])
         errors: list[str] = []
         last_exc: Exception | None = None
 
@@ -222,7 +283,10 @@ class OpenAICompatibleClient:
                     "temperature": temperature,
                 }
             try:
-                response = self._post_with_retry(url, payload)
+                if is_groq and chat_mode:
+                    response = self._post_groq_json_with_retry(url, payload)
+                else:
+                    response = self._post_with_retry(url, payload)
                 response.raise_for_status()
                 body = response.json()
                 choices = body.get("choices", [])
@@ -258,8 +322,7 @@ class OpenAICompatibleClient:
                 errors.append(f"{endpoint}: {type(exc).__name__}: {exc}")
 
         raise RuntimeError(
-            "LLM API failed in both completion modes:\n  "
-            + "\n  ".join(errors)
+            "LLM API request failed:\n  " + "\n  ".join(errors)
         ) from last_exc
 
     def healthcheck(self) -> None:

@@ -425,6 +425,7 @@ def run_rq1(
 
     transcript_path: Path | None
     recording: Any | None = None
+    base: Any | None = None
     if replay:
         transcript_path = replay.expanduser().resolve()
         recording = ReplayLLMClient.from_path(transcript_path)
@@ -470,6 +471,18 @@ def run_rq1(
             ):
                 raise ValueError("Transcript call temperature differs from --temperature")
 
+    def retry_diagnostics() -> dict[str, Any]:
+        if replay:
+            return {"scope": "replay", "live_attempts": 0, "history_available": False}
+        get_stats = getattr(base, "retry_diagnostics", None)
+        if not callable(get_stats):
+            return {"scope": "not_available"}
+        return {
+            "scope": "live_suffix_only" if resume else "full_live_run",
+            "history_available": not bool(resume),
+            **get_stats(),
+        }
+
     client = FixedTemperatureClient(recording, config.temperature)
     manifest_bytes = _manifest_path(ROOT, config.benchmark).read_bytes()
     provenance: dict[str, Any] = {
@@ -481,6 +494,7 @@ def run_rq1(
         "dataset_sha256": dataset_hashes,
         "transcript_path": str(transcript_path),
         "transcript_mode": "replay" if replay else "resume" if resume else "record",
+        "api_retry": retry_diagnostics(),
         "success_definition": "proven gold equivalence, nonweak, no hard-coded fallback",
         "oracle_policy": (
             "one cached gold evaluation per unique (gold contract, generated contract) "
@@ -534,6 +548,7 @@ def run_rq1(
                     },
                 })
             provenance["completed_samples"] = sample_index
+            provenance["api_retry"] = retry_diagnostics()
             provenance["oracle_cache"] = {
                 "unique_contracts": score_cache.misses,
                 "cache_hits": score_cache.hits,
@@ -559,11 +574,13 @@ def run_rq1(
         _write_json(output / "metrics.json", metrics)
         _write_csv_files(output, sorted_tasks, metrics)
         provenance["status"] = "completed"
+        provenance["api_retry"] = retry_diagnostics()
         provenance["finished_at_utc"] = datetime.now(UTC).isoformat()
         _write_json(output / "metadata.json", provenance)
         return output
     except Exception as exc:
         provenance["status"] = "failed"
+        provenance["api_retry"] = retry_diagnostics()
         provenance["error"] = f"{type(exc).__name__}: {exc}"
         provenance["finished_at_utc"] = datetime.now(UTC).isoformat()
         _write_json(output / "metadata.json", provenance)
