@@ -31,10 +31,9 @@ def test_dev_small_manifest_sources_and_gold() -> None:
         record = yaml.safe_load((BENCHMARK / "lifted" / f"{stem}.yaml").read_text())
         assert record["status"] == "confirmed"
         assert record["benchmark_id"] == entry["id"]
-        assert (
-            lookup_gold_contract(case.benchmark_id, gold, source_file=case.file).benchmark_id
-            == entry["id"]
-        )
+        contract = lookup_gold_contract(case.benchmark_id, gold, source_file=case.file)
+        assert contract is not None
+        assert contract.benchmark_id == entry["id"]
         clean_source = (BENCHMARK / "lifted_auto_eval_clean" / f"{stem}.py").read_text()
         assert (DEV / f"{stem}.py").read_text() == clean_source
 

@@ -194,16 +194,16 @@ def test_orchestration_saves_all_samples_without_llm(monkeypatch, tmp_path: Path
         return {"outcome": outcome_from_gold(score), "postcondition": "ret == 0", "gold": score}
 
     fake_runner = ModuleType("dualify.runner")
-    fake_runner.ROOT = root
-    fake_runner.run_experiment = fake_run_experiment
+    fake_runner.__dict__["ROOT"] = root
+    fake_runner.__dict__["run_experiment"] = fake_run_experiment
     fake_gold = ModuleType("dualify.gold_scoring")
-    fake_gold.load_gold_benchmark = lambda: {}
+    fake_gold.__dict__["load_gold_benchmark"] = lambda: {}
     fake_client = ModuleType("dualify.ollama_client")
-    fake_client.create_llm_client = lambda **kwargs: FakeBase()
+    fake_client.__dict__["create_llm_client"] = lambda **kwargs: FakeBase()
     fake_transcript = ModuleType("dualify.transcript")
-    fake_transcript.RecordingLLMClient = FakeRecorder
-    fake_transcript.ReplayLLMClient = FakeReplay
-    fake_transcript.ResumingLLMClient = FakeResume
+    fake_transcript.__dict__["RecordingLLMClient"] = FakeRecorder
+    fake_transcript.__dict__["ReplayLLMClient"] = FakeReplay
+    fake_transcript.__dict__["ResumingLLMClient"] = FakeResume
     for name, module in (
         ("dualify.runner", fake_runner), ("dualify.gold_scoring", fake_gold),
         ("dualify.ollama_client", fake_client), ("dualify.transcript", fake_transcript),

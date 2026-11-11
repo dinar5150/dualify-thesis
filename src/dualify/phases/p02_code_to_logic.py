@@ -19,7 +19,6 @@ from dualify.phases.extraction_common import (
 from dualify.phases.formula_prompt_rules import REPAIR_FORMULA_RULES, SAFE_SUBSET_EXTRA_RULES
 from dualify.types import ExtractionResult
 
-
 _typecheck_errors = typecheck_errors
 
 

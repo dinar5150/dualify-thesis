@@ -134,7 +134,6 @@ def test_unknown_satisfiability_is_recorded_but_not_rejected(monkeypatch) -> Non
             return "timeout"
 
     monkeypatch.setattr(smt.z3, "Solver", UnknownSolver)
-    details: list[str] = []
     result = smt._contract_feasibility([], True)
     assert result.status == "unknown"
     assert result.reason == "timeout"

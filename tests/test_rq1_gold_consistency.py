@@ -19,8 +19,20 @@ def test_same_contract_is_scored_once_across_stages_and_channels(monkeypatch):
         postcondition: str
 
     refs = {
-        "pep.py": FakeReference("PEP316::double", {"items": "List[str]"}, "List[str]", [], "Length(ret) == Length(items) * 2"),
-        "icon.py": FakeReference("icontract::double", {"items": "List[str]"}, "List[str]", [], "ret == Concat(items, items)"),
+        "pep.py": FakeReference(
+            "PEP316::double",
+            {"items": "List[str]"},
+            "List[str]",
+            [],
+            "Length(ret) == Length(items) * 2",
+        ),
+        "icon.py": FakeReference(
+            "icontract::double",
+            {"items": "List[str]"},
+            "List[str]",
+            [],
+            "ret == Concat(items, items)",
+        ),
     }
 
     def fake_lookup(benchmark_id, gold, *, source_file=""):
@@ -48,8 +60,18 @@ def test_same_contract_is_scored_once_across_stages_and_channels(monkeypatch):
     monkeypatch.setattr(gold_scoring, "lookup_gold_contract", fake_lookup)
     monkeypatch.setattr(gold_scoring, "score_extraction_against_gold", fake_score)
 
-    case1 = {"benchmark_id": "double", "file": "pep.py", "arg_types": {"items": "List[str]"}, "return_type": "List[str]"}
-    case2 = {"benchmark_id": "double", "file": "icon.py", "arg_types": {"items": "List[str]"}, "return_type": "List[str]"}
+    case1 = {
+        "benchmark_id": "double",
+        "file": "pep.py",
+        "arg_types": {"items": "List[str]"},
+        "return_type": "List[str]",
+    }
+    case2 = {
+        "benchmark_id": "double",
+        "file": "icon.py",
+        "arg_types": {"items": "List[str]"},
+        "return_type": "List[str]",
+    }
     cache = GoldScoreCache(refs)
     results = [cache.score(case1, "ret == Concat(items, items)", []) for _ in range(8)]
     assert all(score == results[0] for score in results)

@@ -150,7 +150,7 @@ def _dataset_hashes(root: Path, benchmark: str, stems: set[str]) -> dict[str, An
     """Pin the actual inputs and gold files, not only the manifest text."""
     source_dir = root / "benchmark" / benchmark
     gold_dir = root / "benchmark" / "lifted"
-    hashes = {"source_files": {}, "gold_files": {}}
+    hashes: dict[str, dict[str, str]] = {"source_files": {}, "gold_files": {}}
     for stem in sorted(stems):
         source_path = source_dir / f"{stem}.py"
         gold_path = gold_dir / f"{stem}.yaml"
@@ -249,7 +249,10 @@ class GoldScoreCache:
         return result
 
 
-def _initial_score(case: dict[str, Any], channel: str, gold: dict[str, Any], *, cache: GoldScoreCache | None = None) -> dict[str, Any]:
+def _initial_score(
+    case: dict[str, Any], channel: str, gold: dict[str, Any], *,
+    cache: GoldScoreCache | None = None,
+) -> dict[str, Any]:
     """Score initial (pre-repair) candidate using the same existing gold scorer."""
     payload = case[channel]
     initial = (payload.get("extraction_trace") or {}).get("initial") or {}
@@ -302,9 +305,9 @@ def _final_score(
             used_fallback=bool(extraction.get("used_fallback", False)),
         ),
     }
-    if cache is not None and (original_score.get("reason"), original_score.get("contract_equivalent")) != (
-        score.get("reason"), score.get("contract_equivalent")
-    ):
+    if cache is not None and (
+        original_score.get("reason"), original_score.get("contract_equivalent")
+    ) != (score.get("reason"), score.get("contract_equivalent")):
         record["original_pipeline_gold"] = original_score
     return record
 
@@ -469,7 +472,7 @@ def run_rq1(
 
     client = FixedTemperatureClient(recording, config.temperature)
     manifest_bytes = _manifest_path(ROOT, config.benchmark).read_bytes()
-    provenance = {
+    provenance: dict[str, Any] = {
         "started_at_utc": datetime.now(UTC).isoformat(),
         "status": "running",
         "config": {**asdict(config), "ks": list(ks)},
@@ -479,7 +482,10 @@ def run_rq1(
         "transcript_path": str(transcript_path),
         "transcript_mode": "replay" if replay else "resume" if resume else "record",
         "success_definition": "proven gold equivalence, nonweak, no hard-coded fallback",
-        "oracle_policy": "one cached gold evaluation per unique (gold contract, generated contract) in this experiment",
+        "oracle_policy": (
+            "one cached gold evaluation per unique (gold contract, generated contract) "
+            "in this experiment"
+        ),
 
         "unit": "full Dualify pipeline including repair, at the configured temperature",
     }

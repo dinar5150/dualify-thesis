@@ -1,6 +1,7 @@
 """Small shared helpers for the spec and code extraction phases."""
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from dualify.phases.p03_smt_checking import extraction_feasibility, extraction_parseable
 

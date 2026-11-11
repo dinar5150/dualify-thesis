@@ -36,8 +36,11 @@ def test_pre_xor_sat_unknown_direction_is_inconclusive(monkeypatch) -> None:
     result = smt.check_equivalence(case, _ex("x == 0"), _ex("x == 1"))
     assert result.reason == "solver_unknown"
     assert result.well_formedness == "solver_unknown_pre_direction"
-    assert result.diagnostics["solver_status"]["pre_mismatch_check"] == "sat"
-    assert result.diagnostics["solver_status"]["pre_spec_implies_pre_code"] == "unknown"
+    assert result.diagnostics is not None
+    solver_status = result.diagnostics["solver_status"]
+    assert isinstance(solver_status, dict)
+    assert solver_status["pre_mismatch_check"] == "sat"
+    assert solver_status["pre_spec_implies_pre_code"] == "unknown"
 
 
 def test_pre_xor_sat_one_valid_implication_is_enough(monkeypatch) -> None:
@@ -55,4 +58,7 @@ def test_pre_xor_sat_one_valid_implication_is_enough(monkeypatch) -> None:
     case = smt.CaseSpec("pre_direction", {"x": "int"}, "int")
     result = smt.check_equivalence(case, _ex("x >= 0"), _ex("x >= 1"))
     assert result.reason == "case_pre_code"
-    assert result.diagnostics["solver_status"]["pre_code_implies_pre_spec"] == "unsat"
+    assert result.diagnostics is not None
+    solver_status = result.diagnostics["solver_status"]
+    assert isinstance(solver_status, dict)
+    assert solver_status["pre_code_implies_pre_spec"] == "unsat"

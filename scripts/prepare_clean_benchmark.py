@@ -38,6 +38,7 @@ def strip_formal_docstrings(source: str) -> str:
             and isinstance(doc.value.value, str)
         ):
             continue
+        assert doc.end_lineno is not None
         for line_no in range(doc.lineno + 1, doc.end_lineno):
             if FORMAL.match(lines[line_no - 1]):
                 remove.add(line_no)
@@ -45,8 +46,8 @@ def strip_formal_docstrings(source: str) -> str:
     cleaned = "".join(line for i, line in enumerate(lines, 1) if i not in remove)
     for node in ast.walk(ast.parse(cleaned)):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            doc = ast.get_docstring(node) or ""
-            if any(FORMAL.match(line) for line in doc.splitlines()):
+            docstring = ast.get_docstring(node) or ""
+            if any(FORMAL.match(line) for line in docstring.splitlines()):
                 raise ValueError("Unsupported inline or continued formal docstring directive")
     return cleaned
 
@@ -62,13 +63,14 @@ def prepare() -> None:
     if existing - stems:
         raise ValueError("Unexpected Python files in clean benchmark")
 
-    manifest = {"version": 1, "source": "lifted_auto_eval", "gold": "lifted", "cases": []}
+    cases: list[dict[str, str]] = []
+    manifest = {"version": 1, "source": "lifted_auto_eval", "gold": "lifted", "cases": cases}
     for source_path in originals:
         original_bytes = source_path.read_bytes()
         clean_bytes = strip_formal_docstrings(original_bytes.decode("utf-8")).encode("utf-8")
         gold_bytes = gold_files[source_path.stem].read_bytes()
         (CLEAN / source_path.name).write_bytes(clean_bytes)
-        manifest["cases"].append({
+        cases.append({
             "stem": source_path.stem,
             "source_blob": git_blob_sha(original_bytes),
             "clean_blob": git_blob_sha(clean_bytes),

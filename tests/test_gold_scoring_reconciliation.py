@@ -9,15 +9,24 @@ from dualify.types import ExtractionResult, SmtResult
 
 def _case_and_gold():
     gold = gold_scoring.GoldContract(
-        benchmark_id="toy::x", qualname="x", in_fragment=True,
-        args=["x"], arg_types={"x": "int"}, return_type="int",
-        domain_constraints=[], postcondition="ret == x",
+        benchmark_id="toy::x",
+        qualname="x",
+        in_fragment=True,
+        args=["x"],
+        arg_types={"x": "int"},
+        return_type="int",
+        domain_constraints=[],
+        postcondition="ret == x",
     )
     case = CaseSpec(benchmark_id="x", arg_types={"x": "int"}, return_type="int")
     candidate = ExtractionResult(
-        benchmark_id="x", args=["x"], return_type="int",
-        domain_constraints=[], postcondition="ret == x + 0",
-        confidence="high", notes="",
+        benchmark_id="x",
+        args=["x"],
+        return_type="int",
+        domain_constraints=[],
+        postcondition="ret == x + 0",
+        confidence="high",
+        notes="",
     )
     return case, gold, candidate
 
@@ -39,21 +48,27 @@ def test_equivalence_proof_overrides_undetermined_relation(monkeypatch):
 
 
 def test_two_proved_implications_rescue_xor_unknown(monkeypatch):
-    check = SmtResult("x", False, "solver_unknown", None, diagnostics={"post_well_formedness": "ok"})
+    check = SmtResult(
+        "x", False, "solver_unknown", None, diagnostics={"post_well_formedness": "ok"}
+    )
     result = _score(monkeypatch, check=check, post="equivalent")
     assert result.contract_equivalent
     assert result.reason == "equivalent_via_implications"
 
 
 def test_unknown_alone_is_never_success(monkeypatch):
-    check = SmtResult("x", False, "solver_unknown", None, diagnostics={"post_well_formedness": "ok"})
+    check = SmtResult(
+        "x", False, "solver_unknown", None, diagnostics={"post_well_formedness": "ok"}
+    )
     result = _score(monkeypatch, check=check)
     assert not result.contract_equivalent
     assert result.reason == "solver_unknown"
 
 
 def test_proved_directional_difference_overrides_unknown(monkeypatch):
-    check = SmtResult("x", False, "solver_unknown", None, diagnostics={"post_well_formedness": "ok"})
+    check = SmtResult(
+        "x", False, "solver_unknown", None, diagnostics={"post_well_formedness": "ok"}
+    )
     result = _score(monkeypatch, check=check, post="generated_stronger")
     assert not result.contract_equivalent
     assert result.reason == "non_equivalent_via_implications"
@@ -68,7 +83,10 @@ def test_conflicting_definite_proofs_are_reported(monkeypatch):
 
 def test_xor_sat_and_one_valid_implication_proves_generated_stronger(monkeypatch):
     check = SmtResult(
-        "x", False, "solver_unknown", None,
+        "x",
+        False,
+        "solver_unknown",
+        None,
         diagnostics={
             "post_well_formedness": "ok",
             "solver_status": {
@@ -86,7 +104,10 @@ def test_xor_sat_and_one_valid_implication_proves_generated_stronger(monkeypatch
 
 def test_xor_sat_without_direction_proves_non_equivalence(monkeypatch):
     check = SmtResult(
-        "x", False, "solver_unknown", None,
+        "x",
+        False,
+        "solver_unknown",
+        None,
         diagnostics={
             "post_well_formedness": "ok",
             "solver_status": {
@@ -103,7 +124,10 @@ def test_xor_sat_without_direction_proves_non_equivalence(monkeypatch):
 
 def test_conflicting_xor_and_implications_never_pass(monkeypatch):
     check = SmtResult(
-        "x", False, "solver_unknown", None,
+        "x",
+        False,
+        "solver_unknown",
+        None,
         diagnostics={
             "post_well_formedness": "ok",
             "solver_status": {"post_mismatch_check": "sat"},

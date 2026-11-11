@@ -7,10 +7,14 @@ import pytest
 from dualify.ollama_client import LLMClient
 from dualify.phases.p01_spec_to_logic import (
     _typecheck_errors as spec_typecheck_errors,
+)
+from dualify.phases.p01_spec_to_logic import (
     extract_spec_logic,
 )
 from dualify.phases.p02_code_to_logic import (
     _typecheck_errors as code_typecheck_errors,
+)
+from dualify.phases.p02_code_to_logic import (
     extract_code_logic,
 )
 from dualify.transcript import TranscriptPromptMismatchError

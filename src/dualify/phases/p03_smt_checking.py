@@ -1,7 +1,7 @@
 import ast
 import re
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import z3
 
@@ -697,8 +697,12 @@ def check_equivalence(
             name: reason
             for name, reason in {
                 "pre_mismatch_check": _unknown_reason(pre_xor_solver, pre_xor_result),
-                "pre_spec_implies_pre_code": _unknown_reason(spec_implies_code_solver, spec_implies_code_status),
-                "pre_code_implies_pre_spec": _unknown_reason(code_implies_spec_solver, code_implies_spec_status),
+                "pre_spec_implies_pre_code": _unknown_reason(
+                    spec_implies_code_solver, spec_implies_code_status
+                ),
+                "pre_code_implies_pre_spec": _unknown_reason(
+                    code_implies_spec_solver, code_implies_spec_status
+                ),
             }.items()
             if reason is not None
         },
@@ -750,15 +754,9 @@ def check_equivalence(
         # XOR=sat proves a mismatch, but does not always determine its
         # direction. A single proven implication is enough to establish
         # strict strength; otherwise do not turn unknown into False.
-        if (
-            code_implies_spec_status == z3.unsat
-            and spec_implies_code_status != z3.unsat
-        ):
+        if code_implies_spec_status == z3.unsat and spec_implies_code_status != z3.unsat:
             reason = "case_pre_code"
-        elif (
-            spec_implies_code_status == z3.unsat
-            and code_implies_spec_status != z3.unsat
-        ):
+        elif spec_implies_code_status == z3.unsat and code_implies_spec_status != z3.unsat:
             reason = "case_pre_spec"
         elif spec_implies_code_status == z3.sat and code_implies_spec_status == z3.sat:
             # Incomparable preconditions: retain Dualify's primary-label precedence.
@@ -815,8 +813,9 @@ def check_equivalence(
     solver_status = diagnostics.get("solver_status")
     if isinstance(solver_status, dict):
         solver_status["post_mismatch_check"] = str(post_mismatch_result)
+    unknown_reasons = cast(dict[str, str | None], diagnostics["solver_unknown_reasons"])
     if post_mismatch_result == z3.unknown:
-        diagnostics["solver_unknown_reasons"]["post_mismatch_check"] = _unknown_reason(
+        unknown_reasons["post_mismatch_check"] = _unknown_reason(
             post_mismatch_solver, post_mismatch_result
         )
     debug = diagnostics.get("debug")
@@ -898,11 +897,11 @@ def check_equivalence(
         solver_status["spec_post_implies_code_post"] = str(spec_post_implies_code_status)
         solver_status["code_post_implies_spec_post"] = str(code_post_implies_spec_status)
     if spec_post_implies_code_status == z3.unknown:
-        diagnostics["solver_unknown_reasons"]["spec_post_implies_code_post"] = _unknown_reason(
+        unknown_reasons["spec_post_implies_code_post"] = _unknown_reason(
             spec_post_implies_code_solver, spec_post_implies_code_status
         )
     if code_post_implies_spec_status == z3.unknown:
-        diagnostics["solver_unknown_reasons"]["code_post_implies_spec_post"] = _unknown_reason(
+        unknown_reasons["code_post_implies_spec_post"] = _unknown_reason(
             code_post_implies_spec_solver, code_post_implies_spec_status
         )
     debug = diagnostics.get("debug")

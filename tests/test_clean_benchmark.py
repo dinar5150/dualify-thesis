@@ -9,7 +9,13 @@ from pathlib import Path
 from dualify.discovery import discover_python_cases
 from dualify.gold_scoring import load_gold_benchmark, lookup_gold_contract
 from scripts.prepare_clean_benchmark import (
-    CLEAN, FORMAL, GOLD, ROOT, SOURCE, git_blob_sha, strip_formal_docstrings,
+    CLEAN,
+    FORMAL,
+    GOLD,
+    ROOT,
+    SOURCE,
+    git_blob_sha,
+    strip_formal_docstrings,
 )
 
 
