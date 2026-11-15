@@ -40,21 +40,21 @@ def test_invalid_initial_candidate_skips_gold_scoring() -> None:
 
 
 @pytest.mark.parametrize(
-    "formula, node_type",
+    "formula, expected_error",
     [
-        ("ret == Sum([x for x in numbers])", "ListComp"),
-        ("ret == Sum(x for x in numbers)", "GeneratorExp"),
-        ("ret == (lambda x: x)(1)", "Lambda"),
+        ("ret == Sum([x for x in numbers])", "unsupported AST node: ListComp"),
+        ("ret == Sum(x for x in numbers)", "unsupported AST node: GeneratorExp"),
+        ("ret == (lambda x: x)(1)", "unsupported function call target"),
     ],
 )
 def test_shared_evaluator_rejects_unsafe_ast_before_execution(
-    formula: str, node_type: str
+    formula: str, expected_error: str
 ) -> None:
     class NoIteration:
         def __iter__(self):
             raise AssertionError("An unsafe formula was executed")
 
-    with pytest.raises(ValueError, match=f"unsupported AST node: {node_type}"):
+    with pytest.raises(ValueError, match=expected_error):
         _safe_eval(formula, {"numbers": NoIteration(), "ret": 0}, "average")
 
 
