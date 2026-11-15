@@ -258,6 +258,16 @@ def _initial_score(
     initial = (payload.get("extraction_trace") or {}).get("initial") or {}
     post = initial.get("postcondition")
     pre = initial.get("domain_constraints")
+    errors = initial.get("errors") or []
+    # Rejected initial formulas must never reach Z3 evaluation. A Python
+    # comprehension over a symbolic sequence can expand without a finite bound.
+    if errors:
+        return {
+            "outcome": "invalid",
+            "postcondition": post,
+            "domain_constraints": pre,
+            "errors": errors,
+        }
     if not isinstance(post, str) or not isinstance(pre, list):
         return {"outcome": "missing", "postcondition": post, "domain_constraints": pre}
 
@@ -269,12 +279,9 @@ def _initial_score(
     return {
         "postcondition": post,
         "domain_constraints": pre,
-        "errors": initial.get("errors", []),
+        "errors": errors,
         "gold": result,
-        "outcome": (
-            "invalid" if initial.get("errors")
-            else outcome_from_gold(result, weak=_is_weak_postcondition(post))
-        ),
+        "outcome": outcome_from_gold(result, weak=_is_weak_postcondition(post)),
     }
 
 

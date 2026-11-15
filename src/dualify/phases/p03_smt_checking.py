@@ -5,7 +5,7 @@ from typing import Any, Literal, cast
 
 import z3
 
-from dualify.formula_parser import extract_quantifier_binders, normalize_formula
+from dualify.formula_parser import extract_quantifier_binders, normalize_formula, validate_formula
 from dualify.types import ExtractionResult, SmtResult
 
 
@@ -170,6 +170,13 @@ def _canonicalize_expression(expr: str, benchmark_id: str) -> str:
 
 def _safe_eval(expr: str, scope: dict[str, Any], benchmark_id: str) -> Any:
     normalized_expr = _canonicalize_expression(expr, benchmark_id)
+    # All SMT/gold-scoring paths share this evaluator. Check the existing AST
+    # allowlist *before* eval: a list comprehension can iterate a symbolic Z3
+    # sequence forever, consuming memory without reaching a solver timeout.
+    allowed_names = set(scope) | extract_quantifier_binders(normalized_expr)
+    validation_errors = validate_formula(normalized_expr, allowed_names)
+    if validation_errors:
+        raise ValueError("unsafe formula: " + "; ".join(validation_errors))
     sqrt_fn = z3.Function("sqrt", z3.RealSort(), z3.RealSort())
 
     def _max(*values: Any) -> Any:
