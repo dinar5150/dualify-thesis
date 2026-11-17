@@ -40,3 +40,24 @@ A slot with no `result.json` is incomplete and is retried on resume. A `result.j
 ## Diagnostics and limits
 
 For the original OpenAI-compatible client, scoped instrumentation counts high-level calls and HTTP requests, 429s, retries, provider HTTP failures, and time spent in 429 retry sleeps. It records usage objects only when the provider supplies them. Calls and retries inside a process interrupted before a terminal result are not recovered; the start marker remains. Other clients have null HTTP-level metrics. Client-internal parsing errors or failed modes that recover may be invisible unless exposed as HTTP failures; extraction-caught exceptions are recorded and mark the result as an error. The instrumentation does not change the original retry policy. It temporarily wraps the synchronous HTTP and sleep functions; use the runner single-threaded. Pacing applies between high-level calls and not between internal retry requests. `DUALIFY_OPENAI_USE_CHAT=1` is supported and recorded in the manifest.
+
+## Offline gold evaluation and analysis
+
+Run these only after generation, on trusted experiment files. Neither command contacts an LLM. Use new output directories outside the generation directory:
+
+```bash
+poetry run python scripts/evaluate_rq1.py --run-dir results/rq1-run \
+  --output-dir results/rq1-evaluation
+poetry run python scripts/analyze_rq1.py --evaluation results/rq1-evaluation/evaluation.json \
+  --output-dir results/rq1-analysis
+```
+
+The evaluation directory contains `evaluation.json` and per-candidate `candidates.csv`. It uses the original `score_extraction_against_gold` and checks that the benchmark and gold files match the original commit. It records the gold hash, evaluation commit and Z3 version. Results require the original benchmark checkout; compare the recorded generation and evaluation Z3 versions. The analysis directory contains `analysis.json`, per-task `tasks.csv`, `summary.md`, and `pass_at_k.svg`. Existing output directories are not overwritten.
+
+Only terminal result files enter the denominator. A final pass@k for a task is available only with exactly eight terminal outcomes and a usable gold contract; scientific macro values require all 40 original tasks. API failures, original runner fallbacks, invalid candidates and solver unknowns are not successes. Unknown is inconclusive, not a proof of inequivalence. A degraded model-generated candidate can be a success when it passes the extractor's validation and the original scorer proves equivalence. The initial result is reconstructed only when the response and saved initial trace agree; otherwise it is unavailable. Initial API failures without a response count as unsuccessful. Initial pass@k is withheld when a needed initial result cannot be reconstructed.
+
+Validity counts include Python expression syntax, the original parse/type gate, and the original extractor's full validation, with known and unavailable denominators. The repair rate is successful original repairs divided by initially invalid candidates; the report also gives attempts, unsuccessful repairs and unavailable outcomes. Fallbacks do not count as successful repairs. Counts are not gold correctness.
+
+Final outcome precedence is API/evaluation failure, fallback, invalid/unsupported, unscorable, parse error, unknown, proven equivalent, and then proven strength. Directional labels are assigned only if preconditions are proven equivalent and the original common-domain postcondition relation establishes a direction. Other combinations are `unclassified`; both original relations are retained. Syntactic unique rate includes normalized preconditions and postcondition and is not semantic diversity.
+
+Cost totals cover observed terminal attempts only, excluding interrupted work. Missing telemetry is shown as unavailable or partial. Marginal time uses k multiplied by the observed mean duration per attempt, not a measurement of a stopped-early run or a monetary charge; it is shown only with complete 40-task timing coverage. The baseline used temperature 0.0, versus RQ1's recorded temperature, so their pass@1 difference cannot be attributed solely to sampling count. Dev/partial means are exploratory and never scientific macro values. The original formula evaluation and Z3 behavior are unchanged; do not evaluate untrusted generated expressions.
