@@ -1,11 +1,19 @@
 """Configuration and case selection for the RQ1 experiment."""
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections.abc import Iterator
+from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Any, Literal
 
 from dualify.discovery import discover_python_cases
-from dualify.types import BenchmarkCase
+from dualify.fallbacks import get_fallback_extraction
+from dualify.ollama_client import LLMClient
+from dualify.phases.p01_spec_to_logic import extract_spec_logic
+from dualify.phases.p02_code_to_logic import extract_code_logic
+from dualify.phases.p03_smt_checking import CaseSpec, is_parseable
+from dualify.runner import _normalize_extraction
+from dualify.types import BenchmarkCase, ExtractionResult
 
 # Path-qualified IDs distinguish cases with identical names in different files.
 DEV_CASE_IDS = (
@@ -35,12 +43,12 @@ def discover_cases(root: Path) -> dict[str, BenchmarkCase]:
 class ExperimentConfig:
     samples: int = 8
     model: str | None = None
-    temperature: float | None = None
+    temperature: float = 0.7
 
     def __post_init__(self) -> None:
         if self.samples < 1:
             raise ValueError('samples must be a positive integer')
-        if self.temperature is not None and not 0 <= self.temperature <= 2:
+        if not 0 <= self.temperature <= 2:
             raise ValueError('temperature must be between 0 and 2')
 
 
@@ -70,3 +78,89 @@ def make_plan(root: Path, config: ExperimentConfig, *, dev: bool = False,
     return ExperimentPlan(
         {identifier: all_cases[identifier] for identifier in selected_ids}, config
     )
+
+
+@dataclass
+class Candidate:
+    case_id: str
+    benchmark_id: str
+    channel: Literal['spec', 'code']
+    sample_index: int
+    initial_response: dict[str, Any] | None
+    stage_trace: dict[str, object]
+    extraction_before_fallback: ExtractionResult | None
+    final_extraction: ExtractionResult | None
+    used_fallback: bool
+    status: Literal['completed', 'error']
+    errors: list[str]
+
+
+class _ObservedClient:
+    """Observe errors swallowed by original extraction without altering its responses."""
+
+    def __init__(self, inner: LLMClient) -> None:
+        self.inner = inner
+        self.calls = 0
+        self.initial_response: dict[str, Any] | None = None
+        self.errors: list[str] = []
+
+    def healthcheck(self) -> None:
+        self.inner.healthcheck()
+
+    def generate_json(self, prompt: str, temperature: float = 0.0) -> dict:
+        self.calls += 1
+        try:
+            response = self.inner.generate_json(prompt, temperature=temperature)
+        except Exception as exc:
+            self.errors.append(f'{type(exc).__name__}: {exc}')
+            raise
+        if self.calls == 1:
+            self.initial_response = response
+        return response
+
+
+def sample_plan(plan: ExperimentPlan, client: LLMClient) -> Iterator[Candidate]:
+    """Independently invoke the original extraction once per candidate slot."""
+    for qualified_id, case in plan.cases.items():
+        case_spec = CaseSpec(benchmark_id=case.benchmark_id, arg_types=case.arg_types,
+                             return_type=case.return_type)
+        for channel in ('spec', 'code'):
+            for index in range(plan.config.samples):
+                observed = _ObservedClient(client)
+                trace: dict[str, object] = {}
+                before: ExtractionResult | None = None
+                final: ExtractionResult | None = None
+                used_fallback = False
+                try:
+                    if channel == 'spec':
+                        extraction = extract_spec_logic(
+                            client=observed, benchmark_id=case.benchmark_id,
+                            signature=case.signature, informal_spec=case.informal_spec,
+                            return_type=case.return_type, extra_context=case.extra_context,
+                            arg_types=case.arg_types,
+                            initial_temperature=plan.config.temperature, trace_sink=trace)
+                    else:
+                        extraction = extract_code_logic(
+                            client=observed, benchmark_id=case.benchmark_id,
+                            signature=case.signature, function_source=case.function_source,
+                            return_type=case.return_type, extra_context=case.extra_context,
+                            arg_types=case.arg_types,
+                            initial_temperature=plan.config.temperature, trace_sink=trace)
+                    before = type(extraction)(**_normalize_extraction(
+                        case_spec, extraction.postcondition, asdict(extraction)))
+                    final = before
+                    if not is_parseable(case_spec, before):
+                        try:
+                            final = get_fallback_extraction(case.benchmark_id)
+                            used_fallback = True
+                        except ValueError:
+                            pass
+                except Exception as exc:
+                    observed.errors.append(f'{type(exc).__name__}: {exc}')
+                yield Candidate(
+                    case_id=qualified_id, benchmark_id=case.benchmark_id,
+                    channel='spec' if channel == 'spec' else 'code', sample_index=index,
+                    initial_response=observed.initial_response, stage_trace=trace,
+                    extraction_before_fallback=before, final_extraction=final,
+                    used_fallback=used_fallback,
+                    status='error' if observed.errors else 'completed', errors=observed.errors)
