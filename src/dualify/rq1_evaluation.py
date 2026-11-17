@@ -327,7 +327,9 @@ def _evaluate_experiment(root: Path, run_dir: Path) -> dict[str, Any]:
                     or not (slot / f"started-{attempt_id}.json").is_file()
                 ):
                     raise ValueError(f"Missing attempt start record: {path}")
-                entries.append(evaluate_record(case, data, gold))
+                evaluation = evaluate_record(case, data, gold)
+                evaluation["source_record_checksum"] = saved["checksum"]
+                entries.append(evaluation)
     gold_hash = hashlib.sha256()
     for path in sorted((root / "benchmark" / "lifted").glob("*.yaml")):
         gold_hash.update(path.name.encode())

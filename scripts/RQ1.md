@@ -61,3 +61,18 @@ Validity counts include Python expression syntax, the original parse/type gate, 
 Final outcome precedence is API/evaluation failure, fallback, invalid/unsupported, unscorable, parse error, unknown, proven equivalent, and then proven strength. Directional labels are assigned only if preconditions are proven equivalent and the original common-domain postcondition relation establishes a direction. Other combinations are `unclassified`; both original relations are retained. Syntactic unique rate includes normalized preconditions and postcondition and is not semantic diversity.
 
 Cost totals cover observed terminal attempts only, excluding interrupted work. Missing telemetry is shown as unavailable or partial. Marginal time uses k multiplied by the observed mean duration per attempt, not a measurement of a stopped-early run or a monetary charge; it is shown only with complete 40-task timing coverage. The baseline used temperature 0.0, versus RQ1's recorded temperature, so their pass@1 difference cannot be attributed solely to sampling count. Dev/partial means are exploratory and never scientific macro values. The original formula evaluation and Z3 behavior are unchanged; do not evaluate untrusted generated expressions.
+
+## Diagnostic reports
+
+After offline evaluation, run:
+
+```bash
+poetry run python scripts/diagnose_rq1.py --run-dir results/rq1-run \
+  --evaluation results/rq1-evaluation/evaluation.json --output-dir results/rq1-diagnostics
+```
+
+The JSON and Markdown reports attach each observation to its case, channel, sample, source record, input, formula, expected and actual behavior, errors, solver and provider diagnostics, versions and reproduction command. They distinguish confirmed signature-parser defects from model/specification mismatches, observations and suspected implementation risks. An unknown result is not evidence of a Z3 bug; timeout or incomplete-theory causes are only reported if present in the saved data. Evaluation and generation records are cross-checked; legacy evaluation files without source checksums are flagged as unverifiable for freshness.
+
+See [KAGGLE_RQ1.md](KAGGLE_RQ1.md) for a complete CPU workflow, pinning, secret handling, resume, offline reports and ZIP export.
+
+The [final infrastructure review](RQ1_FINAL_REVIEW.md) records unchanged baseline components, the confirmed tuple-signature issue and remaining methodological limitations.
