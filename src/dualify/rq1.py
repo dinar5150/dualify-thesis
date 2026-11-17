@@ -1,7 +1,7 @@
 """Configuration and case selection for the RQ1 experiment."""
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Literal
@@ -119,13 +119,17 @@ class _ObservedClient:
         return response
 
 
-def sample_plan(plan: ExperimentPlan, client: LLMClient) -> Iterator[Candidate]:
+def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
+                should_run: Callable[[str, str, int], bool] | None = None
+                ) -> Iterator[Candidate]:
     """Independently invoke the original extraction once per candidate slot."""
     for qualified_id, case in plan.cases.items():
         case_spec = CaseSpec(benchmark_id=case.benchmark_id, arg_types=case.arg_types,
                              return_type=case.return_type)
         for channel in ('spec', 'code'):
             for index in range(plan.config.samples):
+                if should_run is not None and not should_run(qualified_id, channel, index):
+                    continue
                 observed = _ObservedClient(client)
                 trace: dict[str, object] = {}
                 before: ExtractionResult | None = None
