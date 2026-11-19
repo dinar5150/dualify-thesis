@@ -2,9 +2,11 @@
 
 This guide prepares and runs the experiment **only when you execute the live-run cells**. The six-case development run is for debugging and is not a research sample. The final experiment uses all 40 original cases and eight samples per channel. Set Kaggle Notebook accelerator to **None (CPU)** and enable **Internet**. Add a Kaggle Secret named `GROQ_API_KEY`. Do not paste the secret in the notebook or print environment variables.
 
-## 1. Clone and pin the tested Stage 5 commit
+## 1. Clone and pin the reviewed implementation
 
-Run this `%%bash` cell. It locates the unique first-parent commit with the requested Stage 5 title immediately after the known Stage 4 commit, then checks it out detached. Check the printed SHA against the Stage 5 commit hash supplied with the implementation. This resolves the pin without embedding a commit's own hash inside itself. If the branch has been rewritten and the commit is no longer in its first-parent history, this cell stops.
+After the reviewed commit is available in your repository, set `RQ1_PIN` to its exact
+full SHA. Use the same SHA and environment on resume. Do not substitute the old
+`33cd703` protocol or resume its artifacts under the new code.
 
 ```bash
 %%bash
@@ -12,25 +14,9 @@ set -euo pipefail
 cd /kaggle/working
 git clone --branch thesis-experiments https://github.com/dinar5150/dualify-thesis.git
 cd dualify-thesis
-RQ1_PIN="$(git log --first-parent --format='%H %P%x09%s' origin/thesis-experiments | python3 -c '
-import sys
-parent = "3435cbb46e13e78886d6b18aba61fb38820615cf"
-title = "feat(rq1): add diagnostics and Kaggle execution workflow"
-matches = []
-for line in sys.stdin:
-    parts = line.rstrip("\n").split("\t", 1)
-    if len(parts) == 2:
-        hashes, subject = parts
-        fields = hashes.split()
-        if len(fields) == 2 and fields[1] == parent and subject == title:
-            matches.append(fields[0])
-if len(matches) != 1:
-    raise SystemExit("Expected exactly one Stage 5 commit on the branch")
-print(matches[0])
-')"
+RQ1_PIN="REPLACE_WITH_REVIEWED_FULL_COMMIT_SHA"
 git checkout --detach "$RQ1_PIN"
-test "$(git rev-parse HEAD^)" = 3435cbb46e13e78886d6b18aba61fb38820615cf
-printf 'Pinned SHA: %s\n' "$RQ1_PIN"
+git rev-parse HEAD
 python3 --version
 ```
 

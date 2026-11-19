@@ -61,8 +61,8 @@ def test_original_prompts_and_temperature(channel):
     calls = fake.calls[:2] if channel == 'spec' else fake.calls[2:]
     assert [prompt for prompt, _ in calls] == [prompt for prompt, _ in baseline.calls]
     assert [temp for _, temp in calls] == [0.7, 0.0]
-    assert candidate.stage_trace['initial']['errors']
-    assert candidate.stage_trace['repair']['errors'] == []
+    assert 'initial' not in candidate.stage_trace
+    assert candidate.stage_trace['final']['postcondition'] == 'ret == x + 1'
     assert candidate.final_extraction.postcondition == 'ret == x + 1'
 
 
@@ -79,6 +79,14 @@ def test_slots_independent_and_no_action_or_gold():
     assert fake.calls[2][0] == fake.calls[3][0]
     assert all('ret == x + 1' not in prompt for prompt, _ in fake.calls)
     assert all('gold' not in prompt.lower() for prompt, _ in fake.calls)
+
+
+def test_replay_client_cannot_supply_new_independent_slots(tmp_path):
+    from dualify.transcript import ReplayLLMClient
+
+    replay = ReplayLLMClient(transcript_path=tmp_path / 'old.jsonl')
+    with pytest.raises(ValueError, match='replay'):
+        list(rq1.sample_plan(plan(simple_case()), replay))
 
 
 def test_six_dev_cases_with_fake_clients():
@@ -126,6 +134,22 @@ def test_runner_normalization_and_fallback(monkeypatch):
     assert all(c.used_fallback and c.final_extraction == fallback for c in candidates)
 
 
+def test_extraction_failure_is_not_reported_as_provider_failure(monkeypatch):
+    from dataclasses import asdict
+
+    from dualify.rq1_evaluation import evaluate_record
+
+    def fail(**kwargs):
+        raise ValueError('extractor failed')
+
+    monkeypatch.setattr(rq1, 'extract_spec_logic', fail)
+    candidate = next(rq1.sample_plan(plan(simple_case()), FakeClient([]),
+                                    should_run=lambda _, ch, __: ch == 'spec'))
+    row = evaluate_record(simple_case(), asdict(candidate), None)
+    assert row['final_outcome'] == 'extraction_error'
+    assert row['initial_outcome'] == 'unavailable'
+
+
 def test_original_caught_llm_error_is_reported():
     fake = FakeClient([RuntimeError('API failed')] * 3 + [payload()])
     result = list(rq1.sample_plan(plan(simple_case()), fake))
@@ -165,4 +189,4 @@ def test_initial_error_remains_visible_after_repair_recovery():
                                  should_run=lambda _, ch, __: ch == 'spec'))
     row = evaluate_record(simple_case(), asdict(result), None)
     assert result.status == 'completed'
-    assert row['initial_outcome'] == 'api_or_evaluation_failure'
+    assert row['initial_outcome'] == 'generation_error'

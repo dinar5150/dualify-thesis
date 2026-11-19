@@ -1,5 +1,8 @@
 # RQ1 infrastructure review
 
+Historical review of protocol at `33cd703`, not a description of the current protocol.
+Current instructions and protocol version are in `RQ1.md`.
+
 Compared with original commit `7ffd1ae37822096d5b7b573785ee46e877903185`, the original benchmark, gold contracts, `runner.py`, fallback table, formula parser, Z3 checking code, relation logic, gold scoring, dependency manifest and lockfile are unchanged. The two original extraction modules add only an optional initial temperature (default 0.0) and an optional trace observer, and pass the requested temperature on the first call. Tests compare the entire extractor AST to the original after removing only those additions; original prompt expressions and both repair functions are also compared directly. Offline fake-client tests run the original benchmark runner and verify its default 0.0 generation.
 
 Confirmed original issue: `_extract_signature_args` splits a signature on every comma. For `swap(things: Tuple[int, int]) -> Tuple[int, int]` it returns `['things', 'int]']`, while Python parses one argument, `things`. This defect is not fixed by RQ1.

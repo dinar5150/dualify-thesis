@@ -34,11 +34,11 @@ def main() -> int:
         verify_provenance(ROOT, baseline)
         extractors = ["src/dualify/phases/p01_spec_to_logic.py",
                       "src/dualify/phases/p02_code_to_logic.py"]
-        if subprocess.run(["git", "diff", "--quiet", "33cd703", "--", *extractors],
+        if subprocess.run(["git", "diff", "--quiet", baseline, "--", *extractors],
                           cwd=ROOT).returncode:
             raise ValueError("Extraction validation code differs from RQ1 reference")
         evaluation = evaluate_experiment(ROOT, args.run_dir)
-        evaluation["evaluator_version"] = "rq1-dev-v2"
+        evaluation["evaluator_version"] = "rq1-evaluation-v3"
         evaluation["evaluation_source_sha256"] = {
             str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
             for path in [*sorted((ROOT / "src/dualify").rglob("*.py")), Path(__file__)]

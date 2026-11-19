@@ -13,6 +13,7 @@ from dualify.phases.p01_spec_to_logic import extract_spec_logic
 from dualify.phases.p02_code_to_logic import extract_code_logic
 from dualify.phases.p03_smt_checking import CaseSpec, is_parseable
 from dualify.runner import _normalize_extraction
+from dualify.transcript import ReplayLLMClient, ResumingLLMClient
 from dualify.types import BenchmarkCase, ExtractionResult
 
 # Path-qualified IDs distinguish cases with identical names in different files.
@@ -94,13 +95,15 @@ class Candidate:
     status: Literal['completed', 'error']
     errors: list[str]
     initial_call_failed: bool = False
+    pipeline_failed: bool = False
 
 
 class _ObservedClient:
     """Observe errors swallowed by original extraction without altering its responses."""
 
-    def __init__(self, inner: LLMClient) -> None:
+    def __init__(self, inner: LLMClient, initial_temperature: float) -> None:
         self.inner = inner
+        self.initial_temperature = initial_temperature
         self.calls = 0
         self.initial_response: dict[str, Any] | None = None
         self.errors: list[str] = []
@@ -115,7 +118,8 @@ class _ObservedClient:
         self.calls += 1
         self.last_call_succeeded = False
         try:
-            response = self.inner.generate_json(prompt, temperature=temperature)
+            actual_temperature = self.initial_temperature if self.calls == 1 else temperature
+            response = self.inner.generate_json(prompt, temperature=actual_temperature)
         except Exception as exc:
             if self.calls == 1:
                 self.initial_call_failed = True
@@ -132,6 +136,7 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
                 should_run: Callable[[str, str, int], bool] | None = None
                 ) -> Iterator[Candidate]:
     """Independently invoke the original extraction once per candidate slot."""
+    reject_replay(client)
     for qualified_id, case in plan.cases.items():
         case_spec = CaseSpec(benchmark_id=case.benchmark_id, arg_types=case.arg_types,
                              return_type=case.return_type)
@@ -139,7 +144,7 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
             for index in range(plan.config.samples):
                 if should_run is not None and not should_run(qualified_id, channel, index):
                     continue
-                observed = _ObservedClient(client)
+                observed = _ObservedClient(client, plan.config.temperature)
                 trace: dict[str, object] = {}
                 before: ExtractionResult | None = None
                 final: ExtractionResult | None = None
@@ -151,15 +156,14 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
                             client=observed, benchmark_id=case.benchmark_id,
                             signature=case.signature, informal_spec=case.informal_spec,
                             return_type=case.return_type, extra_context=case.extra_context,
-                            arg_types=case.arg_types,
-                            initial_temperature=plan.config.temperature, trace_sink=trace)
+                            arg_types=case.arg_types)
                     else:
                         extraction = extract_code_logic(
                             client=observed, benchmark_id=case.benchmark_id,
                             signature=case.signature, function_source=case.function_source,
                             return_type=case.return_type, extra_context=case.extra_context,
-                            arg_types=case.arg_types,
-                            initial_temperature=plan.config.temperature, trace_sink=trace)
+                            arg_types=case.arg_types)
+                    trace = dict(extraction.extraction_trace or {})
                     before = type(extraction)(**_normalize_extraction(
                         case_spec, extraction.postcondition, asdict(extraction)))
                     final = before
@@ -172,14 +176,11 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
                 except Exception as exc:
                     pipeline_failed = True
                     observed.errors.append(f'{type(exc).__name__}: {exc}')
-                accepted_repair = any(
-                    isinstance(stage_trace := trace.get(stage), dict) and
-                    stage_trace.get('errors') == []
-                    for stage in ('repair', 'safe_repair')
-                )
                 salvaged = (before is not None and
                             before.degraded_reason == 'salvaged_partial_postcondition' and
                             observed.successful_calls > 0)
+                accepted_repair = (before is not None and observed.calls > 1 and
+                                   before.degraded_reason != 'sanitize_after_validation_failure')
                 recovered = (not pipeline_failed and final is not None and not used_fallback and
                              ((observed.last_call_succeeded and accepted_repair) or salvaged))
                 yield Candidate(
@@ -189,4 +190,16 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
                     extraction_before_fallback=before, final_extraction=final,
                     used_fallback=used_fallback,
                     status='error' if observed.errors and not recovered else 'completed',
-                    errors=observed.errors, initial_call_failed=observed.initial_call_failed)
+                    errors=observed.errors, initial_call_failed=observed.initial_call_failed,
+                    pipeline_failed=pipeline_failed)
+
+
+def reject_replay(client: LLMClient) -> None:
+    """Cached transcript responses cannot represent independent new samples."""
+    seen: set[int] = set()
+    current: Any = client
+    while current is not None and id(current) not in seen:
+        if isinstance(current, (ReplayLLMClient, ResumingLLMClient)):
+            raise ValueError('Cannot use transcript replay for independent sampling')
+        seen.add(id(current))
+        current = getattr(current, 'inner', None)

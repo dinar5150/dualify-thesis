@@ -81,11 +81,12 @@ def _markdown(report: dict[str, Any]) -> str:
             "",
             "## Baseline",
             "",
-            "Original baseline: temperature 0.0; spec 4/40; code 4/40; approximately 4h 42m. "
-            "RQ1 uses the manifest temperature. Differences from baseline pass@1 cannot "
-            "be attributed solely to sample count.",
+            "The previously cited 4/40 baseline has no verified source and is not a comparison. "
+            "Different temperatures and models also confound comparisons.",
             "",
-            "Unknown solver results are not proven successes. Stronger/weaker/incomparable "
+            "Pass@k measures proven-success yield over terminal slots; unknown and generation "
+            "failures are not proven inequivalent. Evaluation exceptions make the task ineligible. "
+            "Stronger/weaker/incomparable "
             "labels require equivalent preconditions and a proven postcondition relation; "
             "other combinations remain unclassified. Syntactic uniqueness is not semantic "
             "equivalence. Cost estimates are time, not monetary charges.",

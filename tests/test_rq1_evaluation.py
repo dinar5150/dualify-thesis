@@ -91,6 +91,29 @@ def test_pass_at_k_edges():
         pass_at_k(7, 1, 8)
 
 
+def test_baseline_is_not_reported_as_verified_without_artifact():
+    from dualify.rq1_analysis import BASELINE
+
+    assert BASELINE["status"] == "unverified"
+    assert BASELINE.get("spec_gold_equivalent") is None
+
+
+def test_evaluation_exception_is_distinct_and_blocks_scientific_estimate(monkeypatch):
+    from dualify import rq1_evaluation
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("scorer failed")
+
+    monkeypatch.setattr(rq1_evaluation.gold_scoring, "score_extraction_against_gold", fail)
+    row = evaluate_record(case(), saved(), gold())
+    assert row["final_outcome"] == "evaluation_error"
+    rows = [dict(row, sample_index=i) for i in range(8)]
+    result = analyze({"experiment_id": "x", "configuration": {},
+                      "selected_case_ids": ["qualified"], "samples": 8,
+                      "candidates": rows})
+    assert result["tasks"][0]["pass_at_k"]["1"] is None
+
+
 def test_actual_scorer_and_degraded_fallback_and_failures():
     equivalent = evaluate_record(case(), saved(degraded=True), gold())
     assert equivalent["final_outcome"] == "equivalent" and equivalent["degraded"]
@@ -98,7 +121,7 @@ def test_actual_scorer_and_degraded_fallback_and_failures():
     assert fallback["final_gold"]["contract_equivalent"] and fallback["final_outcome"] == "fallback"
     failed = evaluate_record(case(), saved(status="error"), gold())
     assert failed["final_gold"]["contract_equivalent"]
-    assert failed["final_outcome"] == "api_or_evaluation_failure"
+    assert failed["final_outcome"] == "generation_error"
 
 
 def test_relation_unknown_and_precise_precedence():
@@ -110,19 +133,26 @@ def test_relation_unknown_and_precise_precedence():
     }
     assert classify(score, True) == "inconclusive"
     assert classify(score, True, fallback=True) == "fallback"
-    assert classify(score, True, failed=True, fallback=True) == "api_or_evaluation_failure"
+    assert classify(score, True, failed=True, fallback=True) == "generation_error"
     score.update(
         reason="case_post_code", contract_equivalent=False, post_relation="generated_stronger"
     )
     assert classify(score, True) == "stronger"
     score["pre_relation"] = "generated_weaker"
-    assert classify(score, True) == "unclassified"
+    assert classify(score, True) == "non_equivalent"
 
 
 def test_proven_equivalence_is_not_overruled_by_secondary_relation_unknown():
     score = {"contract_equivalent": True, "reason": "equivalent",
              "pre_relation": "equivalent", "post_relation": "undetermined"}
     assert classify(score, True) == "equivalent"
+
+
+@pytest.mark.parametrize("reason", ["case_pre_code", "case_pre_spec", "case_post_code"])
+def test_proven_mismatch_remains_distinct_when_direction_unavailable(reason):
+    score = {"contract_equivalent": False, "reason": reason,
+             "pre_relation": "generated_weaker", "post_relation": "undetermined"}
+    assert classify(score, True) == "non_equivalent"
 
 
 def test_initial_final_validity_and_repair():
@@ -218,7 +248,7 @@ def test_macro_and_missing_and_uniqueness():
                     case_id=identifier,
                     channel=channel,
                     sample_index=index,
-                    final_outcome="equivalent" if index == 0 else "api_or_evaluation_failure",
+                    final_outcome="equivalent" if index == 0 else "generation_error",
                 )
                 rows.append(row)
     evaluation = {
@@ -234,6 +264,7 @@ def test_macro_and_missing_and_uniqueness():
     assert result["tasks"][0]["unique_final_contracts"] == 1
     assert result["tasks"][0]["unique_rate"] == 1 / 8
     result = analyze({**evaluation, "candidates": rows[1:]})
+    assert result["scientific_full_benchmark"] is False
     assert result["channels"]["spec"]["pass_at_k"]["final"]["8"]["macro"] is None
     assert result["channels"]["spec"]["pass_at_k"]["final"]["8"]["eligible_tasks"] == 39
     assert result["tasks"][0]["pass_at_k"]["8"] is None
@@ -310,7 +341,7 @@ def test_n8_counts_failures_unknown_fallback_and_degraded():
     assert spec["completed"] == 8 and spec["successes"] == 1
     assert spec["pass_at_k"]["1"] == 0.125 and spec["pass_at_k"]["8"] == 1
     assert spec["outcomes"]["fallback"] == 1
-    assert spec["outcomes"]["api_or_evaluation_failure"] == 1
+    assert spec["outcomes"]["generation_error"] == 1
     assert spec["outcomes"]["inconclusive"] == 1
     assert spec["degraded"] == 1
 

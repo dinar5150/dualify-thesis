@@ -148,7 +148,7 @@ def classify(
 ) -> str:
     """Mutually exclusive outcomes, using only original solver and relation results."""
     if failed:
-        return "api_or_evaluation_failure"
+        return "generation_error"
     if fallback:
         return "fallback"
     if valid is not True:
@@ -163,6 +163,13 @@ def classify(
         return "inconclusive"
     if score.get("contract_equivalent"):
         return "equivalent"
+    if reason in ("case_pre_code", "case_pre_spec", "case_post_code", "case_post_spec"):
+        if pre == "equivalent" and isinstance(post, str):
+            direction = {"generated_stronger": "stronger", "generated_weaker": "weaker",
+                         "incomparable": "incomparable"}.get(post)
+            if direction:
+                return direction
+        return "non_equivalent"
     if "parse_error" in (pre, post):
         return "invalid_or_unsupported"
     if "undetermined" in (pre, post):
@@ -246,12 +253,10 @@ def evaluate_record(
             entry["initial_outcome"] = classify(
                 entry["initial_gold"], entry["initial_validity"]["extractor_valid"]
             )
-        elif data.get("initial_call_failed") or (
-            data.get("initial_response") is None and data.get("status") == "error"
-        ):
-            entry["initial_outcome"] = "api_or_evaluation_failure"
+        elif data.get("initial_call_failed") is True:
+            entry["initial_outcome"] = "generation_error"
     except Exception as exc:
-        entry["initial_outcome"] = "api_or_evaluation_failure"
+        entry["initial_outcome"] = "evaluation_error"
         entry["initial_error"] = f"{type(exc).__name__}: {exc}"
     final: ExtractionResult | None = None
     try:
@@ -271,8 +276,12 @@ def evaluate_record(
             failed=data.get("status") == "error",
             fallback=entry["used_fallback"],
         )
+        if data.get("pipeline_failed"):
+            entry["final_outcome"] = "extraction_error"
     except Exception as exc:
-        entry["final_outcome"] = "api_or_evaluation_failure"
+        entry["final_outcome"] = ("extraction_error" if data.get("pipeline_failed") else
+                                  "generation_error" if data.get("status") == "error" else
+                                  "evaluation_error")
         entry["final_error"] = f"{type(exc).__name__}: {exc}"
     return entry
 

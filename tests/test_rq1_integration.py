@@ -1,5 +1,3 @@
-import ast
-import copy
 import socket
 import subprocess
 from pathlib import Path
@@ -15,6 +13,13 @@ from dualify.rq1_storage import execute, slot_key
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = "7ffd1ae37822096d5b7b573785ee46e877903185"
+
+
+@pytest.mark.parametrize("name", ["p01_spec_to_logic.py", "p02_code_to_logic.py"])
+def test_extractor_is_byte_identical_to_upstream(name):
+    path = f"src/dualify/phases/{name}"
+    original = subprocess.check_output(["git", "show", f"{BASELINE}:{path}"], cwd=ROOT)
+    assert (ROOT / path).read_bytes() == original
 
 
 def test_evaluation_rejects_extra_gold_and_modified_scorer(tmp_path):
@@ -87,78 +92,6 @@ def test_full_and_dev_planning_and_original_files():
         cwd=ROOT,
         check=True,
         capture_output=True,
-    )
-
-
-def _baseline_source(path):
-    return subprocess.check_output(["git", "show", f"{BASELINE}:{path}"], cwd=ROOT, text=True)
-
-
-def _functions(source):
-    return {node.name: node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)}
-
-
-@pytest.mark.parametrize(
-    "name,extractor",
-    [
-        ("p01_spec_to_logic.py", "extract_spec_logic"),
-        ("p02_code_to_logic.py", "extract_code_logic"),
-    ],
-)
-def test_original_prompts_repair_and_default_temperature(name, extractor):
-    path = f"src/dualify/phases/{name}"
-    before = _functions(_baseline_source(path))
-    after = _functions((ROOT / path).read_text())
-    for function in ("_repair_payload", "_safe_subset_repair_payload"):
-        assert ast.dump(before[function], include_attributes=False) == ast.dump(
-            after[function], include_attributes=False
-        )
-    original_prompt = next(
-        n
-        for n in before[extractor].body
-        if isinstance(n, ast.Assign)
-        and any(isinstance(t, ast.Name) and t.id == "prompt" for t in n.targets)
-    )
-    current_prompt = next(
-        n
-        for n in after[extractor].body
-        if isinstance(n, ast.Assign)
-        and any(isinstance(t, ast.Name) and t.id == "prompt" for t in n.targets)
-    )
-    assert ast.dump(original_prompt.value) == ast.dump(current_prompt.value)
-    assert ast.literal_eval(after[extractor].args.defaults[-2]) == 0.0
-    # Remove only the newly added optional temperature and trace instrumentation,
-    # then compare the complete extractor AST with the original implementation.
-    restored = copy.deepcopy(after[extractor])
-    restored.args.args = restored.args.args[:-2]
-    restored.args.defaults = restored.args.defaults[:-2]
-
-    class RemoveSamplingSupport(ast.NodeTransformer):
-        def visit_If(self, node):
-            if (
-                isinstance(node.test, ast.Compare)
-                and isinstance(node.test.left, ast.Name)
-                and node.test.left.id == "trace_sink"
-            ):
-                return None
-            return self.generic_visit(node)
-
-        def visit_Call(self, node):
-            self.generic_visit(node)
-            node.keywords = [
-                kw
-                for kw in node.keywords
-                if not (
-                    kw.arg == "temperature"
-                    and isinstance(kw.value, ast.Name)
-                    and kw.value.id == "initial_temperature"
-                )
-            ]
-            return node
-
-    restored = RemoveSamplingSupport().visit(restored)
-    assert ast.dump(before[extractor], include_attributes=False) == ast.dump(
-        restored, include_attributes=False
     )
 
 

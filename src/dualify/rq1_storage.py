@@ -17,7 +17,7 @@ from unittest.mock import patch
 import requests
 
 from dualify.ollama_client import LLMClient, OpenAICompatibleClient
-from dualify.rq1 import ExperimentPlan, sample_plan
+from dualify.rq1 import ExperimentPlan, reject_replay, sample_plan
 
 
 def utc_now() -> str:
@@ -172,6 +172,7 @@ def _slots(plan: ExperimentPlan) -> dict[str, tuple[str, str, int, str]]:
 def execute(plan: ExperimentPlan, client: LLMClient, output_dir: Path,
             configuration: dict[str, Any], *, resume: bool = False,
             max_new_attempts: int | None = None, interval: float = 0.0) -> dict[str, Any]:
+    reject_replay(client)
     if max_new_attempts is not None and max_new_attempts < 1:
         raise ValueError('max-new-attempts must be positive')
     if not math.isfinite(interval) or interval < 0:

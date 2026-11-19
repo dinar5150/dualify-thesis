@@ -289,8 +289,6 @@ def extract_spec_logic(
     return_type: str,
     extra_context: str = "",
     arg_types: dict[str, str] | None = None,
-    initial_temperature: float = 0.0,
-    trace_sink: dict[str, object] | None = None,
 ) -> ExtractionResult:
     prompt = f"""
 You are translating an informal function spec into a logical formula.
@@ -365,7 +363,7 @@ Additional context:
     allowed_args = _extract_signature_args(signature)
     extra_symbols = _extract_self_symbols(informal_spec + "\n" + extra_context)
     try:
-        raw_payload = client.generate_json(prompt, temperature=initial_temperature)
+        raw_payload = client.generate_json(prompt)
     except Exception:
         raw_payload = {}
     payload = _normalize_payload_formulas(_coerce_payload(raw_payload, allowed_args, return_type))
@@ -379,8 +377,6 @@ Additional context:
         "postcondition": payload["postcondition"],
         "errors": list(errors),
     }
-    if trace_sink is not None:
-        trace_sink.update(payload["extraction_trace"])
     if errors:
         try:
             repaired_raw = _repair_payload(client, payload, errors, signature, return_type)
@@ -402,8 +398,6 @@ Additional context:
             "postcondition": repaired_payload["postcondition"],
             "errors": list(repair_errors),
         }
-        if trace_sink is not None:
-            trace_sink.update(payload["extraction_trace"])
         if not repair_errors:
             payload = repaired_payload
         else:
@@ -433,8 +427,6 @@ Additional context:
                 "postcondition": safe_payload["postcondition"],
                 "errors": list(safe_errors),
             }
-            if trace_sink is not None:
-                trace_sink.update(payload["extraction_trace"])
             if not safe_errors:
                 safe_payload["confidence"] = "low"
                 safe_payload["notes"] = "Recovered via safe-subset repair after validation failure."

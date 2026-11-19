@@ -11,6 +11,7 @@ from typing import Any
 K_VALUES = (1, 2, 4, 8)
 OUTCOMES = (
     "equivalent",
+    "non_equivalent",
     "stronger",
     "weaker",
     "incomparable",
@@ -18,19 +19,16 @@ OUTCOMES = (
     "invalid_or_unsupported",
     "fallback",
     "api_or_evaluation_failure",
+    "generation_error",
+    "extraction_error",
+    "evaluation_error",
     "unclassified",
     "unscorable",
     "unavailable",
 )
 BASELINE = {
-    "temperature": 0.0,
-    "spec_gold_equivalent": "4/40",
-    "code_gold_equivalent": "4/40",
-    "runtime": "approximately 4h 42m",
-    "note": (
-        "The baseline used temperature 0.0; changes relative to RQ1 pass@1 "
-        "cannot be attributed solely to sample count."
-    ),
+    "status": "unverified",
+    "note": "The previously cited 4/40 lacks an identified source and is not a comparison.",
 }
 
 
@@ -138,10 +136,12 @@ def analyze(evaluation: dict[str, Any]) -> dict[str, Any]:
             successes = sum(c["final_outcome"] == "equivalent" for c in candidates)
             initial_successes = sum(c["initial_outcome"] == "equivalent" for c in candidates)
             initial_known = all(
-                c["initial_outcome"] not in ("unavailable", "unscorable") for c in candidates
+                c["initial_outcome"] not in ("unavailable", "unscorable", "evaluation_error",
+                                             "api_or_evaluation_failure") for c in candidates
             )
             final_known = all(
-                c.get("gold_available") is True and c["final_outcome"] != "unscorable"
+                c.get("gold_available") is True and c["final_outcome"] not in
+                ("unscorable", "evaluation_error", "unavailable", "api_or_evaluation_failure")
                 for c in candidates
             )
             # Final n=8 metrics must never be computed from an incomplete or different plan.
@@ -300,7 +300,10 @@ def analyze(evaluation: dict[str, Any]) -> dict[str, Any]:
         "evaluation_warnings": evaluation.get("warnings", []),
         "selected_tasks": len(ids),
         "samples": n,
-        "scientific_full_benchmark": len(ids) == 40,
+        "scientific_full_benchmark": all(
+            channels[channel]["pass_at_k"]["final"]["1"]["macro"] is not None
+            for channel in ("spec", "code")
+        ),
         "channels": channels,
         "tasks": task_results,
     }

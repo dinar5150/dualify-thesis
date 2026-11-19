@@ -75,7 +75,7 @@ def main() -> int:
                 digest.update(str(path.relative_to(ROOT)).encode())
                 digest.update(path.read_bytes())
             configuration = {
-                'protocol_version': 'rq1-dev-v2',
+                'protocol_version': 'rq1-upstream-adapter-v3',
                 'git_sha': subprocess.check_output(
                     ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                 'source_and_inputs_sha256': digest.hexdigest(),
