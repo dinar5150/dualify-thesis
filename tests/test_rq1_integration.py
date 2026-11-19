@@ -17,6 +17,54 @@ ROOT = Path(__file__).resolve().parents[1]
 BASELINE = "7ffd1ae37822096d5b7b573785ee46e877903185"
 
 
+def test_evaluation_rejects_extra_gold_and_modified_scorer(tmp_path):
+    from dualify import rq1_evaluation
+
+    def git(*args):
+        return subprocess.check_output(["git", *args], cwd=tmp_path, text=True).strip()
+
+    git("init", "-q")
+    git("config", "user.email", "test@example.invalid")
+    git("config", "user.name", "test")
+    gold = tmp_path / "benchmark/lifted/a.yaml"
+    scorer = tmp_path / "src/dualify/gold_scoring.py"
+    for path in (gold, scorer):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("original\n")
+    git("add", ".")
+    git("commit", "-qm", "baseline")
+    baseline = git("rev-parse", "HEAD")
+    rq1_evaluation.verify_provenance(tmp_path, baseline)
+    extra = gold.with_name("extra.yaml")
+    extra.write_text("unexpected\n")
+    with pytest.raises(ValueError, match="gold"):
+        rq1_evaluation.verify_provenance(tmp_path, baseline)
+    extra.unlink()
+    scorer.write_text("modified\n")
+    with pytest.raises(ValueError, match="scor"):
+        rq1_evaluation.verify_provenance(tmp_path, baseline)
+
+
+def test_markdown_shows_exploratory_dev_pass_at_k():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("analyze_script", ROOT / "scripts/analyze_rq1.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    rows = []
+    for channel in ("spec", "code"):
+        for index in range(8):
+            rows.append({"case_id": "a", "channel": channel, "sample_index": index,
+                         "final_outcome": "equivalent" if index == 0 else "inconclusive",
+                         "initial_outcome": "unavailable", "gold_available": True})
+    report = analyze({"experiment_id": "dev", "configuration": {},
+                      "selected_case_ids": ["a"], "samples": 8, "candidates": rows})
+    output = module._markdown(report)
+    assert "Exploratory" in output
+    assert "0.1250" in output
+    assert "unavailable" in output
+
+
 def test_full_and_dev_planning_and_original_files():
     full = make_plan(ROOT, ExperimentConfig())
     dev = make_plan(ROOT, ExperimentConfig(), dev=True)
@@ -191,7 +239,7 @@ def test_full_offline_interruption_resume_evaluate_analyze_diagnose(tmp_path, mo
     assert (tmp_path / "attempts" / slot_key(identifier, "spec", 0) / "result.json").exists()
     second = Fake()
     result = execute(plan, second, tmp_path, config, resume=True)
-    assert result["completed"] == 4 and result["errors"] == 1
+    assert result["completed"] == 4 and result["errors"] == 0
     assert len(list(tmp_path.glob("attempts/*/result.json"))) == 4
     assert execute(plan, Fake(), tmp_path, config, resume=True)["new_attempts"] == 0
     monkeypatch.setattr(socket, "socket", lambda *a, **kw: pytest.fail("network accessed"))
@@ -200,8 +248,9 @@ def test_full_offline_interruption_resume_evaluate_analyze_diagnose(tmp_path, mo
     assert analyze(evaluation) == analyze(evaluation)
     findings = diagnose(ROOT, tmp_path, evaluation, tmp_path / "evaluation.json")
     assert findings["counts"]["provider_failure"] >= 1
-    assert findings["counts"]["repeated_identical_candidates"] == 2
-    assert any(c["generation_status"] == "error" for c in evaluation["candidates"])
+    assert findings["counts"]["repeated_identical_candidates"] == 4
+    assert any(c["generation_status"] == "completed" and c["generation_errors"]
+               for c in evaluation["candidates"])
     assert all(
         f["git_sha"] == BASELINE and f["generation_z3_version"] == "4.16.0"
         for f in findings["findings"]

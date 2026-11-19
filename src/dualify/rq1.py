@@ -93,6 +93,7 @@ class Candidate:
     used_fallback: bool
     status: Literal['completed', 'error']
     errors: list[str]
+    initial_call_failed: bool = False
 
 
 class _ObservedClient:
@@ -103,19 +104,27 @@ class _ObservedClient:
         self.calls = 0
         self.initial_response: dict[str, Any] | None = None
         self.errors: list[str] = []
+        self.last_call_succeeded = False
+        self.successful_calls = 0
+        self.initial_call_failed = False
 
     def healthcheck(self) -> None:
         self.inner.healthcheck()
 
     def generate_json(self, prompt: str, temperature: float = 0.0) -> dict:
         self.calls += 1
+        self.last_call_succeeded = False
         try:
             response = self.inner.generate_json(prompt, temperature=temperature)
         except Exception as exc:
+            if self.calls == 1:
+                self.initial_call_failed = True
             self.errors.append(f'{type(exc).__name__}: {exc}')
             raise
         if self.calls == 1:
             self.initial_response = response
+        self.last_call_succeeded = True
+        self.successful_calls += 1
         return response
 
 
@@ -135,6 +144,7 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
                 before: ExtractionResult | None = None
                 final: ExtractionResult | None = None
                 used_fallback = False
+                pipeline_failed = False
                 try:
                     if channel == 'spec':
                         extraction = extract_spec_logic(
@@ -160,11 +170,23 @@ def sample_plan(plan: ExperimentPlan, client: LLMClient, *,
                         except ValueError:
                             pass
                 except Exception as exc:
+                    pipeline_failed = True
                     observed.errors.append(f'{type(exc).__name__}: {exc}')
+                accepted_repair = any(
+                    isinstance(stage_trace := trace.get(stage), dict) and
+                    stage_trace.get('errors') == []
+                    for stage in ('repair', 'safe_repair')
+                )
+                salvaged = (before is not None and
+                            before.degraded_reason == 'salvaged_partial_postcondition' and
+                            observed.successful_calls > 0)
+                recovered = (not pipeline_failed and final is not None and not used_fallback and
+                             ((observed.last_call_succeeded and accepted_repair) or salvaged))
                 yield Candidate(
                     case_id=qualified_id, benchmark_id=case.benchmark_id,
                     channel='spec' if channel == 'spec' else 'code', sample_index=index,
                     initial_response=observed.initial_response, stage_trace=trace,
                     extraction_before_fallback=before, final_extraction=final,
                     used_fallback=used_fallback,
-                    status='error' if observed.errors else 'completed', errors=observed.errors)
+                    status='error' if observed.errors and not recovered else 'completed',
+                    errors=observed.errors, initial_call_failed=observed.initial_call_failed)

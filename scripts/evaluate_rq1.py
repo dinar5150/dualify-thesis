@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import subprocess
 import sys
@@ -15,7 +16,7 @@ import z3
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from dualify.rq1_evaluation import evaluate_experiment  # noqa: E402
+from dualify.rq1_evaluation import evaluate_experiment, verify_provenance  # noqa: E402
 
 
 def main() -> int:
@@ -29,22 +30,19 @@ def main() -> int:
     ):
         parser.error("Evaluation output must be outside the generation directory")
     baseline = "7ffd1ae37822096d5b7b573785ee46e877903185"
-    changed = subprocess.run(
-        [
-            "git",
-            "diff",
-            "--quiet",
-            baseline,
-            "--",
-            "benchmark/lifted_auto_eval",
-            "benchmark/lifted",
-        ],
-        cwd=ROOT,
-    )
-    if changed.returncode:
-        parser.error("Benchmark or gold files differ from the original commit")
     try:
+        verify_provenance(ROOT, baseline)
+        extractors = ["src/dualify/phases/p01_spec_to_logic.py",
+                      "src/dualify/phases/p02_code_to_logic.py"]
+        if subprocess.run(["git", "diff", "--quiet", "33cd703", "--", *extractors],
+                          cwd=ROOT).returncode:
+            raise ValueError("Extraction validation code differs from RQ1 reference")
         evaluation = evaluate_experiment(ROOT, args.run_dir)
+        evaluation["evaluator_version"] = "rq1-dev-v2"
+        evaluation["evaluation_source_sha256"] = {
+            str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in [*sorted((ROOT / "src/dualify").rglob("*.py")), Path(__file__)]
+        }
         evaluation["evaluation_git_sha"] = subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
         ).strip()

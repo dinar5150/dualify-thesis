@@ -36,7 +36,7 @@ def _markdown(report: dict[str, Any]) -> str:
         "Scientific macro values require all 40 original tasks with eight terminal outcomes "
         "per channel. Dev and partial means are exploratory only.",
         "",
-        "| Channel | k | Final macro | Eligible / 40 | Initial macro | Initial eligible / 40 |",
+        "| Channel | k | Final macro | Exploratory final mean | Eligible tasks | Initial macro |",
         "|---|---:|---:|---:|---:|---:|",
     ]
     for channel, content in report["channels"].items():
@@ -45,8 +45,9 @@ def _markdown(report: dict[str, Any]) -> str:
             initial = content["pass_at_k"]["initial"][str(k)]
             lines.append(
                 f"| {channel} | {k} | {_display(final['macro'])} | "
-                f"{final['eligible_tasks']} / 40 | {_display(initial['macro'])} | "
-                f"{initial['eligible_tasks']} / 40 |"
+                f"{_display(final['exploratory_mean'])} | "
+                f"{final['eligible_tasks']} / {report['selected_tasks']} | "
+                f"{_display(initial['macro'])} |"
             )
     if report["evaluation_warnings"]:
         lines.extend(["", "Evaluation warnings: " + "; ".join(report["evaluation_warnings"])])
@@ -65,7 +66,9 @@ def _markdown(report: dict[str, Any]) -> str:
                 f"Repair: `{json.dumps(content['repair'], sort_keys=True)}`.",
                 "",
                 f"Degraded: {content['degraded']}; vacuous: {content['vacuous']}; "
-                f"exploratory macro unique rate: {_display(content['macro_unique_rate'])}.",
+                "exploratory macro syntactic unique rate: "
+                f"{_display(content['macro_unique_rate'])} "
+                "(distinct final contracts / terminal slots, including failures and fallbacks).",
                 "",
                 f"Cost: `{json.dumps(content['cost'], sort_keys=True)}`.",
                 "",

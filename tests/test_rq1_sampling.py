@@ -127,7 +127,42 @@ def test_runner_normalization_and_fallback(monkeypatch):
 
 
 def test_original_caught_llm_error_is_reported():
-    fake = FakeClient([RuntimeError('API failed'), payload(), payload()])
+    fake = FakeClient([RuntimeError('API failed')] * 3 + [payload()])
     result = list(rq1.sample_plan(plan(simple_case()), fake))
     assert result[0].status == 'error'
     assert 'API failed' in result[0].errors[0]
+
+
+@pytest.mark.parametrize('channel', ['spec', 'code'])
+def test_recovered_repair_error_keeps_valid_candidate(channel):
+    fake = FakeClient([payload('unknown_name == 1'), RuntimeError('repair failed'), payload()])
+    result = next(rq1.sample_plan(plan(simple_case()), fake,
+                                 should_run=lambda _, ch, __: ch == channel))
+    assert result.status == 'completed'
+    assert result.final_extraction.postcondition == 'ret == x + 1'
+    assert result.final_extraction.degraded_reason == 'recovered_safe_subset'
+    assert any('repair failed' in error for error in result.errors)
+
+
+def test_salvage_from_model_response_survives_repair_error():
+    fake = FakeClient([payload('ret == x + 1 and unknown_name == 1'),
+                       RuntimeError('repair failed'), payload('unknown_name == 1')])
+    result = next(rq1.sample_plan(plan(simple_case()), fake,
+                                 should_run=lambda _, ch, __: ch == 'spec'))
+    assert result.status == 'completed'
+    assert result.final_extraction.degraded_reason == 'salvaged_partial_postcondition'
+    assert result.final_extraction.postcondition == 'ret == x + 1'
+    assert result.errors
+
+
+def test_initial_error_remains_visible_after_repair_recovery():
+    from dataclasses import asdict
+
+    from dualify.rq1_evaluation import evaluate_record
+
+    fake = FakeClient([RuntimeError('initial failed'), payload()])
+    result = next(rq1.sample_plan(plan(simple_case()), fake,
+                                 should_run=lambda _, ch, __: ch == 'spec'))
+    row = evaluate_record(simple_case(), asdict(result), None)
+    assert result.status == 'completed'
+    assert row['initial_outcome'] == 'api_or_evaluation_failure'

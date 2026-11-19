@@ -73,13 +73,13 @@ def test_interruption_leaves_marker_and_resumes(tmp_path):
 
 def test_failed_generation_is_terminal_and_not_replayed(tmp_path):
     plan = make_plan()
-    fake = FakeClient([RuntimeError('bad secret-key'), payload(), payload()])
+    fake = FakeClient([RuntimeError('bad secret-key')] * 3 + [payload()])
     result = execute(plan, fake, tmp_path, {})
     assert result['completed'] == 2 and result['errors'] == 1
     record = read_result(tmp_path, 'spec', 0)
     assert record['status'] == 'error'
     assert '[REDACTED]' in record['data']['errors'][0]
-    assert record['data']['diagnostics']['request_count'] == 2
+    assert record['data']['diagnostics']['request_count'] == 3
     assert execute(plan, FakeClient([]), tmp_path, {}, resume=True)['errors'] == 1
 
 

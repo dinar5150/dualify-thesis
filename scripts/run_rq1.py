@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import os
 import subprocess
@@ -74,6 +75,7 @@ def main() -> int:
                 digest.update(str(path.relative_to(ROOT)).encode())
                 digest.update(path.read_bytes())
             configuration = {
+                'protocol_version': 'rq1-dev-v2',
                 'git_sha': subprocess.check_output(
                     ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                 'source_and_inputs_sha256': digest.hexdigest(),
@@ -83,6 +85,9 @@ def main() -> int:
                 'base_url': args.base_url.rstrip('/'), 'z3_version': z3.get_version_string(),
                 'python_version': sys.version, 'inter_request_seconds': args.inter_request_seconds,
                 'openai_use_chat': os.environ.get('DUALIFY_OPENAI_USE_CHAT'),
+                'lock_sha256': hashlib.sha256((ROOT / 'poetry.lock').read_bytes()).hexdigest(),
+                'dependency_versions': {name: importlib.metadata.version(name) for name in
+                                        ('requests', 'PyYAML', 'z3-solver', 'python-dotenv')},
             }
             client = create_llm_client(provider=args.provider, model=config.model or '',
                                        base_url=args.base_url, api_key=key)

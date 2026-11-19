@@ -119,6 +119,12 @@ def test_relation_unknown_and_precise_precedence():
     assert classify(score, True) == "unclassified"
 
 
+def test_proven_equivalence_is_not_overruled_by_secondary_relation_unknown():
+    score = {"contract_equivalent": True, "reason": "equivalent",
+             "pre_relation": "equivalent", "post_relation": "undetermined"}
+    assert classify(score, True) == "equivalent"
+
+
 def test_initial_final_validity_and_repair():
     row = evaluate_record(
         case(),
@@ -148,6 +154,56 @@ def test_initial_final_validity_and_repair():
     )
     assert repair["success_per_initially_invalid"] == 1
     assert result["tasks"][0]["pass_at_k"]["8"] is None
+
+
+@pytest.mark.parametrize(
+    ("reason", "fallback", "expected"),
+    [
+        ("", False, "ordinary_repair"),
+        ("recovered_safe_subset", False, "safe_subset_repair"),
+        ("salvaged_partial_postcondition", False, "conjunct_salvage"),
+        ("sanitize_after_validation_failure", False, "sanitization"),
+        ("", True, "fallback"),
+    ],
+)
+def test_repair_attribution(reason, fallback, expected):
+    data = saved(initial_post="ret == ret", initial_errors=["invalid"], repair=True,
+                 fallback=fallback)
+    data["final_extraction"]["degraded_reason"] = reason
+    if reason in ("recovered_safe_subset", "salvaged_partial_postcondition",
+                  "sanitize_after_validation_failure"):
+        data["stage_trace"]["repair"]["errors"] = ["invalid"]
+        data["stage_trace"]["safe_repair"] = {"errors": [] if reason == "recovered_safe_subset"
+                                                 else ["invalid"]}
+    row = evaluate_record(case(), data, gold())
+    assert row["repair_outcome"] == expected
+
+
+def test_repair_attribution_is_unavailable_without_trace():
+    data = saved(initial_post="ret == ret", initial_errors=["invalid"], repair=True)
+    data["stage_trace"].pop("repair")
+    row = evaluate_record(case(), data, gold())
+    assert row["repair_outcome"] == "unavailable"
+    result = analyze({"experiment_id": "x", "configuration": {},
+                      "selected_case_ids": ["qualified"], "samples": 8,
+                      "candidates": [row]})
+    repair = result["channels"]["spec"]["repair"]
+    assert repair["repair_outcome_unavailable"] == 1
+    assert repair["success_per_initially_invalid"] is None
+
+
+def test_salvage_is_not_a_successful_model_repair():
+    data = saved(initial_post="ret == ret", initial_errors=["invalid"], repair=True)
+    data["stage_trace"]["repair"]["errors"] = ["invalid"]
+    data["stage_trace"]["safe_repair"] = {"errors": ["invalid"]}
+    data["final_extraction"]["degraded_reason"] = "salvaged_partial_postcondition"
+    row = evaluate_record(case(), data, gold())
+    result = analyze({"experiment_id": "x", "configuration": {},
+                      "selected_case_ids": ["qualified"], "samples": 8,
+                      "candidates": [row]})
+    repair = result["channels"]["spec"]["repair"]
+    assert repair["successful_repairs"] == 0
+    assert repair["outcomes"]["conjunct_salvage"] == 1
 
 
 def test_macro_and_missing_and_uniqueness():

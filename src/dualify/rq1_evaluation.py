@@ -5,6 +5,7 @@ from __future__ import annotations
 import ast
 import fcntl
 import hashlib
+import subprocess
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,24 @@ from dualify.rq1 import discover_cases
 from dualify.rq1_storage import _digest, _read, slot_key
 from dualify.runner import _normalize_extraction
 from dualify.types import BenchmarkCase, ExtractionResult
+
+
+def verify_provenance(root: Path, baseline: str) -> None:
+    paths = ["benchmark/lifted", "benchmark/lifted_auto_eval", "src/dualify/gold_scoring.py",
+             "src/dualify/formula_parser.py", "src/dualify/phases/p03_smt_checking.py",
+             "src/dualify/relation.py", "src/dualify/types.py", "src/dualify/runner.py",
+             "src/dualify/discovery.py", "src/dualify/fallbacks.py"]
+    result = subprocess.run(["git", "diff", "--quiet", baseline, "--", *paths], cwd=root)
+    if result.returncode:
+        raise ValueError("Benchmark or original scoring code differs from baseline")
+    tracked = subprocess.check_output(
+        ["git", "ls-tree", "-r", "--name-only", baseline, "--", "benchmark/lifted"],
+        cwd=root, text=True,
+    ).splitlines()
+    expected = {Path(name).name for name in tracked if name.endswith(".yaml")}
+    actual = {path.name for path in (root / "benchmark/lifted").glob("*.yaml")}
+    if actual != expected:
+        raise ValueError("Unexpected or missing gold YAML files")
 
 
 def _syntactic(extraction: ExtractionResult) -> bool:
@@ -138,12 +157,16 @@ def classify(
         return "unscorable"
     reason = str(score.get("reason", "")).split(":", 1)[0]
     pre, post = score.get("pre_relation"), score.get("post_relation")
-    if reason == "formula_parse_error" or "parse_error" in (pre, post):
+    if reason == "formula_parse_error":
         return "invalid_or_unsupported"
-    if reason == "solver_unknown" or "undetermined" in (pre, post):
+    if reason == "solver_unknown":
         return "inconclusive"
     if score.get("contract_equivalent"):
         return "equivalent"
+    if "parse_error" in (pre, post):
+        return "invalid_or_unsupported"
+    if "undetermined" in (pre, post):
+        return "inconclusive"
     # Post relation is conditional on the common precondition. Only classify
     # direction when the original scorer proved the preconditions equivalent.
     if pre == "equivalent" and isinstance(post, str):
@@ -153,6 +176,34 @@ def classify(
             "incomparable": "incomparable",
         }.get(post, "unclassified")
     return "unclassified"
+
+
+def _repair_outcome(data: dict[str, Any]) -> str:
+    if data.get("used_fallback"):
+        return "fallback"
+    trace = data.get("stage_trace") or {}
+    initial = trace.get("initial")
+    if not isinstance(initial, dict) or not isinstance(initial.get("errors"), list):
+        return "unavailable"
+    if not initial["errors"]:
+        return "not_needed"
+    repair = trace.get("repair")
+    if not isinstance(repair, dict) or not isinstance(repair.get("errors"), list):
+        return "unavailable"
+    final = data.get("final_extraction") or {}
+    reason = final.get("degraded_reason")
+    if repair["errors"] == [] and data.get("status") == "completed":
+        return "ordinary_repair"
+    safe = trace.get("safe_repair")
+    if not isinstance(safe, dict) or not isinstance(safe.get("errors"), list):
+        return "unavailable"
+    if reason == "recovered_safe_subset" and safe["errors"] == []:
+        return "safe_subset_repair"
+    if safe["errors"]:
+        return {"salvaged_partial_postcondition": "conjunct_salvage",
+                "sanitize_after_validation_failure": "sanitization"}.get(
+                    reason if isinstance(reason, str) else "", "unavailable")
+    return "unavailable"
 
 
 def evaluate_record(
@@ -182,6 +233,7 @@ def evaluate_record(
         "pre_fallback_degraded": (data.get("extraction_before_fallback") or {}).get("degraded"),
         "vacuous": None,
         "repair_attempted": False,
+        "repair_outcome": _repair_outcome(data),
         "diagnostics": data.get("diagnostics"),
         "duration_seconds": data.get("duration_seconds"),
     }
@@ -194,7 +246,9 @@ def evaluate_record(
             entry["initial_outcome"] = classify(
                 entry["initial_gold"], entry["initial_validity"]["extractor_valid"]
             )
-        elif data.get("initial_response") is None and data.get("status") == "error":
+        elif data.get("initial_call_failed") or (
+            data.get("initial_response") is None and data.get("status") == "error"
+        ):
             entry["initial_outcome"] = "api_or_evaluation_failure"
     except Exception as exc:
         entry["initial_outcome"] = "api_or_evaluation_failure"

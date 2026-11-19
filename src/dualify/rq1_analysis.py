@@ -157,11 +157,10 @@ def analyze(evaluation: dict[str, Any]) -> dict[str, Any]:
             successful = [
                 c
                 for c in attempted
-                if not c.get("used_fallback")
-                and c.get("final_validity") is not None
-                and c["final_validity"]["extractor_valid"]
+                if c.get("repair_outcome") in ("ordinary_repair", "safe_subset_repair")
             ]
-            unknown = [c for c in attempted if c.get("final_validity") is None]
+            unknown = [c for c in initial_invalid
+                       if c.get("repair_outcome", "unavailable") == "unavailable"]
             keys = {
                 json.dumps(c["final_contract_key"], ensure_ascii=False, sort_keys=True)
                 for c in candidates
@@ -186,8 +185,13 @@ def analyze(evaluation: dict[str, Any]) -> dict[str, Any]:
                     "initially_invalid": len(initial_invalid),
                     "repair_attempts": len(attempted),
                     "successful_repairs": len(successful),
-                    "unsuccessful_repairs": len(attempted) - len(successful) - len(unknown),
+                    "unsuccessful_repairs": sum(
+                        c.get("repair_outcome") not in
+                        ("ordinary_repair", "safe_subset_repair", "unavailable", None)
+                        for c in attempted),
                     "repair_outcome_unavailable": len(unknown),
+                    "outcomes": dict(Counter(c.get("repair_outcome", "unavailable")
+                                             for c in candidates)),
                     "success_per_initially_invalid": len(successful) / len(initial_invalid)
                     if initial_invalid and not unknown
                     else None,
@@ -226,11 +230,10 @@ def analyze(evaluation: dict[str, Any]) -> dict[str, Any]:
         repair_success = [
             r
             for r in repairs
-            if not r.get("used_fallback")
-            and r.get("final_validity") is not None
-            and r["final_validity"]["extractor_valid"]
+            if r.get("repair_outcome") in ("ordinary_repair", "safe_subset_repair")
         ]
-        repair_unknown = [r for r in repairs if r.get("final_validity") is None]
+        repair_unknown = [r for r in invalid
+                          if r.get("repair_outcome", "unavailable") == "unavailable"]
         channels[channel] = {
             "pass_at_k": by_stage,
             "validity": {s: _validity(channel_rows, s) for s in ("initial", "final")},
@@ -240,8 +243,13 @@ def analyze(evaluation: dict[str, Any]) -> dict[str, Any]:
                 "initially_invalid": len(invalid),
                 "repair_attempts": len(repairs),
                 "successful_repairs": len(repair_success),
-                "unsuccessful_repairs": len(repairs) - len(repair_success) - len(repair_unknown),
+                "unsuccessful_repairs": sum(
+                    r.get("repair_outcome") not in
+                    ("ordinary_repair", "safe_subset_repair", "unavailable", None)
+                    for r in repairs),
                 "repair_outcome_unavailable": len(repair_unknown),
+                "outcomes": dict(Counter(r.get("repair_outcome", "unavailable")
+                                         for r in channel_rows)),
                 "success_per_initially_invalid": len(repair_success) / len(invalid)
                 if invalid and not repair_unknown
                 else None,
