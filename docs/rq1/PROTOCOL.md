@@ -1,6 +1,6 @@
 # RQ1 pre-registered evaluation protocol
 
-**Status:** user-approved methodological rules with pending *runtime configuration values*. Follow this document for experiment design; [SPEC.md](SPEC.md) defines the feature, [PROJECT_DECISIONS.md](../../PROJECT_DECISIONS.md) gives rationale, [CONTEXT.md](../../CONTEXT.md) defines terms.  
+**Status:** user-approved methodological rules with pending *runtime configuration values*. Follow this document for experiment design; [SPEC.md](SPEC.md) defines the feature, [PROJECT_DECISIONS.md](../agent/PROJECT_DECISIONS.md) gives rationale, [CONTEXT.md](../agent/CONTEXT.md) defines terms.  
 **No implementation or live experiment is being executed during the documentation-only stage.**
 
 ## 1. Fixed source, inputs and leakage audit
@@ -47,7 +47,7 @@ Store append-only logical-request records with exact **slot ID**, call sequence,
 
 The original `ReplayLLMClient(match_by_prompt=True)` can reissue its final recorded answer for an exhausted repeated prompt. **For RQ1 use strictly ordered replay plus ledger-level expected slot/call counts and exhaustion checks**, and reject inconsistent prompt hashes, missing records, unexpected additional records and fake candidate identities. Repeated answers from *separate live calls* are legitimate, but replay is a verifier, not a source of extra candidates.
 
-Use existing `score_extraction_against_gold` and original `check_equivalence` semantics/timeout. A negative boolean is not enough to conclude non-equivalence: inspect `reason`, diagnostics and type/parse failures.
+Use existing `score_extraction_against_gold` and original `check_equivalence` semantics/timeout **without modifying the original Z3 approach**. First consult [KNOWN_DUALIFY_LIMITATIONS.md](../agent/KNOWN_DUALIFY_LIMITATIONS.md) if a baseline solver behavior seems incorrect; record its impact and report it to the supervisor rather than altering the oracle. A negative boolean is not enough to conclude non-equivalence: inspect `reason`, diagnostics and type/parse failures.
 
 Every completed candidate has one adjudicated label:
 - `equivalent`: decisively equivalent to original gold in the formal fragment;

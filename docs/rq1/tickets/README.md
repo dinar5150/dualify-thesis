@@ -1,6 +1,6 @@
 # RQ1 implementation tickets
 
-**Status:** documented and ready for future agent assignment; **none started**. The user approved the six-ticket plan, but the current task ends after writing and checking Markdown. See [../SPEC.md](../SPEC.md), [../PROTOCOL.md](../PROTOCOL.md), [../../../AGENTS.md](../../../AGENTS.md).
+**Status:** documented and ready for future agent assignment; **none started**. The user approved the six-ticket plan, but the current task ends after writing and checking Markdown. See [../SPEC.md](../SPEC.md), [../PROTOCOL.md](../PROTOCOL.md), [../../../AGENTS.md](../../agent/AGENT_GUIDE.md).
 
 ## Dependency graph
 
@@ -33,7 +33,7 @@ Every ticket contains **Problem**, **Known facts**, **Constraints**, **Hypothese
 
 ## Procedure for an agent working on one ticket
 
-1. Read the ticket's blockers and the applicable spec/protocol, then inspect original upstream-compatible code at the relevant integration seam.
+1. Read the ticket's blockers, the applicable spec/protocol and [original-method limitations](../../agent/KNOWN_DUALIFY_LIMITATIONS.md) before examining original upstream behavior. Reuse the existing diagnosis and preserve the original Z3 oracle.
 2. Write the smallest full path to a verifiable outcome. Preserve baseline prompts/repairs/solver and existing tests.
 3. Run mock/offline tests first, then permitted live checks only if the ticket and current user authorization allow them.
 4. Attach commands, outputs, diffs and known limitations; update the bug register and decision register only for actually substantiated changes.

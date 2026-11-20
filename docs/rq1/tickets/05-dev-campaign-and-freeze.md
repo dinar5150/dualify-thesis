@@ -20,7 +20,7 @@ Unit tests can confirm interfaces but not the stability of a real Groq-run campa
 - Run the predeclared complete dev plan with bounded API usage; stop after cap/exhaustion, no repeated sampling until “good-looking” metrics.
 - Record real Groq status bodies, distinguish provider out-of-service/429/5xx from generated JSON-format errors and terminal client config failures. Resume only incomplete infrastructure slots. Record latency including wait/backoff.
 - Verify strict replay, score offline and review benchmark leakage. Check behavior against known bugs.
-- Fix only objective correctness/integrity issues revealed on dev. Document changes, rerun relevant tests and justified dev checks, and update [../../../KNOWN_BUGS.md](../../../KNOWN_BUGS.md). No performance chasing, added temperature sweep, extra k, or unplanned fine-tuning.
+- Fix only objective correctness/integrity issues revealed on dev. Document changes, rerun relevant tests and justified dev checks, and update [../../../KNOWN_BUGS.md](../../agent/KNOWN_BUGS.md). No performance chasing, added temperature sweep, extra k, or unplanned fine-tuning.
 - Use an **independent reviewer/subagent when available**, supplied only with frozen protocol, diff, fixtures and artifacts; if unavailable, make limitations explicit and perform a structured separate review.
 - Freeze code revision, manifest, full run config and scoring criteria after acceptance. The held-out test remains inaccessible in this ticket.
 

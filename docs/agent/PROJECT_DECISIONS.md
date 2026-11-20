@@ -1,6 +1,6 @@
 # Project decisions — RQ1
 
-**State:** user-approved research design, 2026-11-20. **Baseline:** original `timur-harin/dualify` commit `7ffd1ae37822096d5b7b573785ee46e877903185`. This file is the human-facing rationale register; see [docs/rq1/SPEC.md](docs/rq1/SPEC.md) for desired behavior and [docs/rq1/PROTOCOL.md](docs/rq1/PROTOCOL.md) for authoritative experiment rules.
+**State:** user-approved research design, 2026-11-20. **Baseline:** original `timur-harin/dualify` commit `7ffd1ae37822096d5b7b573785ee46e877903185`. This file is the human-facing rationale register; see [docs/rq1/SPEC.md](../rq1/SPEC.md) for desired behavior and [docs/rq1/PROTOCOL.md](../rq1/PROTOCOL.md) for authoritative experiment rules.
 
 An **approved** decision may be changed only with a dated amendment stating the reason and affected measures. Such amendments must be approved **before** a held-out evaluation and reflected in both the spec and relevant tickets. Record observations, not retroactive rationalizations.
 
@@ -32,6 +32,8 @@ An **approved** decision may be changed only with a dated amendment stating the 
 **A03 — Primary analysis unit (planned).** Macro-average by benchmark task, separately for channels, then estimate paired coverage gain and its interval using task/group-aware resampling. Counts and group composition are disclosed because held-out data are small.
 
 **A04 — Source and scope (approved for this documentation branch).** Branch directly from the current original upstream commit in `dinar5150/dualify-thesis`; earlier fork branches are untrusted draft work and are outside the design source. This stage writes *Markdown only* and stops after review. It does not implement code or make live LLM requests.
+
+**A05 — Original Z3 approach is frozen (approved, 2026-11-20).** Preserve upstream solver/checker semantics, 5-second timeout policy, formula fragment, reference contracts and native extraction/repair behavior for the RQ1 experiment. Record original-paper/method bugs and limits in [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md), with evidence and research caveats. Do not repeatedly diagnose recorded baseline behavior or silently fix it. Any change to the original method requires a distinct, explicit methodological approval (and is outside the existing tickets).
 
 ## Unresolved run-time configuration (not decisions yet)
 

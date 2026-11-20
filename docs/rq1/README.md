@@ -6,10 +6,11 @@
 1. [SPEC.md](SPEC.md) — problem, solution, user stories, scope and testing decisions (**what** must be true).
 2. [PROTOCOL.md](PROTOCOL.md) — dataset, sampling, retry and oracle rules, frozen reporting requirements (**how** the study is measured).
 3. [tickets/README.md](tickets/README.md) — dependency graph and six independently verifiable tasks (**where** to work next).
-4. [../../PROJECT_DECISIONS.md](../../PROJECT_DECISIONS.md) — user-approved trade-offs and pending configuration choices (**why**).
-5. [../../CONTEXT.md](../../CONTEXT.md) — precise research terminology.
-6. [../../KNOWN_BUGS.md](../../KNOWN_BUGS.md) — confirmed technical hazards and outstanding issues.
-7. [../../AGENTS.md](../../AGENTS.md) — agent workflow and stopping rules.
+4. [../../PROJECT_DECISIONS.md](../agent/PROJECT_DECISIONS.md) — user-approved trade-offs and pending configuration choices (**why**).
+5. [../../CONTEXT.md](../agent/CONTEXT.md) — precise research terminology.
+6. [../agent/KNOWN_DUALIFY_LIMITATIONS.md](../agent/KNOWN_DUALIFY_LIMITATIONS.md) — established limitations and future reported bugs of original Dualify; frozen Z3 behavior.
+8. [../../KNOWN_BUGS.md](../agent/KNOWN_BUGS.md) — confirmed technical hazards and outstanding issues.
+7. [../../AGENTS.md](../agent/AGENT_GUIDE.md) — agent workflow and stopping rules.
 
 ## Stage gates
 

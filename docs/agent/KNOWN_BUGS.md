@@ -1,5 +1,7 @@
 # Known bugs, verified hazards and resolutions
 
+This is the active register of **RQ1 extension and integration defects/hazards**. Original Dualify scientific/Z3 limitations are recorded separately in [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md). A known upstream behavior may be relevant here as an RQ1 integration risk, but does not authorize changing the original method.
+
 This is the active defect register. A **verified hazard** is a behavior observed in upstream source that could invalidate RQ1 if used incorrectly; it is not necessarily a defect in the original Dualify product. An **unverified risk** is not labeled a confirmed bug. No RQ1 implementation fixes have been made as part of the documentation phase.
 
 | ID | State | Category | Location / evidence | Impact on RQ1 | Mitigation / resolution |

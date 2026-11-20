@@ -16,7 +16,7 @@ A raw boolean gold score hides the difference between a decisively incorrect con
 
 ## Constraints
 - Score **only** fully completed, integrity-verified pools from Ticket 03. Incomplete campaigns fail, not shrink n.
-- Invoke the existing gold scorer; preserve original Z3 timeout and formula fragment semantics. No invented oracle, new solver algorithm or LLM judge.
+- Invoke the existing gold scorer; preserve original Z3 timeout, checker and formula fragment semantics. Consult [original-method limitations](../../agent/KNOWN_DUALIFY_LIMITATIONS.md) and report baseline defects without modifying Z3. No invented oracle, new solver algorithm or LLM judge.
 - Classify each candidate as `equivalent`, `non_equivalent`, `invalid`, `inconclusive`, or `unclassified/blocked` if native evidence is insufficient.
 - Compute `low(k)=1−C(4−c,k)/C(4,k)` and `high(k)=1−C(4−c−u,k)/C(4,k)`. Reject impossible counts and preserve diagnostics.
 - Macro-average per task/channel; use group-aware **paired** bootstrap intervals with recorded random seed, effective groups and iteration count.
