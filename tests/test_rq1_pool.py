@@ -97,6 +97,19 @@ def test_pool_requires_positive_treatment_temperature(tmp_path: Path) -> None:
         )
 
 
+def test_completed_pool_rejects_changed_sampling_configuration(tmp_path: Path) -> None:
+    _record_pool(tmp_path)
+
+    with pytest.raises(PoolIntegrityError, match="[Кк]онфигурац"):
+        run_candidate_pool(
+            FakeClient([]),
+            case=benchmark_case(),
+            artifact_dir=tmp_path,
+            model="fake-model",
+            treatment_temperature=0.8,
+        )
+
+
 def test_unresolved_infrastructure_failure_blocks_campaign_at_same_slot(
     tmp_path: Path,
 ) -> None:
@@ -115,6 +128,9 @@ def test_unresolved_infrastructure_failure_blocks_campaign_at_same_slot(
     assert records[0].status == "incomplete"
     assert list(tmp_path.glob("*/result.json")) == []
     assert len(client.calls) == 1
+    transcript = next(tmp_path.glob("*/transcript.jsonl"))
+    events = [json.loads(line) for line in transcript.read_text().splitlines()]
+    assert events[1]["error_type"] == "Timeout"
 
 
 def test_interrupted_slot_resumes_saved_prefix_and_completed_pool_is_idempotent(
@@ -270,6 +286,27 @@ def test_strict_replay_rejects_candidate_metadata_mismatch(tmp_path: Path) -> No
 def test_degraded_but_completed_output_is_saved_and_replayed(tmp_path: Path) -> None:
     records = run_candidate_pool(
         FakeClient([INVALID_RESPONSE] * 3 + [VALID_RESPONSE] * 9),
+        case=benchmark_case(),
+        artifact_dir=tmp_path,
+        model="fake-model",
+        treatment_temperature=0.7,
+    )
+
+    assert records[0].status == "completed"
+    assert records[0].extraction.degraded is True
+    replayed = verify_candidate_pool(
+        artifact_dir=tmp_path,
+        case=benchmark_case(),
+        model="fake-model",
+        treatment_temperature=0.7,
+    )
+    assert replayed[0].extraction == records[0].extraction
+
+
+def test_model_output_exceptions_are_saved_and_replayed(tmp_path: Path) -> None:
+    invalid_json = json.JSONDecodeError("bad JSON", "not-json", 0)
+    records = run_candidate_pool(
+        FakeClient([invalid_json] * 3 + [VALID_RESPONSE] * 9),
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
