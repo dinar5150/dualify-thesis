@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "prepare_rq1_split.py"
 
 
+# Тестируем именно команду, которую будет запускать исследователь,
+# а не только внутреннюю функцию создания manifest.
 def _run(output: Path, *extra: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [
@@ -31,6 +33,7 @@ def _run(output: Path, *extra: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+# Один и тот же seed обязан давать тот же файл и ровно 10 dev / 30 test.
 def test_cli_generates_stable_complete_manifest(tmp_path: Path) -> None:
     first = tmp_path / "first.json"
     second = tmp_path / "second.json"
@@ -49,6 +52,7 @@ def test_cli_generates_stable_complete_manifest(tmp_path: Path) -> None:
     assert sum(case["split"] == "dev" for case in cases) == 10
     assert sum(case["split"] == "test" for case in cases) == 30
 
+    # У каждой задачи есть соответствующий gold; хеши должны совпадать с файлами.
     for case in cases:
         input_path = ROOT / case["input_path"]
         gold_path = ROOT / case["gold_path"]
@@ -57,6 +61,8 @@ def test_cli_generates_stable_complete_manifest(tmp_path: Path) -> None:
         assert case["gold_sha256"] == hashlib.sha256(gold_path.read_bytes()).hexdigest()
 
 
+# Подменяем сохранённый хеш: --check должен заметить изменение,
+# даже если все имена и количество примеров остались прежними.
 def test_check_rejects_corrupted_hash(tmp_path: Path) -> None:
     output = tmp_path / "manifest.json"
     assert _run(output).returncode == 0
@@ -70,6 +76,7 @@ def test_check_rejects_corrupted_hash(tmp_path: Path) -> None:
     assert "does not match" in result.stderr
 
 
+# Портим копии датасета, чтобы тесты не меняли оригинальные 40 примеров.
 def _copy_benchmark(tmp_path: Path) -> tuple[Path, Path]:
     input_dir = tmp_path / "inputs"
     gold_dir = tmp_path / "gold"
@@ -78,6 +85,7 @@ def _copy_benchmark(tmp_path: Path) -> tuple[Path, Path]:
     return input_dir, gold_dir
 
 
+# Если для исходного кода нет gold, разбиение продолжать нельзя.
 def test_cli_rejects_missing_pair(tmp_path: Path) -> None:
     input_dir, gold_dir = _copy_benchmark(tmp_path)
     next(gold_dir.glob("*.yaml")).unlink()
@@ -94,6 +102,7 @@ def test_cli_rejects_missing_pair(tmp_path: Path) -> None:
     assert "input/gold filenames differ" in result.stderr
 
 
+# Даже разные имена файлов не должны скрывать повторяющийся benchmark_id.
 def test_cli_rejects_duplicate_benchmark_id(tmp_path: Path) -> None:
     input_dir, gold_dir = _copy_benchmark(tmp_path)
     first, second = sorted(gold_dir.glob("*.yaml"))[:2]
