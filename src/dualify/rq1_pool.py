@@ -33,6 +33,7 @@ def run_candidate_pool(
     case: BenchmarkCase,
     artifact_dir: Path,
     model: str,
+    provider: str,
     treatment_temperature: float,
     max_transient_retries: int = 0,
 ) -> list[AttemptRecord]:
@@ -44,6 +45,7 @@ def run_candidate_pool(
         artifact_dir,
         case=case,
         model=model,
+        provider=provider,
         treatment_temperature=treatment_temperature,
         max_transient_retries=max_transient_retries,
     )
@@ -72,6 +74,7 @@ def run_candidate_pool(
             transcript_path,
             slot_id=slot_id,
             model=model,
+            provider=provider,
             initial_temperature=temperature,
             max_transient_retries=max_transient_retries,
         )
@@ -103,6 +106,7 @@ def verify_candidate_pool(
     artifact_dir: Path,
     case: BenchmarkCase,
     model: str,
+    provider: str,
     treatment_temperature: float,
 ) -> list[AttemptRecord]:
     """Строго воспроизводит все slots и отвергает неполные артефакты."""
@@ -110,6 +114,7 @@ def verify_candidate_pool(
         artifact_dir,
         case=case,
         model=model,
+        provider=provider,
         treatment_temperature=treatment_temperature,
         max_transient_retries=None,
     )
@@ -142,7 +147,7 @@ def verify_candidate_pool(
             max_transient_retries=pool_config["max_transient_retries"],
         )
         transcript_path = result_paths[slot_id].parent / "transcript.jsonl"
-        replay_client = _StrictReplayClient(transcript_path, expected)
+        replay_client = _StrictReplayClient(transcript_path, expected, provider)
         actual = run_extraction_attempt(
             replay_client,
             slot_id=slot_id,
@@ -223,6 +228,7 @@ class _PoolTranscriptClient:
         *,
         slot_id: str,
         model: str,
+        provider: str,
         initial_temperature: float,
         max_transient_retries: int,
     ) -> None:
@@ -232,6 +238,7 @@ class _PoolTranscriptClient:
             "version": 1,
             "slot_id": slot_id,
             "model": model,
+            "provider": provider,
             "initial_temperature": initial_temperature,
             "repair_temperature": 0.0,
             "max_transient_retries": max_transient_retries,
@@ -249,25 +256,36 @@ class _PoolTranscriptClient:
 
         previous_run = max((event["run_index"] for event in events), default=-1)
         self.run_index = previous_run + 1
-        self.cached_responses = [
-            event
-            for event in events
-            if event["run_index"] == previous_run and "response" in event
+        previous_events = [
+            event for event in events if event["run_index"] == previous_run
         ]
+        last_response = max(
+            (index for index, event in enumerate(previous_events) if "response" in event),
+            default=-1,
+        )
+        self.cached_events = previous_events[: last_response + 1]
         self.cached_cursor = 0
         self.next_event_index = len(events)
         self._handle = path.open("a", encoding="utf-8", buffering=1)
 
     def generate_json(self, prompt: str, temperature: float = 0.0) -> dict:
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
-        if self.cached_cursor < len(self.cached_responses):
-            cached = self.cached_responses[self.cached_cursor]
+        if self.cached_cursor < len(self.cached_events):
+            cached = self.cached_events[self.cached_cursor]
             if (
                 cached.get("prompt_sha256") != prompt_hash
                 or cached.get("temperature") != temperature
             ):
                 raise PoolIntegrityError(f"Slot {self.path.parent.name}: resume prefix mismatch")
             self.cached_cursor += 1
+            if "error_type" in cached:
+                error = {
+                    "error_type": cached["error_type"],
+                    "category": cached["category"],
+                    "status_code": cached.get("status_code"),
+                }
+                self._append_event(prompt, temperature, error=error)
+                raise _exception_from_event(cached)
             response = cached["response"]
             self._append_event(prompt, temperature, response=response)
             return deepcopy(response)
@@ -322,13 +340,14 @@ class _PoolTranscriptClient:
 class _StrictReplayClient:
     """Воспроизводит последний полный run, включая записанные ошибки."""
 
-    def __init__(self, path: Path, expected: AttemptRecord) -> None:
+    def __init__(self, path: Path, expected: AttemptRecord, provider: str) -> None:
         self.path = path
         metadata, all_events = _load_transcript(path)
         expected_metadata = {
             "version": 1,
             "slot_id": expected.slot_id,
             "model": expected.model,
+            "provider": provider,
             "initial_temperature": expected.initial_temperature,
             "repair_temperature": expected.repair_temperature,
             "max_transient_retries": expected.max_transient_retries,
@@ -337,7 +356,9 @@ class _StrictReplayClient:
             raise PoolIntegrityError(f"Slot {expected.slot_id}: transcript metadata mismatch")
         final_run = max((event["run_index"] for event in all_events), default=-1)
         self.events = [event for event in all_events if event["run_index"] == final_run]
-        self.expected_responses = [call.response for call in expected.calls if call.response]
+        self.expected_responses = [
+            call.response for call in expected.calls if call.response is not None
+        ]
         self.expected_errors = expected.errors
         self.cursor = 0
         self.response_cursor = 0
@@ -463,6 +484,7 @@ def _ensure_pool_config(
     *,
     case: BenchmarkCase,
     model: str,
+    provider: str,
     treatment_temperature: float,
     max_transient_retries: int | None,
 ) -> dict:
@@ -470,6 +492,7 @@ def _ensure_pool_config(
     expected = {
         "benchmark_id": case.benchmark_id,
         "model": model,
+        "provider": provider,
         "treatment_temperature": treatment_temperature,
     }
     if max_transient_retries is not None:

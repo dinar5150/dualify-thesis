@@ -73,6 +73,7 @@ def test_pool_records_baseline_and_four_treatment_slots_per_channel(
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -93,6 +94,7 @@ def test_pool_requires_positive_treatment_temperature(tmp_path: Path) -> None:
             case=benchmark_case(),
             artifact_dir=tmp_path,
             model="fake-model",
+            provider="fake",
             treatment_temperature=0.0,
         )
 
@@ -106,6 +108,7 @@ def test_completed_pool_rejects_changed_sampling_configuration(tmp_path: Path) -
             case=benchmark_case(),
             artifact_dir=tmp_path,
             model="fake-model",
+            provider="fake",
             treatment_temperature=0.8,
         )
 
@@ -120,6 +123,7 @@ def test_unresolved_infrastructure_failure_blocks_campaign_at_same_slot(
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -146,6 +150,7 @@ def test_interrupted_slot_resumes_saved_prefix_and_completed_pool_is_idempotent(
             case=benchmark_case(),
             artifact_dir=tmp_path,
             model="fake-model",
+            provider="fake",
             treatment_temperature=0.7,
         )
 
@@ -157,6 +162,7 @@ def test_interrupted_slot_resumes_saved_prefix_and_completed_pool_is_idempotent(
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -173,6 +179,7 @@ def test_interrupted_slot_resumes_saved_prefix_and_completed_pool_is_idempotent(
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -186,6 +193,7 @@ def test_strict_replay_reproduces_complete_pool_without_network(tmp_path: Path) 
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -193,6 +201,7 @@ def test_strict_replay_reproduces_complete_pool_without_network(tmp_path: Path) 
         artifact_dir=tmp_path,
         case=benchmark_case(),
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -208,6 +217,7 @@ def _record_pool(path: Path) -> None:
         case=benchmark_case(),
         artifact_dir=path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -217,6 +227,7 @@ def _verify_pool(path: Path) -> None:
         artifact_dir=path,
         case=benchmark_case(),
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -289,6 +300,7 @@ def test_degraded_but_completed_output_is_saved_and_replayed(tmp_path: Path) -> 
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -298,6 +310,7 @@ def test_degraded_but_completed_output_is_saved_and_replayed(tmp_path: Path) -> 
         artifact_dir=tmp_path,
         case=benchmark_case(),
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
     assert replayed[0].extraction == records[0].extraction
@@ -310,6 +323,7 @@ def test_model_output_exceptions_are_saved_and_replayed(tmp_path: Path) -> None:
         case=benchmark_case(),
         artifact_dir=tmp_path,
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
 
@@ -319,6 +333,67 @@ def test_model_output_exceptions_are_saved_and_replayed(tmp_path: Path) -> None:
         artifact_dir=tmp_path,
         case=benchmark_case(),
         model="fake-model",
+        provider="fake",
         treatment_temperature=0.7,
     )
     assert replayed[0].extraction == records[0].extraction
+
+
+def test_empty_json_response_is_saved_and_replayed(tmp_path: Path) -> None:
+    records = run_candidate_pool(
+        FakeClient([{}, VALID_RESPONSE] + [VALID_RESPONSE] * 9),
+        case=benchmark_case(),
+        artifact_dir=tmp_path,
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+    )
+
+    assert records[0].status == "completed"
+    replayed = verify_candidate_pool(
+        artifact_dir=tmp_path,
+        case=benchmark_case(),
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+    )
+    assert replayed[0].extraction == records[0].extraction
+
+
+def test_resume_keeps_retries_before_successful_prefix(tmp_path: Path) -> None:
+    first_client = FakeClient(
+        [requests.Timeout("temporary"), INVALID_RESPONSE, KeyboardInterrupt()]
+    )
+    with contextlib.suppress(KeyboardInterrupt):
+        run_candidate_pool(
+            first_client,
+            case=benchmark_case(),
+            artifact_dir=tmp_path,
+            model="fake-model",
+            provider="fake",
+            treatment_temperature=0.7,
+            max_transient_retries=1,
+        )
+
+    records = run_candidate_pool(
+        FakeClient([VALID_RESPONSE] * 10),
+        case=benchmark_case(),
+        artifact_dir=tmp_path,
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+        max_transient_retries=1,
+    )
+
+    assert records[0].calls[0].dispatch_count == 2
+    assert [error.category for error in records[0].errors] == [
+        "transient_infrastructure"
+    ]
+    replayed = verify_candidate_pool(
+        artifact_dir=tmp_path,
+        case=benchmark_case(),
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+    )
+    assert replayed[0].calls[0].dispatch_count == 2

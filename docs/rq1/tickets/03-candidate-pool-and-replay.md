@@ -50,7 +50,8 @@
   сохранённый transcript prefix и дописывает только недостающие вызовы. Незавершённая
   инфраструктурная ошибка останавливает campaign на текущем slot. Конфигурация пула и
   каждого slot проверяется до resume, а transcript append-only сохраняет как ответы, так
-  и классы ошибок предыдущих запусков.
+  и классы ошибок предыдущих запусков. В metadata фиксируются provider, model и sampling
+  settings; retry-события успешного префикса переносятся в финальный replay run.
 - `verify_candidate_pool` последовательно воспроизводит pool offline и проверяет slot IDs,
   prompt hashes, температуры, порядок и количество вызовов, identity ответов, финальный
   native result и полное расходование transcript.
