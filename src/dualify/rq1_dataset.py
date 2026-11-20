@@ -46,14 +46,15 @@ def build_manifest(root: Path, *, seed: int = DEFAULT_SEED) -> dict[str, Any]:
         reference = gold_dir / f"{stem}.yaml"
         if stem not in by_stem or not source.is_file() or not reference.is_file():
             raise ValueError(f"Missing unique reference/input for {case.benchmark_id}: {stem}")
-        if case.benchmark_id in seen:
-            raise ValueError(f"Duplicate benchmark ID: {case.benchmark_id}")
-        seen.add(case.benchmark_id)
+        if stem in seen:
+            raise ValueError(f"Duplicate source stem: {stem}")
+        seen.add(stem)
         raw_gold = yaml.safe_load(reference.read_text(encoding="utf-8"))
         text = source.read_text(encoding="utf-8")
         records.append(
             {
-                "benchmark_id": case.benchmark_id,
+                "benchmark_id": stem,
+                "qualname": case.qualname,
                 "input_path": source.relative_to(root).as_posix(),
                 "gold_path": reference.relative_to(root).as_posix(),
                 "input_sha256": _sha(source),
