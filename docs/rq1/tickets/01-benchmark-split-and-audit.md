@@ -1,6 +1,6 @@
 # 01 — Зафиксировать оригинальный benchmark и провести аудит утечек
 
-**Статус:** ready-for-agent (НЕ НАЧАТ)  
+**Статус:** `SPLIT_FROZEN` (выполнен 2026-11-20)
 **Blocked by:** нет — первый незаблокированный тикет.  
 **Результат:** воспроизводимый и проверенный manifest 10 dev / 30 test и полный аудит рисков 40 оригинальных примеров benchmark, без подключения к Groq.
 
@@ -32,12 +32,20 @@
 - Наблюдаемый статус `SPLIT_FROZEN`, если все проверки пройдены, либо `BLOCKED` с точной причиной.
 
 ## Acceptance criteria
-- [ ] На чистом checkout ветки от оригинального upstream повторное выполнение с фиксированным seed воспроизводит тот же manifest и hashes.
-- [ ] Ровно 40 уникальных задач; ровно 10 dev / 30 test; никакая группа не разделена; каждому входу соответствует ровно один gold.
-- [ ] Аудит содержит case-level аннотации, группы похожих функций, слабые описания, происхождение и quality metadata.
-- [ ] Тесты отвергают отсутствующие/повторные IDs, drift source, неправильные hashes и близкие функции по разные стороны split.
-- [ ] При выполнении **ноль** live LLM requests; исходные benchmark/gold не изменяются.
-- [ ] В verification record записаны команды, версии, checksums и объяснения компромиссов.
+- [x] На чистом checkout ветки от оригинального upstream повторное выполнение с фиксированным seed воспроизводит тот же manifest и hashes.
+- [x] Ровно 40 уникальных задач; ровно 10 dev / 30 test; никакая группа не разделена; каждому входу соответствует ровно один gold.
+- [x] Аудит содержит case-level аннотации, группы похожих функций, слабые описания, происхождение и quality metadata.
+- [x] Тесты отвергают отсутствующие/повторные IDs, drift source, неправильные hashes и близкие функции по разные стороны split.
+- [x] При выполнении **ноль** live LLM requests; исходные benchmark/gold не изменяются.
+- [x] В verification record записаны команды, версии, checksums и объяснения компромиссов.
+
+## Frozen artifacts
+
+- Manifest: [`benchmark/rq1/manifest.json`](../../../benchmark/rq1/manifest.json)
+- Audit: [`benchmark/rq1/audit.json`](../../../benchmark/rq1/audit.json)
+- Group registry: [`benchmark/rq1_groups.yaml`](../../../benchmark/rq1_groups.yaml)
+- Reproduction notes: [`benchmark/rq1/README.md`](../../../benchmark/rq1/README.md)
+- Verification record: [`docs/rq1/TICKET_01_VERIFICATION.md`](../TICKET_01_VERIFICATION.md)
 
 ## Stopping criteria
 **STOP, когда:** manifest стабилен и проверен, аудит покрывает все 40 задач, positive/negative тесты проходят и результат отмечен как `SPLIT_FROZEN`. Если группировка или split несовместимы с требованиями, остановись со статусом `BLOCKED` и доказательствами. **Не переходи автоматически** к model sampling, подбору модели, refactoring или Ticket 02.

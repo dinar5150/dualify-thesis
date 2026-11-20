@@ -1,0 +1,1351 @@
+{
+  "cases": [
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::_assert_double_swap_does_nothing",
+      "embedded_formal_annotations": [
+        {
+          "kind": "post",
+          "line": 5,
+          "text": "post: _ == things"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "swap-family",
+      "group_reason": "AST-identical swap variants and the same-source double-swap identity check.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py__assert_double_swap_does_nothing.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py__assert_double_swap_does_nothing.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::double",
+      "embedded_formal_annotations": [
+        {
+          "kind": "post",
+          "line": 6,
+          "text": "post: len(_) == len(items) * 2"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "empty_profile"
+        ],
+        "needs_attention": false,
+        "profile_present": false,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "repeated-list",
+      "group_reason": "AST-identical double variants plus the differently named duplicate_list near-clone.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_double.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py_double.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::perimiter_length",
+      "embedded_formal_annotations": [
+        {
+          "kind": "pre",
+          "line": 4,
+          "text": "pre: l > 0 and w > 0"
+        },
+        {
+          "kind": "post",
+          "line": 7,
+          "text": "post: _ > l and _ > w"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "empty_profile"
+        ],
+        "needs_attention": false,
+        "profile_present": false,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "perimeter",
+      "group_reason": "AST-identical PEP316 and icontract variants.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_perimiter_length.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py_perimiter_length.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::swap",
+      "embedded_formal_annotations": [
+        {
+          "kind": "post",
+          "line": 6,
+          "text": "post: _[0] == things[1]"
+        },
+        {
+          "kind": "post",
+          "line": 7,
+          "text": "post: _[1] == things[0]"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "empty_profile"
+        ],
+        "needs_attention": false,
+        "profile_present": false,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "swap-family",
+      "group_reason": "AST-identical swap variants and the same-source double-swap identity check.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_swap.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py_swap.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::chess.py::ChessPiece::can_move_to",
+      "embedded_formal_annotations": [
+        {
+          "kind": "pre",
+          "line": 8,
+          "text": "pre: (0 <= x < 8) and (0 <= y < 8)"
+        },
+        {
+          "kind": "post",
+          "line": 11,
+          "text": "post: implies((x, y) == (self.x, self.y), not __return__)"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:crosshair_examples::PEP316::correct_code::chess.py::ChessPiece::can_move_to",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_chess.py_ChessPiece_can_move_to.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_chess.py_ChessPiece_can_move_to.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::numpy_examples.py::unit_normalize",
+      "embedded_formal_annotations": [
+        {
+          "kind": "pre",
+          "line": 12,
+          "text": "pre: a.size > 0"
+        },
+        {
+          "kind": "pre",
+          "line": 13,
+          "text": "pre: a.dtype == np.float64"
+        },
+        {
+          "kind": "pre",
+          "line": 14,
+          "text": "pre: np.ptp(a) > 0"
+        },
+        {
+          "kind": "post",
+          "line": 15,
+          "text": "post: np.max(_) <= 1.0"
+        },
+        {
+          "kind": "post",
+          "line": 16,
+          "text": "post: np.min(_) >= 0.0"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention",
+          "quantified_reference"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:crosshair_examples::PEP316::correct_code::numpy_examples.py::unit_normalize",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_numpy_examples.py_unit_normalize.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_numpy_examples.py_unit_normalize.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::showcase.py::even_fibb",
+      "embedded_formal_annotations": [
+        {
+          "kind": "pre",
+          "line": 14,
+          "text": "pre: n >= 0"
+        },
+        {
+          "kind": "post",
+          "line": 15,
+          "text": "post: len(__return__) == n"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": true,
+        "matched_reference_formulas": [
+          "n >= 0"
+        ]
+      },
+      "group_id": "even-fibonacci",
+      "group_reason": "AST-identical PEP316 and icontract variants.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_showcase.py_even_fibb.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_showcase.py_even_fibb.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::deal::correct_code::average.py::average",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "average-family",
+      "group_reason": "Semantically close average and weighted-average implementations from CrossHair examples.",
+      "informal_spec_quality": {
+        "reasons": [
+          "placeholder_behavior_of_description"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_deal_correct_code_average.py_average.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_deal_correct_code_average.py_average.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::arith.py::double",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "repeated-list",
+      "group_reason": "AST-identical double variants plus the differently named duplicate_list near-clone.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_double.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_arith.py_double.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::arith.py::perimiter_length",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "perimeter",
+      "group_reason": "AST-identical PEP316 and icontract variants.",
+      "informal_spec_quality": {
+        "reasons": [
+          "placeholder_behavior_of_description"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_perimiter_length.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_arith.py_perimiter_length.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::arith.py::swap",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "swap-family",
+      "group_reason": "AST-identical swap variants and the same-source double-swap identity check.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_swap.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_arith.py_swap.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::compute_grade",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 3,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "average-family",
+      "group_reason": "Semantically close average and weighted-average implementations from CrossHair examples.",
+      "informal_spec_quality": {
+        "reasons": [
+          "placeholder_behavior_of_description"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_compute_grade.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_compute_grade.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:crosshair_examples::icontract::correct_code::showcase.py::csv_first_column",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [
+          "placeholder_behavior_of_description"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_csv_first_column.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_csv_first_column.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::duplicate_list",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "empty_profile"
+        ],
+        "needs_attention": false,
+        "profile_present": false,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "repeated-list",
+      "group_reason": "AST-identical double variants plus the differently named duplicate_list near-clone.",
+      "informal_spec_quality": {
+        "reasons": [
+          "placeholder_behavior_of_description"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_duplicate_list.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_duplicate_list.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::even_fibb",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "even-fibonacci",
+      "group_reason": "AST-identical PEP316 and icontract variants.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_even_fibb.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_even_fibb.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::zip_exact",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "zip-family",
+      "group_reason": "zipped_pairs directly delegates to zip_exact and exposes the same pairwise zip behavior.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_zip_exact.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_zip_exact.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "empty_profile"
+        ],
+        "needs_attention": false,
+        "profile_present": false,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "zip-family",
+      "group_reason": "zipped_pairs directly delegates to zip_exact and exposes the same pairwise zip behavior.",
+      "informal_spec_quality": {
+        "reasons": [
+          "placeholder_behavior_of_description"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_zipped_pairs.yaml",
+        "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_zipped_pairs.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "crosshair_examples"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_10_adapter_array.py::compute_result",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_10_adapter_array.py::compute_result",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_10_adapter_array.py_compute_result.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_10_adapter_array.py_compute_result.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_10_adapter_array.py::parse",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_10_adapter_array.py::parse",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_10_adapter_array.py_parse.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_10_adapter_array.py_parse.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_11_seating_system.py::list_neighbourhood",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "empty_profile",
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": false,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_11_seating_system.py::list_neighbourhood",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_11_seating_system.py_list_neighbourhood.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_11_seating_system.py_list_neighbourhood.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::find_departure",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 3,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "shuttle-departure",
+      "group_reason": "find_departure directly uses next_departure from the same source task.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_find_departure.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_find_departure.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "shuttle-departure",
+      "group_reason": "find_departure directly uses next_departure from the same source task.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_next_departure.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_next_departure.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_17_conway_cubes.py::count_active",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_17_conway_cubes.py::count_active",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_17_conway_cubes.py_count_active.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_17_conway_cubes.py_count_active.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention",
+          "partial_reference"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 3,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_18_operation_order.py_extract_expression.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_18_operation_order.py_extract_expression.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_1_report_repair.py::find_pair_with_sum",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 0,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_1_report_repair.py::find_pair_with_sum",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_1_report_repair.py_find_pair_with_sum.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_1_report_repair.py_find_pair_with_sum.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_20_jurassic_jigsaw.py::reverse_side",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_20_jurassic_jigsaw.py::reverse_side",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_20_jurassic_jigsaw.py_reverse_side.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_20_jurassic_jigsaw.py_reverse_side.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_22_crab_combat.py::compute_score",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention",
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_22_crab_combat.py::compute_score",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_22_crab_combat.py_compute_score.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_22_crab_combat.py_compute_score.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_25_combo_breaker.py::transform",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention",
+          "partial_reference"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_25_combo_breaker.py::transform",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [
+          "algorithm_behavior_not_described"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_25_combo_breaker.py_transform.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_25_combo_breaker.py_transform.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_2_password_philosophy.py::verify",
+      "embedded_formal_annotations": [
+        {
+          "kind": "formal_directive",
+          "line": 4,
+          "text": "# crosshair: on"
+        }
+      ],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 4,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_2_password_philosophy.py::verify",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [
+          "constraints_not_described"
+        ],
+        "too_general": true
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_2_password_philosophy.py_verify.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_2_password_philosophy.py_verify.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::count_trees",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "needs_attention",
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": true,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 4,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::count_trees",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_count_trees.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_count_trees.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_parse_input.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_parse_input.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::apply",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "binary-boarding",
+      "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_apply.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_apply.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "binary-boarding",
+      "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_column.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_column.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_id",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "binary-boarding",
+      "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_id.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_id.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "binary-boarding",
+      "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row_and_column",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference",
+          "partial_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "binary-boarding",
+      "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row_and_column.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row_and_column.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "quantified_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 2,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_9_encoding_error.py_solve.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_9_encoding_error.py_solve.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::ethz_eprog_2019::exercise_03::problem_01.py::compute",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_03::problem_01.py::compute",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_03_problem_01.py_compute.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_ethz_eprog_2019_exercise_03_problem_01.py_compute.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::ethz_eprog_2019::exercise_05::problem_04.py::Entry::duration",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 1,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_05::problem_04.py::Entry::duration",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_05_problem_04.py_Entry_duration.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_ethz_eprog_2019_exercise_05_problem_04.py_Entry_duration.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate",
+      "embedded_formal_annotations": [],
+      "gold_quality": {
+        "in_fragment": true,
+        "limitations": [
+          "partial_reference"
+        ],
+        "needs_attention": false,
+        "profile_present": true,
+        "reference_post_present": true,
+        "reference_pre_count": 3,
+        "status": "confirmed"
+      },
+      "gold_text_in_generation_input": {
+        "exact_match": false,
+        "matched_reference_formulas": []
+      },
+      "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate",
+      "group_reason": "No close or dependent function was identified in the 40-case corpus.",
+      "informal_spec_quality": {
+        "reasons": [],
+        "too_general": false
+      },
+      "provenance": {
+        "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_08_problem_05.py_simulate.yaml",
+        "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_ethz_eprog_2019_exercise_08_problem_05.py_simulate.py",
+        "pairing_rule": "identical filesystem-safe benchmark stem",
+        "source_corpus": "python_by_contract"
+      }
+    }
+  ],
+  "schema_version": 1,
+  "summary": {
+    "case_count": 40,
+    "embedded_formal_annotation_case_count": 8,
+    "exact_gold_text_overlap_case_count": 1,
+    "gold_readme_count_discrepancy": true,
+    "gold_readme_needs_attention_declared": 8,
+    "needs_attention_count": 7,
+    "source_corpus_counts": {
+      "crosshair_examples": 17,
+      "python_by_contract": 23
+    },
+    "weak_informal_spec_case_count": 8
+  }
+}

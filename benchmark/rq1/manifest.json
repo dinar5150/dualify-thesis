@@ -1,0 +1,469 @@
+{
+  "cases": [
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::_assert_double_swap_does_nothing",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py__assert_double_swap_does_nothing.yaml",
+      "gold_sha256": "47ae7cc3dd5449bcbbaba21afc10312af270e563b379e51f95b9409b71fb8539",
+      "group_id": "swap-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py__assert_double_swap_does_nothing.py",
+      "input_sha256": "b21c51454c6f2e7690e3341d6c7aa7d3d23853aa0f06dc93a17f43b0f2cffab5",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::double",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_double.yaml",
+      "gold_sha256": "24db0607c8f5bc77014c3aba93c387ebc6a11d82631700b0897fbf7564b50795",
+      "group_id": "repeated-list",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py_double.py",
+      "input_sha256": "33d4acd5b04ca8064aa2fb44d82735fae0b27463f2c703ea92df20eae8b59b28",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::perimiter_length",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_perimiter_length.yaml",
+      "gold_sha256": "ab4ed3dc65d9f64182d63566e6ff1b930fb66d1780b6c371debdd3dfd0dd092f",
+      "group_id": "perimeter",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py_perimiter_length.py",
+      "input_sha256": "911535d3acfeeb88b8809e364e544ed0c0ebb788fbc344cdd5b98bb13238fd5f",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::arith.py::swap",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_swap.yaml",
+      "gold_sha256": "f9cec96e149e83dd5f31cf6aa923fcbcd0499a17abdd81c6377fd6d6182c2927",
+      "group_id": "swap-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_arith.py_swap.py",
+      "input_sha256": "67ce8504f20a669de06b72cc146043b157f310b9084e57511b3669d0cca598f6",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::chess.py::ChessPiece::can_move_to",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_chess.py_ChessPiece_can_move_to.yaml",
+      "gold_sha256": "08f5fd3ac3dff3a5b348c4bae0ff82a9f16390e235af22626b51dfc34a9199b9",
+      "group_id": "singleton:crosshair_examples::PEP316::correct_code::chess.py::ChessPiece::can_move_to",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_chess.py_ChessPiece_can_move_to.py",
+      "input_sha256": "4efa2dccdbdd90d3ace321c4b8496d604ff90997c96719d1cffc4188b014a981",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::numpy_examples.py::unit_normalize",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_numpy_examples.py_unit_normalize.yaml",
+      "gold_sha256": "37a02ca2d20202a2dbc22a99b4dc57a19597ed7285efb697f3b9be1880f740e3",
+      "group_id": "singleton:crosshair_examples::PEP316::correct_code::numpy_examples.py::unit_normalize",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_numpy_examples.py_unit_normalize.py",
+      "input_sha256": "dc19fb7a581ef804eb3dcc31c0fc3dd247418f337ab4c2c13a281924b2a6b10d",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::PEP316::correct_code::showcase.py::even_fibb",
+      "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_showcase.py_even_fibb.yaml",
+      "gold_sha256": "a83d2b89a8e82ad61a942c5a036ef1253d921c8ee00b06123713720d1c7d3ce0",
+      "group_id": "even-fibonacci",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_PEP316_correct_code_showcase.py_even_fibb.py",
+      "input_sha256": "8f59130e1f3283b246a8a1cf42d38694a28f063a8864dcbbde4f46c8f93414f9",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::deal::correct_code::average.py::average",
+      "gold_path": "benchmark/lifted/crosshair_examples_deal_correct_code_average.py_average.yaml",
+      "gold_sha256": "bd02a96b00fb2eb3bdf43099250aefe79dd20545b5f1f2fef8a8ed1fef078457",
+      "group_id": "average-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_deal_correct_code_average.py_average.py",
+      "input_sha256": "d07875a5a9fde6474f7bd0471120cc21c4c1568baa3c2b9ebacc8d0e1b525ca0",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::arith.py::double",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_double.yaml",
+      "gold_sha256": "9c7869356a574511a9745d162cbc2d1e176c775818100916a1f5ed24171369ad",
+      "group_id": "repeated-list",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_arith.py_double.py",
+      "input_sha256": "62717244331cf389d874c617468b69b64fe375fbed46ffa56886f7871b48d0a7",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::arith.py::perimiter_length",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_perimiter_length.yaml",
+      "gold_sha256": "b2f372e3ceb1a276b1202cdb29043d6e8f02ed931be9a6d6f03c8cbf74fce290",
+      "group_id": "perimeter",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_arith.py_perimiter_length.py",
+      "input_sha256": "4c76a2363316c5bda6cba038ce0b9985a3d8d3d0d1039ee06b908790a2602a35",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::arith.py::swap",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_swap.yaml",
+      "gold_sha256": "b9a03225b9e6c54300665cfb7bb6d77fcc11ae83c26bde30dd49e97619bd33f3",
+      "group_id": "swap-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_arith.py_swap.py",
+      "input_sha256": "67fba9d28eae533b8486b61b738dcfc76dec14b2d129732b2673f1e9930e8d01",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::compute_grade",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_compute_grade.yaml",
+      "gold_sha256": "7d510f28aa2d93a69270a94c8d7ee7dd4ca0115ee8a54e193d54597844596f25",
+      "group_id": "average-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_compute_grade.py",
+      "input_sha256": "66a4a4499279af1d04bddd39b55d6d528b81e81736231e6e8c9ae935cd16855c",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_csv_first_column.yaml",
+      "gold_sha256": "b7efcf975699d3bb1cb3f42bbe900d8ef6e8a847c180d34fd8538322a9d42b22",
+      "group_id": "singleton:crosshair_examples::icontract::correct_code::showcase.py::csv_first_column",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_csv_first_column.py",
+      "input_sha256": "1b8be8cb3ae7a84df29d80214d303bbad5c6ccafc9e802bf517df41c207853b7",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::duplicate_list",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_duplicate_list.yaml",
+      "gold_sha256": "eeb27e4cd26043d9485f8a3c390d64f44c8ee7e749fbecf95cedeb16e6c3fa7f",
+      "group_id": "repeated-list",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_duplicate_list.py",
+      "input_sha256": "4ca3f403b86efd3df70bd063f0b0e2752ea4706a760a4bc118078367b8280e20",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::even_fibb",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_even_fibb.yaml",
+      "gold_sha256": "29da174e9477d15ee2027d8c628895d0712bb0bd7342061bc027031b6da96662",
+      "group_id": "even-fibonacci",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_even_fibb.py",
+      "input_sha256": "7d8cfc15d48da7ec1747ff3072401e1226415c8ff5b7a8c17ca29c7334dc5546",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::zip_exact",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_zip_exact.yaml",
+      "gold_sha256": "62845f6e584e63a837ce31e7cfc18c52716d875a41b6e44f612b38544a574b06",
+      "group_id": "zip-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_zip_exact.py",
+      "input_sha256": "cccf9c30f616c08e33d026dd80c00c39eaa3f64fb9987acff128217b83ea66df",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs",
+      "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_zipped_pairs.yaml",
+      "gold_sha256": "24fdaff3d09b2fd18e8ecf7f0a433285d39b7fd799ad74ca240d03bb596a389c",
+      "group_id": "zip-family",
+      "input_path": "benchmark/lifted_auto_eval/crosshair_examples_icontract_correct_code_showcase.py_zipped_pairs.py",
+      "input_sha256": "c320e55b9856a4808ea1bb8b442882d444edb2fabbf41244da68e6cb760fec1a",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_10_adapter_array.py::compute_result",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_10_adapter_array.py_compute_result.yaml",
+      "gold_sha256": "ea7dd1433647bf6f9d42d6f5ec10e45e85e51df06283635b48790cb7db9863d8",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_10_adapter_array.py::compute_result",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_10_adapter_array.py_compute_result.py",
+      "input_sha256": "369e932408b25efa3c75ccafe724b2bfe1b9820dbd751bacb092816615d58f3c",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_10_adapter_array.py::parse",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_10_adapter_array.py_parse.yaml",
+      "gold_sha256": "b054c8a16cbe237075f16d008fae4fed9578923992693e8718d7d69c74225e6e",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_10_adapter_array.py::parse",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_10_adapter_array.py_parse.py",
+      "input_sha256": "c9705d430403c3b0abc609a262c284e765517cdbcdf4c861a626fe3b0570af03",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_11_seating_system.py::list_neighbourhood",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_11_seating_system.py_list_neighbourhood.yaml",
+      "gold_sha256": "fbffaefbb1cbe7cbd043ca2eee2e20dca8755a266570853065440104d729b7b7",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_11_seating_system.py::list_neighbourhood",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_11_seating_system.py_list_neighbourhood.py",
+      "input_sha256": "1ca4f5df5f3df704fb35f974b084536c0b747b169ef81ff7fe60d2667d2faec5",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::find_departure",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_find_departure.yaml",
+      "gold_sha256": "548f9db6a45b7d3f24acb3337e0a56cd5378093cd7820769063bfbeadb55011a",
+      "group_id": "shuttle-departure",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_find_departure.py",
+      "input_sha256": "d6df4f116cf5241a7b8c695cff1b445689da1b5bdbed17baef2ca19a8522db40",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_next_departure.yaml",
+      "gold_sha256": "84c27d5090539680aecd273773687ffcd4dc8973e7fff3ac94bef77fcef6fc86",
+      "group_id": "shuttle-departure",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_13_shuttle_search.py_next_departure.py",
+      "input_sha256": "ff176b36189952d1860ca2dcf24f843a31160cd4cbfab9f0535db2b64f6a3bc8",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_17_conway_cubes.py::count_active",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_17_conway_cubes.py_count_active.yaml",
+      "gold_sha256": "de1a11065f3ac73ebc055fbb42376b1f0c4642d56ed919d121a03b459266e0a4",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_17_conway_cubes.py::count_active",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_17_conway_cubes.py_count_active.py",
+      "input_sha256": "ec8eeecee75e25aea6d9f2d9ed4c433d48ccb422ac8b26fe34cd20b08f77b1fd",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_18_operation_order.py_extract_expression.yaml",
+      "gold_sha256": "517d783252c6d8a063bdb9c248169c4311a9b16b624de85975a67ca313244bb9",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_18_operation_order.py_extract_expression.py",
+      "input_sha256": "c944292381764f9773894558d9c2a61569477a41eb642ba172aea447807cb749",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_1_report_repair.py::find_pair_with_sum",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_1_report_repair.py_find_pair_with_sum.yaml",
+      "gold_sha256": "bfd1851c4910f0f15ee5d47d1b0417e40b83e27b01c6d9e5e38ef5686dfd8020",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_1_report_repair.py::find_pair_with_sum",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_1_report_repair.py_find_pair_with_sum.py",
+      "input_sha256": "9c9921ea93ef0faba4062a0bc68d0039485862b59aa529182f96c4648e766adf",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_20_jurassic_jigsaw.py::reverse_side",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_20_jurassic_jigsaw.py_reverse_side.yaml",
+      "gold_sha256": "1568be4bee41c28c4081c4dfda55e2a0ffb2fd3ad564792e9c0f0940d76998c4",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_20_jurassic_jigsaw.py::reverse_side",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_20_jurassic_jigsaw.py_reverse_side.py",
+      "input_sha256": "71e9eb284e3ae95b347c6be6f97a8c524717f5b0ddc515d14f27ddbf0a280e20",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_22_crab_combat.py::compute_score",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_22_crab_combat.py_compute_score.yaml",
+      "gold_sha256": "72e2df850dbfb615b92c6d2b28545736dfbf6fb8a72bb8ff5445d2898209d05c",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_22_crab_combat.py::compute_score",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_22_crab_combat.py_compute_score.py",
+      "input_sha256": "31bf59a85521900582a6c2c83767d50d333bd57697b210b9c47405e341834b95",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_25_combo_breaker.py::transform",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_25_combo_breaker.py_transform.yaml",
+      "gold_sha256": "322111a88e9e4b0f20df0816a6ffe4e12696306a926c8b724303962ad5169f3f",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_25_combo_breaker.py::transform",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_25_combo_breaker.py_transform.py",
+      "input_sha256": "ff37320154c1aa8ca5f6f52c3c93c5d36c0ac7e974545cd2bf3697fd26f1e2a4",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_2_password_philosophy.py::verify",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_2_password_philosophy.py_verify.yaml",
+      "gold_sha256": "de5d82deaf18efd574ec43574213ce7f8a768e4f594d1df4eae67f1b24ea36b2",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_2_password_philosophy.py::verify",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_2_password_philosophy.py_verify.py",
+      "input_sha256": "4e6c3f354221a223eef7283b3dfef23fe6d1690cc7bd13bdf5834419e0e89f72",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::count_trees",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_count_trees.yaml",
+      "gold_sha256": "a1c2abed68e41bd8e1ae4261e73399082e55b75a9e6379583e17524678cd7176",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::count_trees",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_count_trees.py",
+      "input_sha256": "73c8b6868b6ffc3722f47bc53e08958c7bebecbd5768188a59434fa1236188af",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_parse_input.yaml",
+      "gold_sha256": "fcaa6a5a541952e634ffc3d083cf5c4e79a50a24f79b62f100598a8e473c4172",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_parse_input.py",
+      "input_sha256": "44a0cf55c2b134bf49ab014d068d84292300a389471f1a07c08d5b0e7f85873e",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::apply",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_apply.yaml",
+      "gold_sha256": "12ea248f21d8d0c9d1b1ba0f3ba93ed94aff72a1635e8c984dfd4fb1e61913a2",
+      "group_id": "binary-boarding",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_apply.py",
+      "input_sha256": "792ad32237784789f2b66ad3f2fa9de110d61feaf3a0fd89dc1f869a5a175b1b",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_column.yaml",
+      "gold_sha256": "b57176e3d82b838e9194dc62b4d16130c3489c69d0b5cafdc841d77718d381f5",
+      "group_id": "binary-boarding",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_column.py",
+      "input_sha256": "e1e1b944f048fc3502752fc083b8b72b5e9cff05e570d353e48a639c341d360f",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_id",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_id.yaml",
+      "gold_sha256": "47c191b9e5f948615c726771ac912205f2ba37b9df08e4cde713f19b93f8d2e9",
+      "group_id": "binary-boarding",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_id.py",
+      "input_sha256": "fe81fedf49e4223d9c46b88a8e5fef0d6af2626b2bc4a395afc1f23bbe99090e",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row.yaml",
+      "gold_sha256": "3255fbc7c0baa2992373a983095a3965f8f9a2280df69662a29de75be0e5dd22",
+      "group_id": "binary-boarding",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row.py",
+      "input_sha256": "5026033c39747ee0875bdbdddabe24262e2cf3839d8c212af4f4d461e22be8c6",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row_and_column",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row_and_column.yaml",
+      "gold_sha256": "b6f4d84092a14c70b3140d882f1b5768155898754257fd13d2c290bbc66205a1",
+      "group_id": "binary-boarding",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row_and_column.py",
+      "input_sha256": "2f21e84688fa796f1618892f5c7e51bfd0066fc4785ade6da66b885c4013da2d",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_9_encoding_error.py_solve.yaml",
+      "gold_sha256": "a329f00f48ce539cad3dfd8d65956c255b97435b1215d3d4462e2b0f12431e91",
+      "group_id": "singleton:python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_aoc2020_day_9_encoding_error.py_solve.py",
+      "input_sha256": "ed90920e998f4563f4ca5b25b3f5001a364686dce542ccd52aa16441ceb4067a",
+      "split": "dev"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::ethz_eprog_2019::exercise_03::problem_01.py::compute",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_03_problem_01.py_compute.yaml",
+      "gold_sha256": "fa7b029aca23b69bbcef0ba066676948cb661c829f922d27981e964eb1781ea3",
+      "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_03::problem_01.py::compute",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_ethz_eprog_2019_exercise_03_problem_01.py_compute.py",
+      "input_sha256": "46a0fb06938223e311f6e32931805c7e0404c8c95891f43d5993333aa92c2cc8",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::ethz_eprog_2019::exercise_05::problem_04.py::Entry::duration",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_05_problem_04.py_Entry_duration.yaml",
+      "gold_sha256": "23d70b845636bcc3a274297cc415c8084d686f824a1ab57ba6180d823d53b13b",
+      "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_05::problem_04.py::Entry::duration",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_ethz_eprog_2019_exercise_05_problem_04.py_Entry_duration.py",
+      "input_sha256": "ea5a284ab13b0aedf0f118eac5be6e9b0071b0e7140a6893cb699baa704b3f45",
+      "split": "test"
+    },
+    {
+      "benchmark_id": "python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate",
+      "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_08_problem_05.py_simulate.yaml",
+      "gold_sha256": "9e9768a9d8a5d1842340028225eeddf920e0d2e39a2185a5378c8ae41b21022e",
+      "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate",
+      "input_path": "benchmark/lifted_auto_eval/python_by_contract_correct_ethz_eprog_2019_exercise_08_problem_05.py_simulate.py",
+      "input_sha256": "61893e1239bdef12133f362c7ce39032f2909786c6e97961cb119c4aa3e45d17",
+      "split": "dev"
+    }
+  ],
+  "group_definitions": {
+    "average-family": {
+      "members": [
+        "crosshair_examples::deal::correct_code::average.py::average",
+        "crosshair_examples::icontract::correct_code::showcase.py::compute_grade"
+      ],
+      "reason": "Semantically close average and weighted-average implementations from CrossHair examples."
+    },
+    "binary-boarding": {
+      "members": [
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::apply",
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column",
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_id",
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row",
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row_and_column"
+      ],
+      "reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions."
+    },
+    "even-fibonacci": {
+      "members": [
+        "crosshair_examples::PEP316::correct_code::showcase.py::even_fibb",
+        "crosshair_examples::icontract::correct_code::showcase.py::even_fibb"
+      ],
+      "reason": "AST-identical PEP316 and icontract variants."
+    },
+    "perimeter": {
+      "members": [
+        "crosshair_examples::PEP316::correct_code::arith.py::perimiter_length",
+        "crosshair_examples::icontract::correct_code::arith.py::perimiter_length"
+      ],
+      "reason": "AST-identical PEP316 and icontract variants."
+    },
+    "repeated-list": {
+      "members": [
+        "crosshair_examples::PEP316::correct_code::arith.py::double",
+        "crosshair_examples::icontract::correct_code::arith.py::double",
+        "crosshair_examples::icontract::correct_code::showcase.py::duplicate_list"
+      ],
+      "reason": "AST-identical double variants plus the differently named duplicate_list near-clone."
+    },
+    "shuttle-departure": {
+      "members": [
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::find_departure",
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure"
+      ],
+      "reason": "find_departure directly uses next_departure from the same source task."
+    },
+    "swap-family": {
+      "members": [
+        "crosshair_examples::PEP316::correct_code::arith.py::_assert_double_swap_does_nothing",
+        "crosshair_examples::PEP316::correct_code::arith.py::swap",
+        "crosshair_examples::icontract::correct_code::arith.py::swap"
+      ],
+      "reason": "AST-identical swap variants and the same-source double-swap identity check."
+    },
+    "zip-family": {
+      "members": [
+        "crosshair_examples::icontract::correct_code::showcase.py::zip_exact",
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs"
+      ],
+      "reason": "zipped_pairs directly delegates to zip_exact and exposes the same pairwise zip behavior."
+    }
+  },
+  "grouping_rules": [
+    "identical function bodies after removing comments, docstrings, and contract annotations",
+    "manually reviewed semantic/source variants, including variants with different function names",
+    "direct helper/caller families whose behavior exposes the same source logic",
+    "near-clones differing only in identifiers, constants, or contract style"
+  ],
+  "provenance": {
+    "gold_root": "benchmark/lifted",
+    "group_config": "benchmark/rq1_groups.yaml",
+    "group_config_sha256": "b32299749180f7ec9b89f1bb80601aa211c6036a9c6d0df91d15ad1028b40c03",
+    "input_root": "benchmark/lifted_auto_eval",
+    "pairing_rule": "input .py and gold .yaml share the same filesystem-safe stem",
+    "ticket_base_commit": "eca293043c4c2b1d9615e556a7829e3c739044e4",
+    "upstream_commit": "7ffd1ae37822096d5b7b573785ee46e877903185"
+  },
+  "schema_version": 1,
+  "seed": 20261120,
+  "split_rule": {
+    "algorithm": "group subset dynamic programming with proportional-balance objective",
+    "balance_achieved": {
+      "crosshair_examples": 4,
+      "needs_attention": 2
+    },
+    "balance_targets": {
+      "crosshair_examples": 4,
+      "needs_attention": 2
+    },
+    "compromise": "Targets are rounded corpus proportions; both targets are achieved.",
+    "dev_size": 10,
+    "seed_role": "SHA-256 tie-break among equally balanced exact group subsets",
+    "selected_dev_groups": [
+      "average-family",
+      "perimeter",
+      "shuttle-departure",
+      "singleton:python_by_contract::correct::aoc2020::day_1_report_repair.py::find_pair_with_sum",
+      "singleton:python_by_contract::correct::aoc2020::day_22_crab_combat.py::compute_score",
+      "singleton:python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
+      "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate"
+    ],
+    "test_size": 30
+  },
+  "status": "SPLIT_FROZEN"
+}

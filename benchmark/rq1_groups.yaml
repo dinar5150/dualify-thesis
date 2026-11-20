@@ -1,0 +1,52 @@
+schema_version: 1
+grouping_rules:
+  - identical function bodies after removing comments, docstrings, and contract annotations
+  - manually reviewed semantic/source variants, including variants with different function names
+  - direct helper/caller families whose behavior exposes the same source logic
+  - near-clones differing only in identifiers, constants, or contract style
+groups:
+  repeated-list:
+    reason: AST-identical double variants plus the differently named duplicate_list near-clone.
+    members:
+      - crosshair_examples::PEP316::correct_code::arith.py::double
+      - crosshair_examples::icontract::correct_code::arith.py::double
+      - crosshair_examples::icontract::correct_code::showcase.py::duplicate_list
+  swap-family:
+    reason: AST-identical swap variants and the same-source double-swap identity check.
+    members:
+      - crosshair_examples::PEP316::correct_code::arith.py::_assert_double_swap_does_nothing
+      - crosshair_examples::PEP316::correct_code::arith.py::swap
+      - crosshair_examples::icontract::correct_code::arith.py::swap
+  perimeter:
+    reason: AST-identical PEP316 and icontract variants.
+    members:
+      - crosshair_examples::PEP316::correct_code::arith.py::perimiter_length
+      - crosshair_examples::icontract::correct_code::arith.py::perimiter_length
+  even-fibonacci:
+    reason: AST-identical PEP316 and icontract variants.
+    members:
+      - crosshair_examples::PEP316::correct_code::showcase.py::even_fibb
+      - crosshair_examples::icontract::correct_code::showcase.py::even_fibb
+  average-family:
+    reason: Semantically close average and weighted-average implementations from CrossHair examples.
+    members:
+      - crosshair_examples::deal::correct_code::average.py::average
+      - crosshair_examples::icontract::correct_code::showcase.py::compute_grade
+  zip-family:
+    reason: zipped_pairs directly delegates to zip_exact and exposes the same pairwise zip behavior.
+    members:
+      - crosshair_examples::icontract::correct_code::showcase.py::zip_exact
+      - crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs
+  shuttle-departure:
+    reason: find_departure directly uses next_departure from the same source task.
+    members:
+      - python_by_contract::correct::aoc2020::day_13_shuttle_search.py::find_departure
+      - python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure
+  binary-boarding:
+    reason: determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.
+    members:
+      - python_by_contract::correct::aoc2020::day_5_binary_boarding.py::apply
+      - python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column
+      - python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_id
+      - python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row
+      - python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row_and_column
