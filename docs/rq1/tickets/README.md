@@ -1,6 +1,6 @@
 # Тикеты реализации RQ1
 
-**Статус:** задачи описаны и готовы к будущей передаче агенту; **ни одна не начата**. Пользователь утвердил шесть тикетов, но текущая работа завершается после подготовки и проверки Markdown. См. [SPEC.md](../SPEC.md), [PROTOCOL.md](../PROTOCOL.md), [руководство агенту](../../agent/AGENT_GUIDE.md).
+**Статус:** пользователь утвердил шесть тикетов; порядок выполнения определяется зависимостями и критериями завершения. См. [SPEC.md](../SPEC.md), [PROTOCOL.md](../PROTOCOL.md), [руководство агенту](../../agent/AGENT_GUIDE.md).
 
 ## Граф зависимостей
 
@@ -20,12 +20,12 @@
 
 | Тикет | Проверяемый результат | Заблокирован | Допуск |
 | --- | --- | --- | --- |
-| [01 — Benchmark split и аудит](01-benchmark-split-and-audit.md) | Воспроизводимый manifest 10/30 и аудит возможных утечек, без API-запросов | Нет | Будущая реализация |
-| [02 — Native candidate attempt](02-native-attempt-and-telemetry.md) | Наблюдаемый полный extractor: T>0 на initial generation / T=0 на repair | 01 | Будущая реализация |
-| [03 — Pool, запись и replay](03-candidate-pool-and-replay.md) | Четыре разных slot IDs, crash-resume и strict offline replay одной задачи | 02 | Будущая реализация |
-| [04 — Oracle и аналитика](04-offline-oracle-and-analytics.md) | Сквозной offline pass@k low/high, delta, интервалы и latency | 03 | Будущая реализация |
-| [05 — Dev campaign и freeze](05-dev-campaign-and-freeze.md) | Результаты dev на 10 задачах, review и этап **READY FOR HELD-OUT TEST** | 04 | Будущий live dev только после offline тестов |
-| [06 — Held-out test](06-heldout-test-and-report.md) | Результаты test на 30 задачах с замороженными настройками | 05 **и новое явное разрешение пользователя** | Сейчас не разрешён |
+| [01 — Benchmark split и аудит](01-benchmark-split-and-audit.md) | Воспроизводимый manifest 10/30 и аудит возможных утечек, offline | Нет | Без блокеров |
+| [02 — Native candidate attempt](02-native-attempt-and-telemetry.md) | Наблюдаемый полный extractor: T>0 на initial generation / T=0 на repair | 01 | После 01 |
+| [03 — Pool, запись и replay](03-candidate-pool-and-replay.md) | Четыре разных slot IDs, crash-resume и strict offline replay одной задачи | 02 | После 02 |
+| [04 — Oracle и аналитика](04-offline-oracle-and-analytics.md) | Сквозной offline pass@k low/high, delta, интервалы и latency | 03 | После 03 |
+| [05 — Dev campaign и freeze](05-dev-campaign-and-freeze.md) | Результаты dev на 10 задачах, review и этап **READY FOR HELD-OUT TEST** | 04 | Live dev после offline-тестов |
+| [06 — Held-out test](06-heldout-test-and-report.md) | Результаты test на 30 задачах с замороженными настройками | 05 **и отдельное разрешение пользователя** | После freeze и согласования |
 
 ## Формат тикета
 
@@ -35,7 +35,7 @@
 
 1. Прочитай зависимости, актуальную спецификацию/протокол и [ограничения оригинального подхода](../../agent/KNOWN_DUALIFY_LIMITATIONS.md), прежде чем исследовать upstream. Используй уже задокументированные объяснения и сохраняй исходный Z3 oracle.
 2. Реализуй минимальный сквозной проверяемый результат. Сохраняй оригинальные prompts, repairs, solver и существующие тесты.
-3. Сначала запусти fake/mock и offline тесты; live-проверки только при разрешении текущего тикета и пользователя.
+3. Сначала запусти fake/mock и offline тесты; полный live dev-прогон предусмотрен Ticket 05. Held-out test следует отдельной процедуре допуска.
 4. Приложи команды, outputs, diff и известные ограничения; обновляй реестр багов и решений только при появлении подтверждённых фактов.
 5. **Остановись.** Не выбирай автоматически следующий тикет и не запускай held-out test как побочный результат dev.
 
