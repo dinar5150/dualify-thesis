@@ -19,7 +19,7 @@
 - Используй оригинальный gold scorer; сохраняй исходные Z3 timeout, checker и семантику формального фрагмента. Сверяйся с [ограничениями оригинального метода](../../agent/KNOWN_DUALIFY_LIMITATIONS.md), фиксируй обнаруженные недостатки исходного подхода, **не модифицируя Z3**. Не добавляй LLM judge или новый oracle.
 - Каждому кандидату назначь `equivalent`, `non_equivalent`, `invalid`, `inconclusive` либо `unclassified/blocked`, если источников недостаточно.
 - Считай `low(k)=1−C(4−c,k)/C(4,k)` и `high(k)=1−C(4−c−u,k)/C(4,k)`. Отклоняй невозможные счётчики; сохраняй исходные diagnostics.
-- Макроусредняй по task/channel; используй **парный group-aware bootstrap** с записанными seed, количеством resamples и effective groups.
+- Макроусредняй по task/channel; используй **парный task-level bootstrap** с записанными seed, количеством resamples и числом задач; возможную зависимость похожих задач явно описывай как ограничение.
 - Reference truth и derived labels остаются только в offline-scoring artifacts; generation/replay не должны от них зависеть.
 - Обязательно сообщай наблюдаемое время полной попытки и stage metrics. HTTP/token/inference данные провайдера указывай только при прямом наблюдении, иначе NA с объяснением.
 - Все тесты полностью offline, быстрые и детерминированные.
@@ -30,13 +30,13 @@
 
 ## Expected outcome
 - Небольшая детерминированная fixture из candidate pool создаёт per-candidate reasons, per-task low/high pass@1/2/4 и отдельные channel summaries.
-- Один offline report содержит paired delta_4_1 и 95% group-aware interval, first-k diagnostic, mixed-outcome cases, распределение degraded/repair/errors, diversity и наблюдаемые расходы.
+- Один offline report содержит paired delta_4_1 и 95% paired task-level interval, first-k diagnostic, mixed-outcome cases, распределение degraded/repair/errors, diversity и наблюдаемые расходы.
 - При повторном выполнении над теми же records значения и checksums совпадают; credentials не требуются.
 
 ## Acceptance criteria
 - [ ] Граничные формулы: c=0 → всё 0; c=1,u=0 → (0.25,0.5,1.0); c=4 → всё 1; c=0,u=1 → high (0.25,0.5,1.0).
 - [ ] Solver `unknown` входит в u, а не в доказанную неэквивалентность; invalid syntax не включается ни в c, ни в u. Исходные reasons сохраняются.
-- [ ] Все test tasks имеют одинаковый вес внутри канала; paired resampling учитывает связи задач/групп и даёт воспроизводимый 95% interval.
+- [ ] Все test tasks имеют одинаковый вес внутри канала; paired resampling на уровне задач даёт воспроизводимый 95% interval; зависимость похожих задач остаётся ограничением.
 - [ ] Сравнение treatment k=4 vs k=1 выполняется **при одинаковой температуре**; T=0 baseline обозначается как описательный ориентир, а не чистый контроль эффекта k.
 - [ ] Отчёт включает разнообразие формул, errors, количество native repairs, attempt/campaign timings, counts unknown/incomplete/NA.
 - [ ] Missing slot, несовместимые counts, неклассифицируемое состояние oracle или повреждение transcript приводят к **ошибке формирования отчёта** с диагностикой, а не к правдоподобным цифрам.

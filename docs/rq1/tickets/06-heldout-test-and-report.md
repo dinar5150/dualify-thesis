@@ -28,7 +28,7 @@
 
 ## Expected outcome
 - Ровно 300 зафиксированных и проверенных held-out slots либо прозрачный отчёт `INCOMPLETE` (никакой фиктивной полноты).
-- Воспроизводимый отчёт: отдельно spec/code pass@1/2/4 low/high, delta_4_1, 95% group-aware intervals, first-k diagnostic и baseline comparison.
+- Воспроизводимый отчёт: отдельно spec/code pass@1/2/4 low/high, delta_4_1, 95% paired task-level intervals, first-k diagnostic и baseline comparison.
 - Письменный вывод для диплома: effect size, uncertainty, задачи, где дополнительный sampling помог найти правильный кандидат, затраты/latency, provider constraints и threats to validity.
 - Доказательства отсутствия post-hoc tuning и соблюдения freeze.
 
@@ -37,7 +37,7 @@
 - [ ] Есть все 30 ожидаемых test case IDs; ровно 300 planned full attempt slots завершены либо эксперимент отмечен `INCOMPLETE` с прозрачными diagnostics.
 - [ ] Все treatment pools имеют n=4; strict replay проверяет cardinality запросов/ответов, prompt settings и identities кандидатов.
 - [ ] Oracle scores сохраняют различие unknown/invalid; offline analytics не обращается к live API.
-- [ ] Оба канала содержат pass@1/2/4, per-task results, low/high, paired delta с 95% intervals, first-k diagnostic и source-group counts.
+- [ ] Оба канала содержат pass@1/2/4, per-task results, low/high, paired delta с 95% intervals, first-k diagnostic и число задач с оговоркой о возможной зависимости близких примеров.
 - [ ] В отчёте явно различаются performance costs, observed attempt latency, доступная HTTP telemetry, retries/rate-limit ожидания и отсутствующие метрики.
 - [ ] Дипломный вывод не содержит необоснованных утверждений о causal effects, selection или полной Python-семантике; test results не повлекли неутверждённой настройки.
 - [ ] Review report и инструкции воспроизведения указывают точные неизменяемые artifacts.
