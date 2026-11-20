@@ -1,6 +1,6 @@
 # 02 — Одна штатная extraction attempt с температурой и учётом ошибок
 
-**Статус:** ready-for-agent (НЕ НАЧАТ)  
+**Статус:** выполнен 2026-11-20
 **Blocked by:** [01 — Benchmark split и аудит](01-benchmark-split-and-audit.md).  
 **Результат:** одна offline-проверяемая полная попытка extractor по каждому каналу с неизменным native validation/repair, правильной температурой и наблюдаемым конечным статусом.
 
@@ -32,13 +32,22 @@
 - Тесты успешного initial extraction, штатного repair, degraded результата, ограниченных transient retries, non-retriable config failure и output-format ошибки как результата модели/extraction.
 
 ## Acceptance criteria
-- [ ] Fake-client integration подтверждает **T>0 только для treatment initial** и T=0 для всех следующих native repairs в обоих каналах.
-- [ ] T=0 baseline использует ровно оригинальный полный extractor; при одинаковых fake responses содержание/trace сохраняются.
-- [ ] Invalid/degraded extraction вследствие ответа модели считается завершённым кандидатом, а не поводом повторять генерацию.
-- [ ] Исчерпанная инфраструктурная ошибка, перехваченная внутри extractor, помечается incomplete, не incorrect candidate.
-- [ ] Auth, unsupported model/endpoint и permanent config останавливают с объяснением; transient retries ограничены и логируются.
-- [ ] Есть тесты на HTTP 4xx, вызванные output-validation: они не считаются обычной временной недоступностью.
-- [ ] Существующие regression tests проходят; для проверки тикета Groq не нужен.
+- [x] Fake-client integration подтверждает **T>0 только для treatment initial** и T=0 для всех следующих native repairs в обоих каналах.
+- [x] T=0 baseline использует ровно оригинальный полный extractor; при одинаковых fake responses содержание/trace сохраняются.
+- [x] Invalid/degraded extraction вследствие ответа модели считается завершённым кандидатом, а не поводом повторять генерацию.
+- [x] Исчерпанная инфраструктурная ошибка, перехваченная внутри extractor, помечается incomplete, не incorrect candidate.
+- [x] Auth, unsupported model/endpoint и permanent config останавливают с объяснением; transient retries ограничены и логируются.
+- [x] Есть тесты на HTTP 4xx, вызванные output-validation: они не считаются обычной временной недоступностью.
+- [x] Существующие regression tests проходят; для проверки тикета Groq не нужен.
+
+## Реализация
+
+- `dualify.rq1_attempt.run_extraction_attempt` создаёт новый adapter на каждый slot и вызывает
+  неизменённый `extract_spec_logic` либо `extract_code_logic`.
+- Attempt record хранит slot/model/settings, native extraction, стадии и ответы logical calls,
+  видимые передачи в inner client, ошибки и полное wall-clock время вызова extractor.
+- Физические HTTP retries внутри provider client по-прежнему не наблюдаются и не выводятся из
+  `dispatch_count`; это ограничение сохранено как `RQ1-003`.
 
 ## Stopping criteria
 **STOP, когда:** оба канала проходят тесты полной attempt, маршрутизации temperature и классификации ошибок; существующий test suite зелёный; пример attempt record воспроизводим. Если adapter не может сохранить поведение оригинального extractor, укажи `BLOCKED`, минимальное воспроизведение и необходимое точечное изменение. Не создавай четырёхкандидатные пулы, не запускай live-модель и не улучшай несвязанные модули.
