@@ -18,6 +18,8 @@ from dualify.rq1_attempt import (
     Channel,
     LogicalCall,
     _classify_error,
+    _redact_credentials,
+    _response_body,
     run_extraction_attempt,
 )
 from dualify.types import BenchmarkCase, ExtractionResult
@@ -65,6 +67,7 @@ def run_candidate_pool(
                 temperature=temperature,
                 max_transient_retries=max_transient_retries,
             )
+            _verify_transcript_digest(result_path, transcript_path)
             records.append(record)
             continue
 
@@ -96,7 +99,7 @@ def run_candidate_pool(
         if record.status != "completed":
             # Следующие slots нельзя запускать, пока текущий не завершён.
             return records
-        _write_attempt_atomically(result_path, record)
+        _write_attempt_atomically(result_path, transcript_path, record)
 
     return records
 
@@ -147,6 +150,7 @@ def verify_candidate_pool(
             max_transient_retries=pool_config["max_transient_retries"],
         )
         transcript_path = result_paths[slot_id].parent / "transcript.jsonl"
+        _verify_transcript_digest(result_paths[slot_id], transcript_path)
         replay_client = _StrictReplayClient(transcript_path, expected, provider)
         actual = run_extraction_attempt(
             replay_client,
@@ -218,6 +222,41 @@ def _slot_specs(
     return specs
 
 
+def _resumable_prefix(events: list[dict], max_transient_retries: int) -> list[dict]:
+    """Оставляет события, которые можно честно повторить в том же slot."""
+    last_response = max(
+        (index for index, event in enumerate(events) if "response" in event),
+        default=-1,
+    )
+    prefix = events[: last_response + 1]
+    trailing = events[last_response + 1 :]
+    transient_group_start = len(prefix)
+    transient_prompt: str | None = None
+    transient_count = 0
+
+    for event in trailing:
+        category = event.get("category")
+        if category == "model_output_format":
+            prefix.append(event)
+            transient_prompt = None
+            transient_count = 0
+            continue
+        if category != "transient_infrastructure":
+            break
+        prompt_hash = event.get("prompt_sha256")
+        if prompt_hash != transient_prompt:
+            transient_prompt = prompt_hash
+            transient_count = 0
+            transient_group_start = len(prefix)
+        transient_count += 1
+        prefix.append(event)
+        if transient_count > max_transient_retries:
+            # Исчерпанную terminal-серию не повторяем бесконечно при resume.
+            del prefix[transient_group_start:]
+            break
+    return prefix
+
+
 class _PoolTranscriptClient:
     """Пишет ответы и классы ошибок, сохраняя префикс при resume."""
 
@@ -256,14 +295,8 @@ class _PoolTranscriptClient:
 
         previous_run = max((event["run_index"] for event in events), default=-1)
         self.run_index = previous_run + 1
-        previous_events = [
-            event for event in events if event["run_index"] == previous_run
-        ]
-        last_response = max(
-            (index for index, event in enumerate(previous_events) if "response" in event),
-            default=-1,
-        )
-        self.cached_events = previous_events[: last_response + 1]
+        previous_events = [event for event in events if event["run_index"] == previous_run]
+        self.cached_events = _resumable_prefix(previous_events, max_transient_retries)
         self.cached_cursor = 0
         self.next_event_index = len(events)
         self._handle = path.open("a", encoding="utf-8", buffering=1)
@@ -283,6 +316,8 @@ class _PoolTranscriptClient:
                     "error_type": cached["error_type"],
                     "category": cached["category"],
                     "status_code": cached.get("status_code"),
+                    "message": cached.get("message", ""),
+                    "response_body": cached.get("response_body"),
                 }
                 self._append_event(prompt, temperature, error=error)
                 raise _exception_from_event(cached)
@@ -301,6 +336,8 @@ class _PoolTranscriptClient:
                     "error_type": type(exc).__name__,
                     "category": category,
                     "status_code": status_code,
+                    "message": _redact_credentials(str(exc)),
+                    "response_body": _response_body(exc),
                 },
             )
             raise
@@ -533,14 +570,28 @@ def _validate_attempt_metadata(
         raise PoolIntegrityError(f"Slot {slot_id}: metadata не совпадает с конфигурацией")
 
 
-def _write_attempt_atomically(path: Path, record: AttemptRecord) -> None:
+def _write_attempt_atomically(
+    path: Path,
+    transcript_path: Path,
+    record: AttemptRecord,
+) -> None:
     """Публикует готовый slot одним rename, не оставляя частичный result.json."""
     temporary_path = path.with_suffix(".tmp")
+    payload = asdict(record)
+    payload["transcript_sha256"] = hashlib.sha256(transcript_path.read_bytes()).hexdigest()
     temporary_path.write_text(
-        json.dumps(asdict(record), ensure_ascii=False, indent=2),
+        json.dumps(payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     temporary_path.replace(path)
+
+
+def _verify_transcript_digest(result_path: Path, transcript_path: Path) -> None:
+    payload = json.loads(result_path.read_text(encoding="utf-8"))
+    expected = payload.get("transcript_sha256")
+    actual = hashlib.sha256(transcript_path.read_bytes()).hexdigest()
+    if expected != actual:
+        raise PoolIntegrityError(f"Slot {result_path.parent.name}: transcript digest mismatch")
 
 
 def _load_attempt(path: Path) -> AttemptRecord:

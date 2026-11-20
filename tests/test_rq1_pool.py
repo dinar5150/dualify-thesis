@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import json
 import shutil
 from collections.abc import Sequence
@@ -132,9 +133,10 @@ def test_unresolved_infrastructure_failure_blocks_campaign_at_same_slot(
     assert records[0].status == "incomplete"
     assert list(tmp_path.glob("*/result.json")) == []
     assert len(client.calls) == 1
-    transcript = next(tmp_path.glob("*/transcript.jsonl"))
+    transcript = tmp_path / "increment__spec__baseline__0" / "transcript.jsonl"
     events = [json.loads(line) for line in transcript.read_text().splitlines()]
     assert events[1]["error_type"] == "Timeout"
+    assert events[1]["message"] == "offline"
 
 
 def test_interrupted_slot_resumes_saved_prefix_and_completed_pool_is_idempotent(
@@ -239,6 +241,10 @@ def test_strict_replay_rejects_missing_llm_record_caught_by_native_extractor(
     transcript = next(tmp_path.glob("*/transcript.jsonl"))
     lines = transcript.read_text(encoding="utf-8").splitlines()
     transcript.write_text(lines[0] + "\n", encoding="utf-8")
+    result = transcript.with_name("result.json")
+    payload = json.loads(result.read_text())
+    payload["transcript_sha256"] = hashlib.sha256(transcript.read_bytes()).hexdigest()
+    result.write_text(json.dumps(payload), encoding="utf-8")
 
     with pytest.raises(PoolIntegrityError, match="исчерпан"):
         _verify_pool(tmp_path)
@@ -397,3 +403,71 @@ def test_resume_keeps_retries_before_successful_prefix(tmp_path: Path) -> None:
         treatment_temperature=0.7,
     )
     assert replayed[0].calls[0].dispatch_count == 2
+
+
+def test_resume_keeps_trailing_retry_when_budget_remains(tmp_path: Path) -> None:
+    first_client = FakeClient(
+        [INVALID_RESPONSE, requests.Timeout("temporary"), KeyboardInterrupt()]
+    )
+    with contextlib.suppress(KeyboardInterrupt):
+        run_candidate_pool(
+            first_client,
+            case=benchmark_case(),
+            artifact_dir=tmp_path,
+            model="fake-model",
+            provider="fake",
+            treatment_temperature=0.7,
+            max_transient_retries=1,
+        )
+
+    records = run_candidate_pool(
+        FakeClient([VALID_RESPONSE] * 10),
+        case=benchmark_case(),
+        artifact_dir=tmp_path,
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+        max_transient_retries=1,
+    )
+
+    assert records[0].calls[1].dispatch_count == 2
+    assert [error.category for error in records[0].errors] == [
+        "transient_infrastructure"
+    ]
+    replayed = verify_candidate_pool(
+        artifact_dir=tmp_path,
+        case=benchmark_case(),
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+    )
+    assert replayed[0].calls[1].dispatch_count == 2
+
+
+def test_strict_replay_rejects_corruption_in_pre_resume_run(tmp_path: Path) -> None:
+    first_client = FakeClient([INVALID_RESPONSE, KeyboardInterrupt()])
+    with contextlib.suppress(KeyboardInterrupt):
+        run_candidate_pool(
+            first_client,
+            case=benchmark_case(),
+            artifact_dir=tmp_path,
+            model="fake-model",
+            provider="fake",
+            treatment_temperature=0.7,
+        )
+    run_candidate_pool(
+        FakeClient([VALID_RESPONSE] * 10),
+        case=benchmark_case(),
+        artifact_dir=tmp_path,
+        model="fake-model",
+        provider="fake",
+        treatment_temperature=0.7,
+    )
+
+    transcript = tmp_path / "increment__spec__baseline__0" / "transcript.jsonl"
+    lines = [json.loads(line) for line in transcript.read_text().splitlines()]
+    lines[1]["response"]["notes"] = "tampered historical response"
+    transcript.write_text("".join(json.dumps(line) + "\n" for line in lines))
+
+    with pytest.raises(PoolIntegrityError, match="digest"):
+        _verify_pool(tmp_path)
