@@ -44,6 +44,7 @@
 - Manifest: [`benchmark/rq1/manifest.json`](../../../benchmark/rq1/manifest.json)
 - Audit: [`benchmark/rq1/audit.json`](../../../benchmark/rq1/audit.json)
 - Group registry: [`benchmark/rq1_groups.yaml`](../../../benchmark/rq1_groups.yaml)
+- Audit/source lock: [`benchmark/rq1_audit_rules.yaml`](../../../benchmark/rq1_audit_rules.yaml)
 - Reproduction notes: [`benchmark/rq1/README.md`](../../../benchmark/rq1/README.md)
 - Verification record: [`docs/rq1/TICKET_01_VERIFICATION.md`](../TICKET_01_VERIFICATION.md)
 

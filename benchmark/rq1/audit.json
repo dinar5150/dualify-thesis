@@ -104,8 +104,10 @@
       "group_id": "perimeter",
       "group_reason": "AST-identical PEP316 and icontract variants.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "exact_perimeter_relation_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_arith.py_perimiter_length.yaml",
@@ -186,8 +188,10 @@
       "group_id": "singleton:crosshair_examples::PEP316::correct_code::chess.py::ChessPiece::can_move_to",
       "group_reason": "No close or dependent function was identified in the 40-case corpus.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "piece_movement_rules_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/crosshair_examples_PEP316_correct_code_chess.py_ChessPiece_can_move_to.yaml",
@@ -381,10 +385,8 @@
       "group_id": "perimeter",
       "group_reason": "AST-identical PEP316 and icontract variants.",
       "informal_spec_quality": {
-        "reasons": [
-          "placeholder_behavior_of_description"
-        ],
-        "too_general": true
+        "reasons": [],
+        "too_general": false
       },
       "provenance": {
         "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_arith.py_perimiter_length.yaml",
@@ -477,10 +479,8 @@
       "group_id": "singleton:crosshair_examples::icontract::correct_code::showcase.py::csv_first_column",
       "group_reason": "No close or dependent function was identified in the 40-case corpus.",
       "informal_spec_quality": {
-        "reasons": [
-          "placeholder_behavior_of_description"
-        ],
-        "too_general": true
+        "reasons": [],
+        "too_general": false
       },
       "provenance": {
         "gold_path": "benchmark/lifted/crosshair_examples_icontract_correct_code_showcase.py_csv_first_column.yaml",
@@ -1020,8 +1020,10 @@
       "group_id": "singleton:python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::count_trees",
       "group_reason": "No close or dependent function was identified in the 40-case corpus.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "traversal_slope_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_3_toboggan_trajectory.py_count_trees.yaml",
@@ -1078,8 +1080,10 @@
       "group_id": "binary-boarding",
       "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "directive_semantics_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_apply.yaml",
@@ -1110,8 +1114,10 @@
       "group_id": "binary-boarding",
       "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "decoding_rule_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_column.yaml",
@@ -1171,8 +1177,10 @@
       "group_id": "binary-boarding",
       "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "decoding_rule_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row.yaml",
@@ -1203,8 +1211,10 @@
       "group_id": "binary-boarding",
       "group_reason": "determine_row and determine_column are near-clones; the other cases are their direct helper/compositions.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "decoding_rule_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_5_binary_boarding.py_determine_row_and_column.yaml",
@@ -1234,8 +1244,10 @@
       "group_id": "singleton:python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
       "group_reason": "No close or dependent function was identified in the 40-case corpus.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "xmas_weakness_rule_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_aoc2020_day_9_encoding_error.py_solve.yaml",
@@ -1323,8 +1335,10 @@
       "group_id": "singleton:python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate",
       "group_reason": "No close or dependent function was identified in the 40-case corpus.",
       "informal_spec_quality": {
-        "reasons": [],
-        "too_general": false
+        "reasons": [
+          "journey_success_condition_not_described"
+        ],
+        "too_general": true
       },
       "provenance": {
         "gold_path": "benchmark/lifted/python_by_contract_correct_ethz_eprog_2019_exercise_08_problem_05.py_simulate.yaml",
@@ -1346,6 +1360,6 @@
       "crosshair_examples": 17,
       "python_by_contract": 23
     },
-    "weak_informal_spec_case_count": 8
+    "weak_informal_spec_case_count": 15
   }
 }

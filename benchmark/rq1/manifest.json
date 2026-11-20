@@ -431,10 +431,14 @@
     "near-clones differing only in identifiers, constants, or contract style"
   ],
   "provenance": {
+    "audit_rules": "benchmark/rq1_audit_rules.yaml",
+    "audit_rules_sha256": "46bb15c65b8656f4717dbe594a9102d41c133eda6ff2f6cf48b7bcf85ec23a89",
     "gold_root": "benchmark/lifted",
+    "gold_tree_sha256": "50c5bb9fc7ce90b162c4a6f5f11bfe0c1e9abaeb81a6b1d698893a06c7174305",
     "group_config": "benchmark/rq1_groups.yaml",
     "group_config_sha256": "b32299749180f7ec9b89f1bb80601aa211c6036a9c6d0df91d15ad1028b40c03",
     "input_root": "benchmark/lifted_auto_eval",
+    "input_tree_sha256": "f768e9ae79f3d575df99f6df9e1c369d1ae0412c5617b64a16548f8d926aa8d2",
     "pairing_rule": "input .py and gold .yaml share the same filesystem-safe stem",
     "ticket_base_commit": "eca293043c4c2b1d9615e556a7829e3c739044e4",
     "upstream_commit": "7ffd1ae37822096d5b7b573785ee46e877903185"

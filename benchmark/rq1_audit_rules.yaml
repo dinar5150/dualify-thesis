@@ -1,0 +1,36 @@
+schema_version: 1
+source_lock:
+  upstream_commit: 7ffd1ae37822096d5b7b573785ee46e877903185
+  input_tree_sha256: f768e9ae79f3d575df99f6df9e1c369d1ae0412c5617b64a16548f8d926aa8d2
+  gold_tree_sha256: 50c5bb9fc7ce90b162c4a6f5f11bfe0c1e9abaeb81a6b1d698893a06c7174305
+too_general_informal_specs:
+  crosshair_examples::PEP316::correct_code::arith.py::perimiter_length:
+    - exact_perimeter_relation_not_described
+  crosshair_examples::PEP316::correct_code::chess.py::ChessPiece::can_move_to:
+    - piece_movement_rules_not_described
+  crosshair_examples::deal::correct_code::average.py::average:
+    - placeholder_behavior_of_description
+  crosshair_examples::icontract::correct_code::showcase.py::compute_grade:
+    - placeholder_behavior_of_description
+  crosshair_examples::icontract::correct_code::showcase.py::duplicate_list:
+    - placeholder_behavior_of_description
+  crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:
+    - placeholder_behavior_of_description
+  python_by_contract::correct::aoc2020::day_25_combo_breaker.py::transform:
+    - algorithm_behavior_not_described
+  python_by_contract::correct::aoc2020::day_2_password_philosophy.py::verify:
+    - constraints_not_described
+  python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::count_trees:
+    - traversal_slope_not_described
+  python_by_contract::correct::aoc2020::day_5_binary_boarding.py::apply:
+    - directive_semantics_not_described
+  python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:
+    - decoding_rule_not_described
+  python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row:
+    - decoding_rule_not_described
+  python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_row_and_column:
+    - decoding_rule_not_described
+  python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:
+    - xmas_weakness_rule_not_described
+  python_by_contract::correct::ethz_eprog_2019::exercise_08::problem_05.py::simulate:
+    - journey_success_condition_not_described

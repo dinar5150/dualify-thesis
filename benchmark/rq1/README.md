@@ -37,6 +37,9 @@ the artifacts.
 - `../rq1_groups.yaml` is the reviewed grouping input. It covers exact clones,
   variants with different names, near-clones, and direct helper/caller families.
   Unlisted cases become explicit singleton groups.
+- `../rq1_audit_rules.yaml` anchors the original input/gold trees to immutable
+  upstream SHA-256 digests and records manually reviewed broad-spec decisions.
+  The lock is checked before generation writes any artifact.
 
 The split algorithm searches whole-group subsets of exactly 10 cases. Among
 valid subsets it minimizes deviation from the rounded corpus proportions for
@@ -46,7 +49,7 @@ SHA-256. The frozen dev split reaches both targets: 4 CrossHair cases and 2
 
 ## Audit interpretation
 
-The audit reports eight cases containing formal annotations/directives, eight
+The audit reports eight cases containing formal annotations/directives, fifteen
 cases with descriptions classified as too general, and one exact reference
 formula already present in a generation input (`even_fibb`, `n >= 0`). These are
 disclosed threats to validity; no case was edited or removed.

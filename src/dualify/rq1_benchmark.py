@@ -16,6 +16,16 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _tree_sha256(paths: list[Path]) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(paths, key=lambda item: item.name):
+        digest.update(path.name.encode("utf-8"))
+        digest.update(b"\x00")
+        digest.update(path.read_bytes())
+        digest.update(b"\x00")
+    return digest.hexdigest()
+
+
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -37,6 +47,11 @@ def _load_groups(
     for benchmark_id in benchmark_ids - assignments.keys():
         assignments[benchmark_id] = f"singleton:{benchmark_id}"
     return assignments, config
+
+
+def _load_audit_rules(source_root: Path) -> dict[str, Any]:
+    path = source_root / "benchmark" / "rq1_audit_rules.yaml"
+    return cast(dict[str, Any], yaml.safe_load(path.read_text(encoding="utf-8")))
 
 
 def _select_dev_groups(
@@ -102,16 +117,10 @@ def _formal_annotations(source: str) -> list[dict[str, Any]]:
     return annotations
 
 
-def _informal_spec_quality(informal_spec: str) -> dict[str, Any]:
-    normalized = " ".join(informal_spec.split())
-    lowered = normalized.lower()
-    reasons: list[str] = []
-    if lowered.startswith("behavior of "):
-        reasons.append("placeholder_behavior_of_description")
-    if "under the given constraints" in lowered:
-        reasons.append("constraints_not_described")
-    if "hard-coded algorithm" in lowered:
-        reasons.append("algorithm_behavior_not_described")
+def _informal_spec_quality(
+    benchmark_id: str, audit_rules: dict[str, Any]
+) -> dict[str, Any]:
+    reasons = list(audit_rules["too_general_informal_specs"].get(benchmark_id, []))
     return {"too_general": bool(reasons), "reasons": reasons}
 
 
@@ -168,6 +177,22 @@ def _build_benchmark(source_root: Path, seed: int) -> tuple[dict[str, Any], dict
             f"missing_gold={sorted(input_stems - gold_stems)}, "
             f"missing_input={sorted(gold_stems - input_stems)}"
         )
+    audit_rules = _load_audit_rules(source_root)
+    source_lock = audit_rules["source_lock"]
+    if source_lock.get("upstream_commit") != UPSTREAM_COMMIT:
+        raise ValueError("audit source lock does not reference the frozen upstream commit")
+    input_tree_sha256 = _tree_sha256(input_paths)
+    gold_tree_sha256 = _tree_sha256(gold_files)
+    if input_tree_sha256 != source_lock["input_tree_sha256"]:
+        raise ValueError(
+            "source drift: input corpus does not match immutable upstream lock "
+            f"{source_lock['input_tree_sha256']}"
+        )
+    if gold_tree_sha256 != source_lock["gold_tree_sha256"]:
+        raise ValueError(
+            "source drift: gold corpus does not match immutable upstream lock "
+            f"{source_lock['gold_tree_sha256']}"
+        )
 
     rows: list[dict[str, Any]] = []
     source_by_id: dict[str, str] = {}
@@ -189,6 +214,13 @@ def _build_benchmark(source_root: Path, seed: int) -> tuple[dict[str, Any], dict
                 "gold_path": gold_path.relative_to(source_root).as_posix(),
                 "gold_sha256": _sha256(gold_path),
             }
+        )
+
+    reviewed_ids = set(audit_rules["too_general_informal_specs"])
+    unknown_reviewed_ids = reviewed_ids - set(gold_by_id)
+    if unknown_reviewed_ids:
+        raise ValueError(
+            f"audit rules reference unknown benchmark IDs: {sorted(unknown_reviewed_ids)}"
         )
 
     group_assignments, group_config = _load_groups(
@@ -247,9 +279,7 @@ def _build_benchmark(source_root: Path, seed: int) -> tuple[dict[str, Any], dict
                     "exact_match": bool(exact_matches),
                     "matched_reference_formulas": exact_matches,
                 },
-                "informal_spec_quality": _informal_spec_quality(
-                    str(gold.get("informal_spec", ""))
-                ),
+                "informal_spec_quality": _informal_spec_quality(benchmark_id, audit_rules),
                 "gold_quality": _gold_quality(gold),
             }
         )
@@ -315,6 +345,12 @@ def _build_benchmark(source_root: Path, seed: int) -> tuple[dict[str, Any], dict
             "gold_root": "benchmark/lifted",
             "group_config": "benchmark/rq1_groups.yaml",
             "group_config_sha256": _sha256(source_root / "benchmark" / "rq1_groups.yaml"),
+            "audit_rules": "benchmark/rq1_audit_rules.yaml",
+            "audit_rules_sha256": _sha256(
+                source_root / "benchmark" / "rq1_audit_rules.yaml"
+            ),
+            "input_tree_sha256": input_tree_sha256,
+            "gold_tree_sha256": gold_tree_sha256,
             "pairing_rule": "input .py and gold .yaml share the same filesystem-safe stem",
         },
         "cases": rows,

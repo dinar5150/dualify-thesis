@@ -85,6 +85,19 @@ def test_verify_rejects_source_drift(tmp_path: Path) -> None:
     assert "source drift" in verified.stderr.lower()
 
 
+def test_generation_rejects_source_drift_before_artifacts_exist(tmp_path: Path) -> None:
+    source_root = tmp_path / "source"
+    shutil.copytree(ROOT / "benchmark", source_root / "benchmark")
+    input_path = next((source_root / "benchmark" / "lifted_auto_eval").glob("*.py"))
+    input_path.write_bytes(input_path.read_bytes() + b"\n# drift before generation\n")
+
+    result = _run_cli(tmp_path / "artifacts", source_root=source_root)
+
+    assert result.returncode != 0
+    assert "source drift" in result.stderr.lower()
+    assert not (tmp_path / "artifacts" / "manifest.json").exists()
+
+
 def test_generation_is_byte_stable_and_maps_each_input_to_same_stem_gold(
     tmp_path: Path,
 ) -> None:
@@ -166,6 +179,13 @@ def test_audit_records_case_level_leakage_and_gold_quality_evidence(tmp_path: Pa
         "crosshair_examples::icontract::correct_code::showcase.py::duplicate_list"
     ]
     assert duplicate["informal_spec_quality"]["too_general"] is True
+
+    for qualname in ("determine_row", "determine_column"):
+        case = by_id[
+            f"python_by_contract::correct::aoc2020::day_5_binary_boarding.py::{qualname}"
+        ]
+        assert case["informal_spec_quality"]["too_general"] is True
+        assert "decoding_rule_not_described" in case["informal_spec_quality"]["reasons"]
 
     transform = by_id[
         "python_by_contract::correct::aoc2020::day_25_combo_breaker.py::transform"
