@@ -1,22 +1,22 @@
-# Known bugs, verified hazards and resolutions
+# Известные баги, проверенные риски и исправления RQ1
 
-This is the active register of **RQ1 extension and integration defects/hazards**. Original Dualify scientific/Z3 limitations are recorded separately in [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md). A known upstream behavior may be relevant here as an RQ1 integration risk, but does not authorize changing the original method.
+Это текущий реестр **дефектов и рисков расширения RQ1 и его интеграции**. Научные ограничения оригинального Dualify/Z3 отдельно записываются в [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md). Поведение оригинального upstream может создавать риск для нашего RQ1, но это не разрешает менять исходный метод.
 
-This is the active defect register. A **verified hazard** is a behavior observed in upstream source that could invalidate RQ1 if used incorrectly; it is not necessarily a defect in the original Dualify product. An **unverified risk** is not labeled a confirmed bug. No RQ1 implementation fixes have been made as part of the documentation phase.
+**Подтверждённый риск (verified hazard)** — наблюдаемое поведение исходного кода, которое при неправильном использовании может исказить RQ1; оно необязательно является багом оригинального Dualify. **Непроверенный риск** нельзя называть подтверждённым багом. На этапе подготовки документации исправления RQ1 не выполнялись.
 
-| ID | State | Category | Location / evidence | Impact on RQ1 | Mitigation / resolution |
+| ID | Статус | Категория | Источник / свидетельства | Влияние на RQ1 | Мера / исправление |
 | --- | --- | --- | --- | --- | --- |
-| RQ1-001 | **Verified hazard; open** | Replay | Upstream `ReplayLLMClient(match_by_prompt=True)` reuses the last recorded answer if calls with an identical prompt exceed available records. | Can silently produce apparent extra independent candidates from one recorded response. | Require strict sequential replay, expected call/slot counts, explicit candidate IDs and fail-closed verification in Ticket 03. **Not fixed yet.** |
-| RQ1-002 | **Verified hazard; open** | Failure attribution | Upstream p01/p02 catch broad exceptions and may yield a degraded extraction. | A failed Groq call might look like a valid completed negative candidate; a retry could wrongly replace a genuine model failure. | Log provider events at the client boundary and classify cause before finalizing a slot; test swallowed-failure cases in Ticket 02/03. **Not fixed yet.** |
-| RQ1-003 | **Observed limitation; open** | Measurement | A logical `generate_json` call may hide transport retries/fallback endpoints. Original extraction interface does not expose complete physical HTTP timings. | Logical call count and extractor elapsed time cannot be presented as exact HTTP call count or pure model inference latency. | Report actual available metrics and coverage; optionally instrument transport narrowly with verification. **Not fixed yet.** |
-| RQ1-004 | **Audit pending** | Benchmark leakage | Some upstream inputs include embedded formal annotations; several tasks are near-duplicates or have generic informal specs. | Inflated apparent extraction success or dev/test contamination. | Ticket 01 records complete case-level audit and group-aware split; preserve inputs and disclose the limitations. **Not verified as test leakage.** |
-| RQ1-005 | **Potential provider hazard; not reproduced here** | API output format | Providers may surface generated JSON validation failures via HTTP error responses. | Treating all 4xx responses as infrastructure errors can bias success by free retries. | Distinguish error-body causes, stop on config/auth failures, count model-format failures under native extraction policy. Validate with offline fakes in Ticket 02. |
+| RQ1-001 | **Подтверждённый риск; открыт** | Replay | В upstream `ReplayLLMClient(match_by_prompt=True)` повторно использует последний записанный ответ, если вызовов с тем же prompt больше, чем доступных записей. | Можно ошибочно получить дополнительные «независимые» кандидаты из одного сохранённого ответа. | В Ticket 03 — strict sequential replay, проверка количества calls/slots, отдельные candidate IDs и fail-closed проверки. **Не исправлено.** |
+| RQ1-002 | **Подтверждённый риск; открыт** | Атрибуция ошибок | Оригинальные p01/p02 перехватывают широкие исключения и могут возвращать degraded extraction. | Неудачный запрос к Groq может выглядеть как завершённый неправильный кандидат; retry может ошибочно заменить реальную ошибку генерации. | В Ticket 02/03 — регистрация событий на границе клиента, классификация причины до завершения slot, тесты скрытых исключений. **Не исправлено.** |
+| RQ1-003 | **Наблюдаемое ограничение; открыто** | Измерения | Логический `generate_json` может скрывать transport retries и смену endpoint. Исходный extraction API не даёт полные метрики физических HTTP-запросов. | Нельзя выдавать количество логических вызовов и elapsed time extractor за точное количество HTTP-запросов или чистую model inference latency. | Отчитываться только по доступным метрикам и их покрытию; при необходимости — узкое инструментирование transport с проверкой. **Не исправлено.** |
+| RQ1-004 | **Аудит ожидается** | Утечка benchmark | В некоторых исходных входах есть формальные аннотации; задачи могут быть близкими дубликатами или иметь общие неформальные описания. | Возможное завышение качества extraction или загрязнение dev/test. | Ticket 01 — полный аудит по задачам и group-aware split с сохранением исходных входов. **Утечка в test не подтверждена.** |
+| RQ1-005 | **Потенциальный риск провайдера; не воспроизведён здесь** | Формат API | Провайдер может сообщать о сбое валидации сгенерированного JSON через HTTP-ошибку. | Если все 4xx считать инфраструктурными сбоями, бесплатные retries могут завысить pass@k. | Различать причины по телу ответа; останавливаться при config/auth ошибках; ошибки формата модели учитывать в рамках native extraction. Проверить offline fake-клиентами в Ticket 02. |
 
-## How to update this register
+## Как обновлять реестр
 
-When a bug is reproduced, record **date**, **commit**, **minimal reproduction**, **expected vs actual behavior**, **severity**, **affected ticket**, **fix commit**, **regression test** and **verification outcome**. Change state only when evidence supports it:
+Когда баг воспроизведён, записывай **дату**, **commit**, **минимальное воспроизведение**, **ожидаемое и фактическое поведение**, **severity**, **затронутый тикет**, **fix commit**, **regression test** и **результат проверки**. Меняй статус только по фактам:
 
-`observed / reproduced → investigating → fixed-in-branch → verified-resolved`, or `non-bug / accepted limitation` with rationale.
+`observed / reproduced → investigating → fixed-in-branch → verified-resolved` либо `non-bug / accepted limitation` с объяснением.
 
-### Resolved incidents
-None documented on the clean upstream-based documentation branch as of 2026-11-20. Do not import old fork branch issues as if they were current defects.
+### Закрытые проблемы
+На чистой ветке документации, основанной на upstream, по состоянию на 2026-11-20 закрытые инциденты не задокументированы. Не импортируй ошибки старых веток форка как проблемы текущего состояния.

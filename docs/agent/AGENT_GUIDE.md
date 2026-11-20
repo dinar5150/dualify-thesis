@@ -1,38 +1,38 @@
-# Repository agent guide
+# Руководство для AI-агентов репозитория
 
-## Purpose
-This repository is a documentation-first workspace for the bachelor thesis study of **Dualify RQ1**: how the probability of obtaining at least one gold-equivalent formal contract changes as the number of independently generated candidates increases. The project extends the **original** Dualify extraction workflow without changing its semantics.
+## Назначение
+Этот репозиторий — рабочая среда для бакалаврского исследования **Dualify RQ1**: как меняется вероятность получить хотя бы один gold-equivalent формальный контракт при увеличении числа независимо сгенерированных кандидатов. Исследование расширяет **оригинальный** процесс извлечения контрактов Dualify без изменения его семантики.
 
-**Source baseline:** [timur-harin/dualify](https://github.com/timur-harin/dualify), upstream commit `7ffd1ae37822096d5b7b573785ee46e877903185`.
-**Current stage:** approved design and implementation tickets; this documentation branch does **not** authorize running implementation or live experiments in the current handoff. The existing fork branches are unrelated drafts; this branch starts from the upstream commit.
+**Исходная версия:** [timur-harin/dualify](https://github.com/timur-harin/dualify), upstream commit `7ffd1ae37822096d5b7b573785ee46e877903185`.  
+**Текущий этап:** дизайн и тикеты реализации утверждены, но работа с этой документационной веткой **не даёт разрешения** реализовывать код или выполнять live-эксперименты. Прежние ветки форка — отдельные черновики; эта ветка основана на исходном upstream.
 
-## Workflow for an AI coding agent
-1. Read [docs/rq1/SPEC.md](../rq1/SPEC.md) and [CONTEXT.md](CONTEXT.md) before planning RQ1 changes.
-2. Read [PROJECT_DECISIONS.md](PROJECT_DECISIONS.md) whenever choosing architecture, experiment protocol, evaluation, or trade-offs. Preserve approved decisions; propose an explicit amendment instead of silently changing them.
-3. Read [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md) before diagnosing original extraction, formula-fragment, gold-scoring or Z3 behavior. Preserve the original Z3 method and reuse existing documented diagnoses.
-4. Choose **one unblocked ticket** from [docs/rq1/tickets/README.md](../rq1/tickets/README.md); read its complete file, including **Stopping criteria**.
-5. Study the current source and tests at the relevant seam. Prefer the existing extractor, transcript and gold-scoring interfaces. Add the narrowest observable end-to-end slice, its tests and a reproducible verification record.
-6. Review [KNOWN_BUGS.md](KNOWN_BUGS.md) when diagnosing failures or modifying recovery/replay logic. Record newly confirmed bugs, affected versions, evidence, mitigations and verified resolutions.
-7. Verify only the current ticket's acceptance criteria, run the relevant quality checks, update relevant docs, then **stop**. Summarize changed files, commands, evidence, remaining risks and the next *unblocked* ticket. Do not automatically execute the next ticket.
+## Порядок работы AI-агента
+1. Перед планированием изменений RQ1 прочитай [SPEC.md](../rq1/SPEC.md) и [CONTEXT.md](CONTEXT.md).
+2. При выборе архитектуры, протокола, способа оценки или компромиссов прочитай [PROJECT_DECISIONS.md](PROJECT_DECISIONS.md). Сохраняй утверждённые решения; при необходимости предложи явную поправку вместо молчаливого изменения.
+3. Перед диагностикой оригинального extraction, фрагмента формул, gold scoring или Z3 прочитай [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md). Сохраняй оригинальный метод Z3 и используй уже документированные объяснения.
+4. Выбери **один незаблокированный тикет** из [списка тикетов](../rq1/tickets/README.md). Прочитай его полностью, включая **Stopping criteria**.
+5. Изучи актуальный код и тесты в нужной точке интеграции. Предпочитай существующие интерфейсы extractor, transcript и gold scoring. Реализуй минимальный сквозной проверяемый сценарий, тесты и воспроизводимое подтверждение результата.
+6. При диагностике ошибок или изменении логики восстановления/replay сверяйся с [KNOWN_BUGS.md](KNOWN_BUGS.md). Записывай новые подтверждённые ошибки, затронутые версии, доказательства, обходные пути и проверенные исправления.
+7. Проверь только acceptance criteria текущего тикета, запусти нужные проверки качества, обнови относящиеся к нему документы и **остановись**. В итоговом отчёте укажи изменённые файлы, команды, результаты проверок, оставшиеся риски и следующий *незаблокированный* тикет. **Не переходи к нему автоматически.**
 
-## Scope and guardrails
-- RQ1 is **candidate coverage against human-confirmed gold**, not contract selection. RQ2 and RQ3 are outside the current implementation.
-- Use original p01 (spec) and p02 (code) including native validation and repair; call existing gold scoring for offline evaluation. The original prompts, Z3 logic, solver timeout, supported formula fragment, gold-scoring semantics and repair ladder are **frozen research controls**. Add observation/reporting only; document suspected upstream defects for the supervisor instead of modifying the Z3 approach.
-- Preserve the original 40 benchmark inputs and gold files. Freeze a group-aware 10-dev/30-test split before any experiment. Keep gold out of extraction prompts.
-- Main sampling: 4 completed *attempt slots* per task/channel, `k=1,2,4`; baseline: 1 original attempt at T=0. The sampling temperature is nonzero **only on the initial generation**; native repairs remain at T=0.
-- Keep independent successful samples, including identical text; never fill missing samples from cached replay responses. Distinguish provider faults from model/format failures and from inconclusive Z3 judgments.
-- A live dev run is permitted only when the implementation ticket is explicitly started, after mock/offline tests and frozen run configuration. Held-out test requires **separate explicit authorization** after the dev gate. Do not run either as a side effect of documentation work.
-- No wholesale refactoring, speculative features, wide formatting rewrites, or edits to old thesis branches. Keep API keys and raw sensitive provider credentials out of Git history.
+## Область работы и строгие ограничения
+- RQ1 измеряет **наличие правильного кандидата относительно human-confirmed gold**, а не выбор итогового контракта. RQ2 и RQ3 не входят в текущую реализацию.
+- Используй оригинальные p01 (spec) и p02 (code), включая штатные validation и repair, и существующий gold scoring для offline-оценки. Оригинальные prompts, логика Z3, timeout solver, фрагмент допустимых формул, семантика gold scoring и repair ladder — **зафиксированные контрольные элементы исследования**. Добавляй наблюдение и отчётность; подозреваемые ошибки upstream фиксируй для обсуждения с научным руководителем, а не исправляй Z3.
+- Сохраняй оригинальные 40 входных примеров и gold-файлов. До экспериментов зафиксируй group-aware split 10 dev / 30 test. Gold не должен попадать в extraction prompts.
+- Основной sampling: четыре завершённых *attempt slots* на задачу и канал, `k=1,2,4`; baseline — одна оригинальная попытка при T=0. Ненулевая температура используется **только для initial generation**; штатные repairs остаются при T=0.
+- Сохраняй отдельно полученные результаты даже при одинаковом тексте. Не заполняй недостающие кандидаты кэшированными ответами replay. Различай инфраструктурные ошибки провайдера, ошибки генерации/формата и неопределённость Z3.
+- Live dev разрешён только после явного начала соответствующего этапа реализации, прохождения fake/offline тестов и заморозки конфигурации. Held-out test требует **отдельного разрешения** после dev gate. Не запускай их как побочный эффект работы над документацией.
+- Не делай широких рефакторингов, необязательных функций, массового форматирования или изменений старых веток диплома. API-ключи и секреты не должны попадать в Git history.
 
-## References and trigger pointers
-- **Task scope or user-facing behavior:** [docs/rq1/SPEC.md](../rq1/SPEC.md)
-- **Experimental sampling, oracle semantics, metrics, failure taxonomy or freeze procedure:** [docs/rq1/PROTOCOL.md](../rq1/PROTOCOL.md)
-- **Starting, finishing or reviewing a single ticket:** [docs/rq1/tickets/README.md](../rq1/tickets/README.md) and its ticket file
-- **Meaning of “attempt”, “candidate”, “gold-equivalent” or “unknown”:** [CONTEXT.md](CONTEXT.md)
-- **Why an approach was chosen / how to change it:** [PROJECT_DECISIONS.md](PROJECT_DECISIONS.md)
-- **Limitation or potential bug in the original article, Z3, gold scorer or Dualify method:** [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md) — consult first; document rather than modify upstream semantics
-- **Bug or integration risk in our RQ1 extension:** [KNOWN_BUGS.md](KNOWN_BUGS.md)
-- **Source project setup and pipeline:** [README.md](../../README.md), `pyproject.toml`
+## Куда обращаться за информацией
+- **Задача и ожидаемое поведение:** [SPEC.md](../rq1/SPEC.md)
+- **Sampling, oracle, метрики, классификация ошибок, freeze:** [PROTOCOL.md](../rq1/PROTOCOL.md)
+- **Начало, выполнение и проверка конкретного тикета:** [список тикетов](../rq1/tickets/README.md) и соответствующий файл
+- **Значение attempt, candidate, gold equivalence, unknown:** [CONTEXT.md](CONTEXT.md)
+- **Причины выбранных решений и порядок их изменения:** [PROJECT_DECISIONS.md](PROJECT_DECISIONS.md)
+- **Ограничение или возможный баг исходной статьи, Z3, gold scorer, Dualify:** [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md) — сначала проверь записи; документируй, а не меняй исходную семантику
+- **Баг или риск интеграции нового RQ1:** [KNOWN_BUGS.md](KNOWN_BUGS.md)
+- **Запуск и структура исходного проекта:** [README.md](../../README.md), `pyproject.toml`
 
-## Quality gate (when implementation is authorized)
-Use the commands supported by the project, typically `poetry run ruff check .`, `poetry run mypy src`, and `poetry run pytest -q`; verify exact configuration before running. Tests of RQ1 behavior must work with **fake clients / recorded responses**, without contacting Groq. A clean check does not replace the ticket-specific tests or the documented Definition of Done.
+## Проверки качества (после допуска к реализации)
+Используй команды, поддерживаемые проектом, обычно `poetry run ruff check .`, `poetry run mypy src`, `poetry run pytest -q`; предварительно сверь точную конфигурацию. Тесты поведения RQ1 должны работать с **fake clients / recorded responses**, без подключения к Groq. Успешные общие проверки не заменяют тесты тикета и его Definition of Done.

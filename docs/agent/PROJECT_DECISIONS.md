@@ -1,45 +1,45 @@
-# Project decisions — RQ1
+# Проектные решения — RQ1
 
-**State:** user-approved research design, 2026-11-20. **Baseline:** original `timur-harin/dualify` commit `7ffd1ae37822096d5b7b573785ee46e877903185`. This file is the human-facing rationale register; see [docs/rq1/SPEC.md](../rq1/SPEC.md) for desired behavior and [docs/rq1/PROTOCOL.md](../rq1/PROTOCOL.md) for authoritative experiment rules.
+**Статус:** исследовательский дизайн утверждён пользователем 2026-11-20. **Основа:** оригинальный `timur-harin/dualify`, commit `7ffd1ae37822096d5b7b573785ee46e877903185`. Здесь хранятся причины решений. Описание желаемого поведения — в [SPEC.md](../rq1/SPEC.md), обязательные правила эксперимента — в [PROTOCOL.md](../rq1/PROTOCOL.md).
 
-An **approved** decision may be changed only with a dated amendment stating the reason and affected measures. Such amendments must be approved **before** a held-out evaluation and reflected in both the spec and relevant tickets. Record observations, not retroactive rationalizations.
+**Утверждённое** решение изменяется только через датированную поправку с объяснением причины и затронутых метрик. Поправки согласуются **до** held-out evaluation и отражаются в спецификации и затронутых тикетах. Фиксируй наблюдения, а не придумывай задним числом обоснования.
 
-| ID | Decision | Why this choice (trade-off) |
+| ID | Решение | Почему выбрано / компромисс |
 | --- | --- | --- |
-| D01 | Retain original 40 benchmark inputs and conduct a separate leakage/quality audit. | Preserves comparability and prevents opportunistic dataset editing; embedded annotations and weak informal descriptions must be disclosed. |
-| D02 | A sampling attempt includes the complete native extractor and repair ladder. | Measures usable final contracts as Dualify produces them; one attempt can cost multiple LLM requests. |
-| D03 | Freeze dev/test before experiments. | Protects the later RQ2 methodology from test-data tuning. |
-| D04 | Target a group-aware 10/30 dev/test split. | Leaves most cases for reporting while grouping close variants to avoid leakage; 40 tasks limit statistical power. |
-| D05 | Use nonzero temperature on initial generation while preserving original repairs. | Encourages candidate diversity without confounding changes to the recovery policy; repairs remain at native T=0. |
-| D06 | Report separate spec/code pass@k with latency, error and cost diagnostics. | The channels can fail differently; single merged accuracy would obscure that. |
-| D07 | Use an available Qwen model through Groq; pin exact model ID at preflight. | Practical free-tier feasibility matters more than matching the paper's exact model; cross-model claims are out of scope. |
-| D08 | Add a single native T=0 baseline per channel/task. | Supplies a reference to original behavior at modest cost; it is descriptive, not an isolated k effect across temperatures. |
-| D09 | Main arm: n=4, k={1,2,4}. | Makes a bounded study feasible with Groq Free Tier; limits granularity and power. |
-| D10 | Primary metric: combinatorial pass@k. | Estimates coverage from fixed-size candidate pools without privileging arbitrary sample order; first-k is diagnostic. |
-| D11 | One model-appropriate positive temperature, fixed before dev. | Focuses RQ1 on candidate count, not temperature tuning. |
-| D12 | Count only decisive equivalence as success; show an unknown-sensitive upper bound. | Avoids falsely treating solver unknown as proven wrong while preserving a conservative main measure. |
-| D13 | Bounded, cause-based infrastructure retries and same-slot resume. | Separates provider unavailability from model/extractor quality; no resampling-until-valid. |
-| D14 | Describe coverage gain and uncertainty, with no arbitrary minimum-effect threshold. | pass@k is nondecreasing by construction, so effect size and expense are more informative than monotonicity. |
-| D15 | Limit RQ1 to original p01/p02 and existing gold scoring. | Isolates generation quality; later planning/execution phases are irrelevant to oracle coverage. |
-| D16 | Dev engineering gate, freeze, then one held-out test campaign. | Prevents test-set tuning; the test run requires separate approval after dev. |
+| D01 | Сохраняем оригинальные 40 входов benchmark и проводим независимый аудит утечек/качества. | Сравнимость результатов и защита от удобного редактирования датасета; встроенные аннотации и слабые описания должны быть раскрыты. |
+| D02 | Одна sampling attempt включает полный оригинальный extractor и repair ladder. | Измеряем пригодный итоговый контракт в семантике Dualify; на одну попытку может приходиться несколько LLM-вызовов. |
+| D03 | Фиксируем dev/test до экспериментов. | Защищаем последующую методологию RQ2 от подгонки по test. |
+| D04 | Стремимся к group-aware split 10 dev / 30 test. | Большая часть задач остаётся для оценки; похожие функции не разделяются между наборами. Размер 40 ограничивает статистическую мощность. |
+| D05 | Повышаем температуру initial generation, сохраняя штатный repair. | Получаем разнообразие кандидатов без вмешательства в восстановление; repairs остаются на исходной T=0. |
+| D06 | Отдельные spec/code pass@k, latency, ошибки и затраты. | Каналы могут ошибаться по-разному; одна объединённая accuracy скрыла бы различия. |
+| D07 | Используем доступную Qwen через Groq, точный model ID фиксируем перед запуском. | Практичность бесплатного тарифа важнее точного совпадения модели из статьи; сравнение разных моделей вне scope. |
+| D08 | Добавляем отдельный single-attempt baseline штатного Dualify при T=0 для каждого канала и задачи. | При небольших затратах получаем ориентир исходного поведения; это описательное сравнение, не чистый эффект k при равной температуре. |
+| D09 | Основная серия: n=4, k={1,2,4}. | Ограниченный объём эксперимента с Groq Free Tier; более грубые оценки и меньшая статистическая мощность. |
+| D10 | Основная метрика — комбинаторный pass@k. | Оценка coverage из фиксированных пулов без зависимости от случайного порядка; first-k — диагностика. |
+| D11 | Одна подходящая модели ненулевая температура, зафиксированная до dev. | RQ1 изучает количество кандидатов, а не поиск оптимальной температуры. |
+| D12 | Успех — только доказанная эквивалентность; для unknown дополнительно верхняя граница. | Нельзя выдавать неопределённость solver за доказанную ошибку; основная оценка остаётся консервативной. |
+| D13 | Ограниченные retries по причине сбоя и resume того же slot. | Отделяем недоступность провайдера от качества генерации; исключаем resampling-until-valid. |
+| D14 | Оцениваем прирост coverage и неопределённость без произвольного порога минимального эффекта. | pass@k не убывает математически; размер выигрыша и цена важнее монотонности. |
+| D15 | Для RQ1 используем только оригинальные p01/p02 и существующий gold scoring. | Изолируем качество генерации; planning/execution не влияют на oracle coverage. |
+| D16 | Dev gate → freeze → один held-out test run. | Не подгоняем метод по test; для test нужен отдельный допуск. |
 
-## Architecture decisions accompanying the approved protocol
+## Архитектурные решения в дополнение к протоколу
 
-**A01 — External orchestration seam (planned).** Prefer a thin RQ1 runner and per-attempt client adapter around the original interfaces over changes to extractors, prompts or Z3. Higher-level integration is easier to test without altering native behavior. Narrow source edits require explicit evidence, scoped tests and a documented justification.
+**A01 — Внешний слой оркестрации (запланировано).** Предпочитаем тонкий runner RQ1 и per-attempt client adapter вокруг существующих интерфейсов, а не изменения extractors, prompts или Z3. Интеграция на высоком уровне проще проверяется без изменения исходного поведения. Точечные изменения исходников допустимы лишь при конкретном доказательстве необходимости, отдельном тесте и описании причин.
 
-**A02 — Transcript identity (planned).** Each candidate gets a unique attempt slot, ordered LLM call log and output. Strict replay requires exact cardinality, prompt hashes and exhaustion checks. The upstream prompt-matching mode can reuse a previous response and cannot establish independent sampling.
+**A02 — Идентичность transcript (запланировано).** У каждого кандидата уникальный attempt slot, упорядоченный журнал LLM calls и итоговый результат. Strict replay требует точного количества вызовов, prompt hashes и проверки полного расходования записей. Upstream match-by-prompt может вернуть прошлый ответ и не доказывает независимость sampling.
 
-**A03 — Primary analysis unit (planned).** Macro-average by benchmark task, separately for channels, then estimate paired coverage gain and its interval using task/group-aware resampling. Counts and group composition are disclosed because held-out data are small.
+**A03 — Единица статистического анализа (запланировано).** Макроусреднение по benchmark tasks отдельно для каналов; оценка парного прироста coverage и доверительного интервала с повторной выборкой по tasks/groups. При 30 test-задачах обязательно раскрывать количество задач и состав групп.
 
-**A04 — Source and scope (approved for this documentation branch).** Branch directly from the current original upstream commit in `dinar5150/dualify-thesis`; earlier fork branches are untrusted draft work and are outside the design source. This stage writes *Markdown only* and stops after review. It does not implement code or make live LLM requests.
+**A04 — Источник и область работ (утверждено для документационной ветки).** Новая ветка `dinar5150/dualify-thesis` создана непосредственно от актуального на момент создания upstream commit; старые ветки форка — черновики и не служат источником реализации. Этот этап меняет только Markdown, после проверки завершается, не реализуя код и не запуская LLM.
 
-**A05 — Original Z3 approach is frozen (approved, 2026-11-20).** Preserve upstream solver/checker semantics, 5-second timeout policy, formula fragment, reference contracts and native extraction/repair behavior for the RQ1 experiment. Record original-paper/method bugs and limits in [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md), with evidence and research caveats. Do not repeatedly diagnose recorded baseline behavior or silently fix it. Any change to the original method requires a distinct, explicit methodological approval (and is outside the existing tickets).
+**A05 — Заморозка оригинального Z3-подхода (утверждено 2026-11-20).** Для эксперимента RQ1 сохраняем семантику solver/checker, исходный timeout 5 секунд, допустимый фрагмент формул, эталонные контракты и штатные extraction/repair. Баги и ограничения оригинальной статьи записываем с доказательствами в [KNOWN_DUALIFY_LIMITATIONS.md](KNOWN_DUALIFY_LIMITATIONS.md) и описываем их влияние на выводы. Не проводим одни и те же исследования повторно и не исправляем базовый метод скрытно. Любое изменение требует отдельного явного утверждения методологии и не входит в существующие тикеты.
 
-## Unresolved run-time configuration (not decisions yet)
+## Неопределённые параметры запуска (пока не решения)
 
-- Exact Groq-compatible Qwen **model ID** and whether that model/mode is still available.
-- Numeric initial sampling temperature justified by the **actual model** documentation.
-- Provider-visible effective request/token quotas and safe throttle/retry budgets.
-- Fixed split and bootstrap seeds, actual corpus/duplicate groups, and benchmark-content checksums: produced by Ticket 01 before any live run.
+- Точный **model ID** Qwen через Groq и наличие требуемой модели/режима.
+- Числовая температура initial generation, обоснованная документацией **фактической модели**.
+- Действующие лимиты запросов/токенов провайдера, безопасное ограничение частоты и политика retry.
+- Seed для split и bootstrap, реальные группы дубликатов, хеши benchmark — будут получены в Ticket 01 до любых live-запусков.
 
-Do not insert guessed values to fill these gaps. Ticket 05 must reject an incomplete run manifest.
+Не подставляй предполагаемые значения. Ticket 05 должен отклонить неполный run manifest.

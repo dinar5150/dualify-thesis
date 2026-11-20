@@ -1,29 +1,29 @@
-# Domain glossary — Dualify thesis RQ1
+# Словарь предметной области — диплом Dualify RQ1
 
-This is the **ubiquitous language**, not an implementation plan. Use these terms consistently in specs, tickets and reports.
+Это **единый словарь терминов (ubiquitous language)**, а не план реализации. Используй эти значения в спецификации, тикетах и отчётах.
 
-| Term | Meaning |
+| Термин | Значение |
 | --- | --- |
-| **Benchmark case / task** | One original Dualify example with a unique benchmark identifier, source code, informal specification and linked human-confirmed gold contract. |
-| **Spec channel** | Generating a contract from the informal natural-language specification (original p01). |
-| **Code channel** | Generating a contract from the program source (original p02). |
-| **Contract** | Formal preconditions/domain constraints and a postcondition in Dualify's supported SMT-checkable fragment. |
-| **Gold contract** | A human-confirmed reference for the **supported fragment**, not a complete proof of Python semantics. |
-| **Extraction attempt** | One invocation of the **complete original extractor**, including validation, native repair/safe-subset procedures and final postprocessing. An attempt can make multiple LLM calls. |
-| **Candidate** | The final contract/extraction result of one completed extraction attempt. A degraded or invalid result is still a candidate, not a reason to sample for free. |
-| **Attempt slot** | Preassigned unique task × channel × arm × sample-index unit. It is completed by one final extraction or marked incomplete after unresolved infrastructure problems. |
-| **Candidate pool** | The four recorded attempt slots for a task and channel in the nonzero-temperature sampling arm. |
-| **Baseline** | A separate, single native extraction attempt with initial temperature 0. |
-| **Repair ladder** | Existing sequence of validation, repair, safe subset recovery or degradation undertaken by the original extractor. It is part of an attempt. |
-| **Gold equivalence** | A **decisive** equivalence result from existing gold scoring using the original solver semantics. It measures agreement with the reference in the formal fragment. |
-| **Non-equivalence** | A decisive negative oracle result; differs from inconclusive solver status. |
-| **Oracle unknown** | Z3 or checking outcome that does not establish equivalence or non-equivalence. Do not label as proven incorrect. |
-| **Invalid candidate** | A completed extraction that cannot be scored as a well-formed contract; it is not automatically oracle-unknown. |
-| **Infrastructure failure** | Unresolved transport/rate-limit/server condition preventing trustworthy completion of a preassigned slot, distinct from a model output error. |
-| **Provider attempt** | One physical HTTP attempt; multiple may occur during a logical LLM call or extraction attempt. |
-| **Transcript** | Ordered record of LLM prompts, settings and responses used to replay extraction *offline*. Replaying is not new sampling. |
-| **pass@k** | Estimated probability of finding at least one confirmed gold-equivalent contract among k samples from a pool of n independently obtained extraction attempts. |
-| **Coverage gain (delta_4_1)** | Within-sampling-arm pass@4 minus pass@1, separately for the spec and code channels. |
-| **Dev set** | Ten frozen benchmark tasks available for engineering validation. |
-| **Held-out test set** | Thirty frozen benchmark tasks evaluated once after the dev gate and explicit approval; no tuning from its results. |
-| **Freeze** | Persisted code revision, split, model ID, sampling settings, oracle versions and evaluation rules before held-out test. |
+| **Benchmark case / task** | Один оригинальный пример Dualify с уникальным benchmark ID, исходным кодом, неформальной спецификацией и соответствующим human-confirmed gold-контрактом. |
+| **Spec channel** | Генерация контракта по неформальной спецификации на естественном языке (оригинальная p01). |
+| **Code channel** | Генерация контракта по исходному коду программы (оригинальная p02). |
+| **Contract** | Формальные предусловия/domain constraints и постусловие из поддерживаемого Dualify фрагмента, проверяемого SMT. |
+| **Gold contract** | Проверенный человеком эталон **для поддерживаемого фрагмента**, а не полное доказательство семантики Python. |
+| **Extraction attempt** | Один вызов **полного оригинального extractor**, включая validation, штатные repair/safe-subset и финальную обработку. Одна попытка может включать несколько LLM-вызовов. |
+| **Candidate** | Итоговый контракт/результат одной завершённой попытки extraction. Degraded или invalid результат тоже считается кандидатом, а не поводом бесплатно запустить новую генерацию. |
+| **Attempt slot** | Заранее назначенная уникальная единица task × channel × arm × sample-index. Содержит один финальный результат extraction либо помечается неполной после неустранённого инфраструктурного сбоя. |
+| **Candidate pool** | Четыре зафиксированных attempt slots для одной задачи и канала в серии с ненулевой температурой. |
+| **Baseline** | Отдельная одна штатная попытка extraction с начальной температурой 0. |
+| **Repair ladder** | Существующая в оригинальном extractor последовательность validation, repair, safe-subset recovery либо degraded fallback. Является частью попытки. |
+| **Gold equivalence** | **Однозначно установленная** эквивалентность по существующему gold scoring при исходной семантике solver. Измеряет согласие с эталоном в формальном фрагменте. |
+| **Non-equivalence** | Однозначно установленный отрицательный результат oracle; отличается от неопределённого ответа solver. |
+| **Oracle unknown** | Результат Z3/проверки, который не доказывает ни эквивалентность, ни неэквивалентность. Нельзя называть доказанной ошибкой. |
+| **Invalid candidate** | Результат завершённого extraction, не допускающий корректную проверку как well-formed contract. Не равен автоматически oracle-unknown. |
+| **Infrastructure failure** | Неустранённый сбой сети, rate limit или сервера, мешающий достоверно завершить назначенный slot; отличается от ошибки ответа модели. |
+| **Provider attempt** | Один физический HTTP-запрос. В рамках одного логического LLM-вызова или extraction attempt их может быть несколько. |
+| **Transcript** | Упорядоченная запись prompts, настроек и ответов LLM для offline replay extraction. Replay не является новой генерацией. |
+| **pass@k** | Оценка вероятности обнаружить хотя бы один подтверждённый gold-equivalent контракт среди k выборок из пула n независимо полученных extraction attempts. |
+| **Coverage gain (delta_4_1)** | Разница pass@4 − pass@1 внутри одной sampling-серии; вычисляется отдельно для spec и code. |
+| **Dev set** | Десять заранее зафиксированных задач benchmark, доступных для инженерной проверки. |
+| **Held-out test set** | Тридцать заранее зафиксированных задач; оцениваются однократно после dev gate и отдельного разрешения, без настройки метода по результатам. |
+| **Freeze** | Сохранённые перед held-out test ревизия кода, split, model ID, sampling settings, версии oracle и правила оценки. |

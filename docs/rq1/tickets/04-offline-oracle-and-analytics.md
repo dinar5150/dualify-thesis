@@ -1,49 +1,49 @@
-# 04 — Turn recorded candidates into an auditable offline RQ1 report
+# 04 — Превратить записанных кандидатов в проверяемый offline-отчёт RQ1
 
-**Status:** ready-for-agent (NOT STARTED)  
-**Blocked by:** [03 — Candidate pool and strict replay](03-candidate-pool-and-replay.md).  
-**Deliverable:** A credential-free, end-to-end offline report from immutable recorded candidate pools through native gold scoring to pass@k, uncertainty and costs.
+**Статус:** ready-for-agent (НЕ НАЧАТ)  
+**Blocked by:** [03 — Candidate pool и strict replay](03-candidate-pool-and-replay.md).  
+**Результат:** полный offline-путь без credentials — от неизменяемых candidate pools через исходный gold scoring к pass@k, uncertainty и cost.
 
 ## Problem
-A raw boolean gold score hides the difference between a decisively incorrect contract, invalid expression and solver `unknown`. Counting all false results as “incorrect” understates uncertainty. Computing pass@k by taking a first-k prefix alone is not the agreed estimator, and treating four samples from the same task as independent observations would give misleading confidence intervals.
+Один булев gold score скрывает разницу между доказанно неправильным контрактом, invalid expression и solver `unknown`. Если все false считать «неправильно», неопределённость будет искажена. Простое first-k coverage не соответствует согласованной основной метрике; а если считать четыре samples одной задачи независимыми observations, доверительные интервалы будут ошибочными.
 
 ## Known facts
-- Original Dualify has `score_extraction_against_gold`, a human-confirmed gold corpus and Z3 equivalence checking, including reasons/diagnostics.
-- A false equivalence flag does not necessarily prove non-equivalence; unknown or parse failure needs explicit classification.
-- The approved primary estimator uses n=4, k={1,2,4}, separate spec/code task macro-averages and a conservative/unknown-sensitive bound.
-- The within-treatment effect of interest is `pass@4 − pass@1`. The T=0 baseline is separate and descriptive.
-- Observed extractor elapsed time is **not** pure provider inference latency, especially under Groq rate limits and retries.
+- Оригинальный Dualify содержит `score_extraction_against_gold`, проверенный человеком gold corpus и Z3 equivalence checking с reason/diagnostics.
+- `equivalent=False` не всегда доказывает неэквивалентность; unknown и parse failure необходимо классифицировать отдельно.
+- Утверждённый estimator: n=4, k={1,2,4}, раздельные macro-averages spec/code и консервативная/unknown-sensitive границы.
+- Основной эффект внутри treatment: `pass@4 − pass@1`; baseline T=0 учитывается отдельно и описательно.
+- Измеренное elapsed time extractor **не равно** чистому inference latency провайдера, особенно при rate limits и retries Groq.
 
 ## Constraints
-- Score **only** fully completed, integrity-verified pools from Ticket 03. Incomplete campaigns fail, not shrink n.
-- Invoke the existing gold scorer; preserve original Z3 timeout, checker and formula fragment semantics. Consult [original-method limitations](../../agent/KNOWN_DUALIFY_LIMITATIONS.md) and report baseline defects without modifying Z3. No invented oracle, new solver algorithm or LLM judge.
-- Classify each candidate as `equivalent`, `non_equivalent`, `invalid`, `inconclusive`, or `unclassified/blocked` if native evidence is insufficient.
-- Compute `low(k)=1−C(4−c,k)/C(4,k)` and `high(k)=1−C(4−c−u,k)/C(4,k)`. Reject impossible counts and preserve diagnostics.
-- Macro-average per task/channel; use group-aware **paired** bootstrap intervals with recorded random seed, effective groups and iteration count.
-- Keep the reference truth and derived labels in offline scoring artifacts only; candidate generation/replay must remain independent of them.
-- Report mandatory attempt wall time and stage metrics. Provider-internal HTTP/latency/tokens are conditional on observed telemetry and may be NA with explanation.
-- Tests must be fully offline, fast and deterministic.
+- Оценивай **только** полностью завершённые и проверенные pools из Ticket 03. При неполной campaign нужно остановить scoring, а не сокращать n.
+- Используй оригинальный gold scorer; сохраняй исходные Z3 timeout, checker и семантику формального фрагмента. Сверяйся с [ограничениями оригинального метода](../../agent/KNOWN_DUALIFY_LIMITATIONS.md), фиксируй обнаруженные недостатки исходного подхода, **не модифицируя Z3**. Не добавляй LLM judge или новый oracle.
+- Каждому кандидату назначь `equivalent`, `non_equivalent`, `invalid`, `inconclusive` либо `unclassified/blocked`, если источников недостаточно.
+- Считай `low(k)=1−C(4−c,k)/C(4,k)` и `high(k)=1−C(4−c−u,k)/C(4,k)`. Отклоняй невозможные счётчики; сохраняй исходные diagnostics.
+- Макроусредняй по task/channel; используй **парный group-aware bootstrap** с записанными seed, количеством resamples и effective groups.
+- Reference truth и derived labels остаются только в offline-scoring artifacts; generation/replay не должны от них зависеть.
+- Обязательно сообщай наблюдаемое время полной попытки и stage metrics. HTTP/token/inference данные провайдера указывай только при прямом наблюдении, иначе NA с объяснением.
+- Все тесты полностью offline, быстрые и детерминированные.
 
 ## Hypotheses
-- **Methodological hypothesis:** native equivalence results can be mapped to honest confirmed-success and uncertainty bounds without changing the oracle.
-- **Engineering hypothesis:** both channels can be evaluated with one reusable offline analyzer that detects missing/corrupt pools before reporting numbers.
+- **Методологическая гипотеза:** исходные equivalence results можно отразить как подтверждённые успехи и честные границы неопределённости, не меняя oracle.
+- **Инженерная гипотеза:** оба канала допускают один повторно используемый offline analyzer, который выявляет неполные и повреждённые pools до вычисления результатов.
 
 ## Expected outcome
-- A small deterministic fixture from a recorded candidate pool generates per-candidate reasons, per-task low/high pass@1/2/4 and separate channel macro summaries.
-- A single offline report includes paired delta_4_1 and 95% group-aware interval, first-k diagnostic, mixed-outcome cases, degraded/repair/error distribution, diversity and observable costs.
-- A second invocation on identical records reproduces identical numerical results and artifact checksums, without credentials.
+- Небольшая детерминированная fixture из candidate pool создаёт per-candidate reasons, per-task low/high pass@1/2/4 и отдельные channel summaries.
+- Один offline report содержит paired delta_4_1 и 95% group-aware interval, first-k diagnostic, mixed-outcome cases, распределение degraded/repair/errors, diversity и наблюдаемые расходы.
+- При повторном выполнении над теми же records значения и checksums совпадают; credentials не требуются.
 
 ## Acceptance criteria
-- [ ] Formula fixtures: c=0 → 0; c=1,u=0 → (0.25,0.5,1.0); c=4 → 1; c=0,u=1 → high (0.25,0.5,1.0).
-- [ ] Solver `unknown` contributes to u, not decisively incorrect; invalid syntax contributes to neither c nor u. Native reasons are preserved.
-- [ ] Every test task is weighted equally within its channel; paired resampling preserves task/group relationships and yields reproducible 95% interval.
-- [ ] Treatment comparison uses **within-temperature** k=4 vs k=1; T=0 baseline is labeled descriptive, not used as a k-only control.
-- [ ] Reports include formula diversity, error statuses, native repair counts, observed attempt/campaign timings, and unknown/incomplete/NA counts.
-- [ ] A missing slot, contradictory counts, unclassifiable oracle state or transcript corruption produces a **failed report** with a diagnostic, not plausible numbers.
-- [ ] Offline reruns match numerical outputs and verify no network/model access. Existing gold/solver regression checks remain green.
+- [ ] Граничные формулы: c=0 → всё 0; c=1,u=0 → (0.25,0.5,1.0); c=4 → всё 1; c=0,u=1 → high (0.25,0.5,1.0).
+- [ ] Solver `unknown` входит в u, а не в доказанную неэквивалентность; invalid syntax не включается ни в c, ни в u. Исходные reasons сохраняются.
+- [ ] Все test tasks имеют одинаковый вес внутри канала; paired resampling учитывает связи задач/групп и даёт воспроизводимый 95% interval.
+- [ ] Сравнение treatment k=4 vs k=1 выполняется **при одинаковой температуре**; T=0 baseline обозначается как описательный ориентир, а не чистый контроль эффекта k.
+- [ ] Отчёт включает разнообразие формул, errors, количество native repairs, attempt/campaign timings, counts unknown/incomplete/NA.
+- [ ] Missing slot, несовместимые counts, неклассифицируемое состояние oracle или повреждение transcript приводят к **ошибке формирования отчёта** с диагностикой, а не к правдоподобным цифрам.
+- [ ] Повтор offline расчёта даёт те же числа и не вызывает сеть/модель; существующие gold/solver regression checks зелёные.
 
 ## Stopping criteria
-**STOP when:** every boundary fixture and one end-to-end offline case passes; the report explains oracle uncertainty and observed/missing telemetry; an independent reviewer can reproduce its values without Groq. If native scoring cannot distinguish a crucial oracle status, record `BLOCKED` and propose only the narrowest observation improvement. Do not run a dev campaign or tune results toward a desired pass@k.
+**STOP, когда:** все граничные fixtures и один сквозной offline case проходят; report честно описывает неопределённость oracle и наличие/отсутствие telemetry; независимый reviewer может воспроизвести значения без Groq. Если нативная оценка не позволяет различать важный статус, зафиксируй `BLOCKED` и предложи лишь самое узкое улучшение наблюдаемости. Не запускай dev campaign и не настраивай метод под желаемый pass@k.
 
 ## Out of scope
-Provider sampling, selecting a best contract, test-set evaluation, model comparison and modifying Z3 internals.
+Provider sampling, выбор лучшего контракта, test-set evaluation, сравнение моделей и изменение внутренней логики Z3.

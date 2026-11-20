@@ -1,22 +1,22 @@
-# Thesis RQ1 — planning hub
+# Дипломный RQ1 — навигация по плану
 
-**Stage:** approved design; implementation **not started**. This documentation-only branch is based on original `timur-harin/dualify` commit `7ffd1ae37822096d5b7b573785ee46e877903185`, rather than any earlier fork branch.
+**Этап:** исследовательский дизайн утверждён; реализация **не начата**. Эта документационная ветка основана на оригинальном `timur-harin/dualify`, commit `7ffd1ae37822096d5b7b573785ee46e877903185`, а не на старых ветках форка.
 
-## Read in this order
-1. [SPEC.md](SPEC.md) — problem, solution, user stories, scope and testing decisions (**what** must be true).
-2. [PROTOCOL.md](PROTOCOL.md) — dataset, sampling, retry and oracle rules, frozen reporting requirements (**how** the study is measured).
-3. [tickets/README.md](tickets/README.md) — dependency graph and six independently verifiable tasks (**where** to work next).
-4. [Project decisions](../agent/PROJECT_DECISIONS.md) — user-approved trade-offs and pending configuration choices (**why**).
-5. [Domain glossary](../agent/CONTEXT.md) — precise research terminology.
-6. [../agent/KNOWN_DUALIFY_LIMITATIONS.md](../agent/KNOWN_DUALIFY_LIMITATIONS.md) — established limitations and future reported bugs of original Dualify; frozen Z3 behavior.
-7. [RQ1 known bugs](../agent/KNOWN_BUGS.md) — confirmed technical hazards and outstanding issues.
-8. [Agent guide](../agent/AGENT_GUIDE.md) — agent workflow and stopping rules.
+## Порядок чтения
+1. [SPEC.md](SPEC.md) — проблема, решение, user stories, область работы и подход к тестированию (**что** должно работать).
+2. [PROTOCOL.md](PROTOCOL.md) — набор данных, sampling, retries, oracle, фиксированные требования к отчёту (**как** измеряем результат).
+3. [tickets/README.md](tickets/README.md) — зависимости и шесть независимо проверяемых тикетов (**над чем** работать дальше).
+4. [Проектные решения](../agent/PROJECT_DECISIONS.md) — утверждённые компромиссы и параметры, требующие настройки (**почему**).
+5. [Словарь терминов](../agent/CONTEXT.md) — точные значения понятий.
+6. [Ограничения исходного Dualify](../agent/KNOWN_DUALIFY_LIMITATIONS.md) — известные ограничения и будущие сообщения о багах; поведение Z3 фиксировано.
+7. [Баги и риски RQ1](../agent/KNOWN_BUGS.md) — подтверждённые технические риски и открытые проблемы.
+8. [Руководство агенту](../agent/AGENT_GUIDE.md) — процесс работы и критерии остановки.
 
-## Stage gates
+## Этапы и допуски
 
-**Documents (this branch)** → **offline implementation and tests (Tickets 01–04)** → **a single authorized dev campaign and independent review (Ticket 05)** → **STOP / freeze and request a separate test authorization** → **held-out 30-case evaluation (Ticket 06)**.
+**Документация (эта ветка)** → **offline-реализация и тесты (Tickets 01–04)** → **один разрешённый dev-прогон и независимая проверка (Ticket 05)** → **STOP / freeze и запрос отдельного разрешения на test** → **held-out оценка 30 задач (Ticket 06)**.
 
-Current requested stop: deliver and audit Markdown specification/tickets; **no source code changes and no Groq calls**.
+Текущий критерий остановки: подготовка и проверка Markdown-спецификации/тикетов; **без изменений исходного Python-кода и без вызовов Groq**.
 
-## Source of truth
-The upstream README and Python source describe existing Dualify behavior. The spec/protocol describe the approved **new thesis experiment**. Do not treat original paper RQ1–RQ7 numbering as identical to the **thesis** RQ1–RQ3.
+## Источники истины
+Upstream README и Python-код описывают существующий Dualify. SPEC/PROTOCOL определяют **новый дипломный эксперимент**. Нумерацию RQ1–RQ7 оригинальной статьи нельзя смешивать с **RQ1–RQ3 диплома**.

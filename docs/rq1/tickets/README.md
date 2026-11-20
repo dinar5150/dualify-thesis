@@ -1,42 +1,42 @@
-# RQ1 implementation tickets
+# Тикеты реализации RQ1
 
-**Status:** documented and ready for future agent assignment; **none started**. The user approved the six-ticket plan, but the current task ends after writing and checking Markdown. See [../SPEC.md](../SPEC.md), [../PROTOCOL.md](../PROTOCOL.md), [../../../AGENTS.md](../../agent/AGENT_GUIDE.md).
+**Статус:** задачи описаны и готовы к будущей передаче агенту; **ни одна не начата**. Пользователь утвердил шесть тикетов, но текущая работа завершается после подготовки и проверки Markdown. См. [SPEC.md](../SPEC.md), [PROTOCOL.md](../PROTOCOL.md), [руководство агенту](../../agent/AGENT_GUIDE.md).
 
-## Dependency graph
+## Граф зависимостей
 
 ```text
-01 Frozen benchmark and leakage audit
+01 Фиксация benchmark и аудит утечек
   ↓
-02 One native extraction attempt with temperature and fault provenance
+02 Одна полная extraction attempt с температурой и диагностикой
   ↓
-03 Four-candidate pool with crash-safe transcript and strict replay
+03 Пул четырёх кандидатов, безопасная запись и strict replay
   ↓
-04 Offline gold scoring and pass@k report
+04 Offline gold scoring и отчёт pass@k
   ↓
-05 Full dev run, independent review, freeze → STOP
-  ↓  (requires fresh user authorization)
-06 One held-out test campaign and thesis result
+05 Полный dev-прогон, независимая проверка, freeze → STOP
+  ↓  (необходимо отдельное разрешение пользователя)
+06 Один held-out test и итоговые результаты диплома
 ```
 
-| Ticket | What it delivers | Blocked by | Authorization |
+| Тикет | Проверяемый результат | Заблокирован | Допуск |
 | --- | --- | --- | --- |
-| [01 — Benchmark split and audit](01-benchmark-split-and-audit.md) | Reproducible 10/30 manifest and leakage report, no API calls | None | Future implementation |
-| [02 — Native candidate attempt](02-native-attempt-and-telemetry.md) | One observable full native extraction with T>0 initial generation / T=0 repair | 01 | Future implementation |
-| [03 — Pool, recording and replay](03-candidate-pool-and-replay.md) | Four distinct slot IDs, crash-resume and strict offline replay for one task | 02 | Future implementation |
-| [04 — Oracle and analytics](04-offline-oracle-and-analytics.md) | End-to-end offline pass@k low/high, delta, intervals and latency diagnostics | 03 | Future implementation |
-| [05 — Dev campaign and freeze](05-dev-campaign-and-freeze.md) | 10-task dev evidence, review and **READY FOR HELD-OUT TEST** gate | 04 | Future live dev run after offline tests |
-| [06 — Held-out study](06-heldout-test-and-report.md) | Frozen 30-task test evidence and final RQ1 results | 05 **and separate explicit user go-ahead** | Not authorized now |
+| [01 — Benchmark split и аудит](01-benchmark-split-and-audit.md) | Воспроизводимый manifest 10/30 и аудит возможных утечек, без API-запросов | Нет | Будущая реализация |
+| [02 — Native candidate attempt](02-native-attempt-and-telemetry.md) | Наблюдаемый полный extractor: T>0 на initial generation / T=0 на repair | 01 | Будущая реализация |
+| [03 — Pool, запись и replay](03-candidate-pool-and-replay.md) | Четыре разных slot IDs, crash-resume и strict offline replay одной задачи | 02 | Будущая реализация |
+| [04 — Oracle и аналитика](04-offline-oracle-and-analytics.md) | Сквозной offline pass@k low/high, delta, интервалы и latency | 03 | Будущая реализация |
+| [05 — Dev campaign и freeze](05-dev-campaign-and-freeze.md) | Результаты dev на 10 задачах, review и этап **READY FOR HELD-OUT TEST** | 04 | Будущий live dev только после offline тестов |
+| [06 — Held-out test](06-heldout-test-and-report.md) | Результаты test на 30 задачах с замороженными настройками | 05 **и новое явное разрешение пользователя** | Сейчас не разрешён |
 
-## Ticket format
+## Формат тикета
 
-Every ticket contains **Problem**, **Known facts**, **Constraints**, **Hypotheses**, **Expected outcome** and **Stopping criteria**, plus **Blocked by**, **Acceptance criteria** and **Out of scope**. Status `ready-for-agent` means the ticket is prepared, not that its predecessors have completed. An agent may start only at the **unblocked frontier**, and must stop as soon as its ticket's criterion passes or a documented blocker prevents completion.
+Каждый тикет содержит **Problem**, **Known facts**, **Constraints**, **Hypotheses**, **Expected outcome** и **Stopping criteria**, а также **Blocked by**, **Acceptance criteria** и **Out of scope**. Статус `ready-for-agent` означает готовность описания, а не завершение зависимостей. Агент может начать только **незаблокированный тикет** и обязан остановиться, как только критерии выполнены либо обнаружен документированный блокер.
 
-## Procedure for an agent working on one ticket
+## Как агент выполняет один тикет
 
-1. Read the ticket's blockers, the applicable spec/protocol and [original-method limitations](../../agent/KNOWN_DUALIFY_LIMITATIONS.md) before examining original upstream behavior. Reuse the existing diagnosis and preserve the original Z3 oracle.
-2. Write the smallest full path to a verifiable outcome. Preserve baseline prompts/repairs/solver and existing tests.
-3. Run mock/offline tests first, then permitted live checks only if the ticket and current user authorization allow them.
-4. Attach commands, outputs, diffs and known limitations; update the bug register and decision register only for actually substantiated changes.
-5. **Stop.** Do not select another ticket automatically, and do not run held-out test as a byproduct of dev completion.
+1. Прочитай зависимости, актуальную спецификацию/протокол и [ограничения оригинального подхода](../../agent/KNOWN_DUALIFY_LIMITATIONS.md), прежде чем исследовать upstream. Используй уже задокументированные объяснения и сохраняй исходный Z3 oracle.
+2. Реализуй минимальный сквозной проверяемый результат. Сохраняй оригинальные prompts, repairs, solver и существующие тесты.
+3. Сначала запусти fake/mock и offline тесты; live-проверки только при разрешении текущего тикета и пользователя.
+4. Приложи команды, outputs, diff и известные ограничения; обновляй реестр багов и решений только при появлении подтверждённых фактов.
+5. **Остановись.** Не выбирай автоматически следующий тикет и не запускай held-out test как побочный результат dev.
 
-Any future change to a frozen methodological decision needs a new documented and approved protocol amendment. Ticket completion cannot silently override the research agreement.
+Любое изменение зафиксированного методологического решения требует новой документированной и утверждённой поправки к протоколу. Завершение тикета не даёт права молча менять исследовательские правила.
