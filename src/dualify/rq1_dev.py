@@ -11,6 +11,7 @@ import time
 from collections import Counter
 from collections.abc import Sequence
 from dataclasses import replace
+from functools import partial
 from importlib.metadata import distributions
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -172,9 +173,15 @@ class CampaignTransport:
         self.slot_id = ""
         self.attempt = 0
 
-    def start_slot(self, slot_id: str) -> None:
+    def start_slot(self, slot_id: str, *, pool: Path) -> None:
         self.slot_id = slot_id
         self.attempt = self.sent + 1
+        previous_failure = pool / slot_id.replace(":", "__") / "failure.json"
+        if previous_failure.exists():
+            # A crash during this dispatch must not inherit the previous diagnosis.
+            previous_failure.rename(
+                previous_failure.with_name(f"failure-before-{self.attempt:04d}.json"),
+            )
 
     def post(self, url: str, *, json: dict, headers: dict, timeout: int) -> requests.Response:
         if self.sent >= HTTP_CAP:
@@ -259,7 +266,8 @@ def _run(directory: Path, manifest: dict, api_key: str) -> None:
         case = replace(matches[0], benchmark_id=case_id)
         records = run_candidate_pool(
             client, case=case, artifact_dir=pool, model=MODEL, provider="groq",
-            treatment_temperature=TEMPERATURE, on_slot_started=transport.start_slot,
+            treatment_temperature=TEMPERATURE,
+            on_slot_started=partial(transport.start_slot, pool=pool),
         )
         if records[-1].status != "completed":
             last = records[-1]
@@ -436,6 +444,9 @@ def _live(directory: Path) -> int:
     ) as exc:
         reason = str(exc)
         print(f"BLOCKED: {exc}", file=sys.stderr)
+    except KeyboardInterrupt:
+        reason = "Dev campaign interrupted"
+        raise
     finally:
         planned = manifest.get("planned_slots", [])
         completed, invalid = _recorded_slots(directory, planned)

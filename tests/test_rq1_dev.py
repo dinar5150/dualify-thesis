@@ -160,3 +160,30 @@ def test_http_evidence_rejects_missing_or_duplicate_provider_completions(tmp_pat
         rq1_dev.verify_http(tmp_path, manifest, candidates)
     receipt(2, "chatcmpl-2")
     assert rq1_dev.verify_http(tmp_path, manifest, candidates)["verified_slots"] == 2
+
+
+def test_interrupted_resume_cannot_reuse_previous_failure_as_diagnosis(tmp_path, monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "offline-fixture")
+    monkeypatch.setattr(rq1_dev, "_revision", lambda: "a" * 40)
+    monkeypatch.setattr("time.sleep", lambda seconds: None)
+    (tmp_path / "models-check.json").write_text('{"model_available": true}')
+    posts = 0
+
+    def post(*args, **kwargs):
+        nonlocal posts
+        posts += 1
+        if posts == 3:
+            raise KeyboardInterrupt
+        response = requests.Response()
+        response.status_code = 503
+        response._content = b'{"error":{"message":"Service temporarily unavailable"}}'
+        return response
+
+    monkeypatch.setattr(requests, "post", post)
+    assert rq1_dev.main([str(tmp_path)]) == 1
+    with pytest.raises(KeyboardInterrupt):
+        rq1_dev.main([str(tmp_path)])
+    assert rq1_dev.main([str(tmp_path)]) == 1
+    gate = json.loads((tmp_path / "gate.json").read_text())
+    assert "without infrastructure diagnosis" in gate["reason"]
+    assert posts == 3
