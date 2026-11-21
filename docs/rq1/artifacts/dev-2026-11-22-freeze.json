@@ -1,0 +1,100 @@
+{
+  "verdict": "BLOCKED",
+  "dev_campaign": {
+    "reason": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:baseline:0: incomplete: 429 Client Error: Too Many Requests for url: https://api.groq.com/openai/v1/chat/completions",
+    "stop_category": "groq_daily_token_quota",
+    "terminal_http_evidence": [
+      "http/0178.json",
+      "http/0179.json"
+    ],
+    "planned_slots": 100,
+    "completed_slots": 65,
+    "missing_slots": 35,
+    "full_scored_tasks": 6,
+    "elapsed_seconds": 3374.3132483339996,
+    "http": {
+      "verified_slots": 65,
+      "http_posts": 179,
+      "http_statuses": {
+        "200": 164,
+        "400": 2,
+        "429": 13
+      },
+      "unique_groq_completion_ids": 164,
+      "observed_completion_tokens": 34603,
+      "completion_token_observations": 164
+    },
+    "oracle_statuses": {
+      "equivalent": 13,
+      "non_equivalent": 37,
+      "inconclusive": 10,
+      "unclassified": 5
+    },
+    "logical_calls_in_completed_slots": 166,
+    "repair_calls_in_completed_slots": 101,
+    "degraded_completed_slots": 46
+  },
+  "generation_commit": "c8d559bef7c47a87d44e6bca0245cbdf30b6665e",
+  "offline_verification_commit": "05a2ffb2b9107e992aafb01397f9b1201d1005ae",
+  "upstream_commit": "7ffd1ae37822096d5b7b573785ee46e877903185",
+  "split_sha256": "7ab71167ec212f85f824819be6126ab0e25870c24d300a2f60e52d6e55cdc6c3",
+  "preflight_sha256": "8c09917ffe731cf867bc6bbcd99f8fc37b82f31be58691e2ce24834d61402d75",
+  "dependency_and_source_manifest": "rq1-dev-2026-11-22/preflight.json",
+  "sampling": {
+    "provider": "groq",
+    "model": "qwen/qwen3.8-27b",
+    "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+    "reasoning_effort": "none",
+    "response_format": "json_object",
+    "top_p": "provider default (1)",
+    "baseline_temperature": 0,
+    "repair_temperature": 0,
+    "treatment_temperature": 0.7,
+    "request_timeout_seconds": 120,
+    "max_output_tokens": 1024,
+    "max_campaign_posts": 180,
+    "max_http_attempts_per_call": 2,
+    "max_outer_retries": 0,
+    "backoff_seconds": {
+      "base": 2,
+      "max": 60,
+      "use_retry_after": true
+    },
+    "min_seconds_between_posts": 18,
+    "public_free_plan": {
+      "rpm": 30,
+      "rpd": 1000,
+      "tpm": 8000,
+      "tpd": 200000
+    }
+  },
+  "observed_account_limits": {
+    "rpd": 1000,
+    "tpm_header": 8000,
+    "output_tpm_from_429_body": 1000
+  },
+  "scoring": {
+    "z3_solver": "4.16.0.0",
+    "timeout_seconds": 5,
+    "k": [
+      1,
+      2,
+      4
+    ],
+    "success": "proved equivalent",
+    "unknown_bound": "inconclusive counted as success for high only",
+    "bootstrap_seed": 20261120,
+    "bootstrap_resamples": 10000,
+    "full_dev_metric": null,
+    "blocked_gold_id": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input",
+    "blocked_gold_reason": "formula_parse_error: Non-sequence passed as a sequence",
+    "reproduced_partial_report": "rq1-dev-2026-11-22/partial-scores.json"
+  },
+  "artifact": {
+    "file": "dev-2026-11-22.tar.gz",
+    "sha256": "0500be3c83a1d86f263bae3eb5c5c0195b86e947812d9adabdd00b1612d37187",
+    "gate": "rq1-dev-2026-11-22/gate.json",
+    "redacted_organization_ids": 14
+  },
+  "held_out_requests": 0
+}
