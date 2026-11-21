@@ -57,7 +57,7 @@
 
 - `dualify.rq1_pool.run_candidate_pool` запускает baseline и четыре treatment attempts на каждый канал, сохраняет каждый завершённый `result.json` и пропускает его при resume.
 - `verify_candidate_pool` **читает финальные результаты offline**, проверяет конфигурацию, уникальность/полноту десяти слотов и записанные logical calls; больше не воспроизводит оригинальный extractor из transcript.
-- Live runner принимает штатные HTTP-клиенты, в том числе под штатной recording-обёрткой. Клиенты replay и resume отклоняются. При resume сверяются модель и отпечаток endpoint. Старые пулы без отпечатка можно прочитать offline, а для новых live-слотов требуется новый каталог. `provider="fake"` используется в offline-тестах.
+- Live runner принимает штатные HTTP-клиенты, в том числе под штатной recording-обёрткой. Клиенты replay и resume отклоняются. При resume сверяются модель и отпечаток endpoint. Пулы с live-провайдером без отпечатка отклоняются и при offline-проверке: старый writer мог сохранить replay под таким провайдером. `provider="fake"` используется в offline-тестах.
 - При сбое `failure.json` сохраняет диагностику последней незавершённой попытки. После resume scoring читает завершённый `result.json`.
 - Отдельный transcript/replay engine с внутренним восстановлением prompt hashes удалён. Сохранённый `AttemptRecord` оставляет исходный output, stage/temperature, статус и доступную provenance.
 - При прерывании без завершённого `result.json` текущий slot считается incomplete и повторяется целиком; уже завершённые результаты остаются без изменений.

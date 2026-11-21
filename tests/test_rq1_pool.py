@@ -204,6 +204,21 @@ def test_live_resume_refuses_endpoint_change(
     assert len(calls) == 11
 
 
+def test_offline_live_pool_requires_endpoint_provenance(tmp_path: Path) -> None:
+    _run(tmp_path, FakeClient([VALID] * 10))
+    path = tmp_path / "pool_config.json"
+    config = json.loads(path.read_text())
+    # Старый writer принимал replay под именем live-провайдера.
+    config["provider"] = "groq"
+    path.write_text(json.dumps(config))
+
+    with pytest.raises(PoolIntegrityError, match="endpoint_sha256"):
+        verify_candidate_pool(
+            artifact_dir=tmp_path, case=_case(), model="fake-model",
+            provider="groq", treatment_temperature=0.7,
+        )
+
+
 def test_resume_skips_completed_slots(tmp_path: Path) -> None:
     original = _run(tmp_path, FakeClient([VALID] * 10))
     empty = FakeClient([])

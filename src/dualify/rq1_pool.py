@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from dataclasses import asdict
 from pathlib import Path
 
@@ -79,6 +80,10 @@ def _config(
             raise PoolIntegrityError(f"Конфигурация пула не совпадает: {key}")
     if not isinstance(stored.get("max_transient_retries"), int):
         raise PoolIntegrityError("В конфигурации нет max_transient_retries")
+    if provider != "fake":
+        fingerprint = stored.get("endpoint_sha256")
+        if not isinstance(fingerprint, str) or not re.fullmatch("[0-9a-f]{64}", fingerprint):
+            raise PoolIntegrityError(f"Нет корректного endpoint_sha256: {path}")
     return stored
 
 
