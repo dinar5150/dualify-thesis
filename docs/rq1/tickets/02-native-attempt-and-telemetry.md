@@ -53,6 +53,7 @@
 ## Реализация в main
 
 - `dualify.rq1_attempt.run_extraction_attempt` вызывает неизменённые p01/p02 через per-attempt client adapter.
+- Для `OpenAICompatibleClient` перед RQ1-запуском явно задаётся `fixed_chat_mode`. Ошибка формата попадает в native repair на том же endpoint.
 - Adapter передаёт treatment T>0 только на initial generation, T=0 на native repairs, различает завершённые model outputs и инфраструктурные/конфигурационные сбои.
 - `AttemptRecord` содержит наблюдаемые logical calls, статусы и elapsed time; физические HTTP retries и чистая inference latency не измеряются.
 - Небольшая существующая реализация уже удовлетворяет упрощённым требованиям, поэтому не переписывается без доказанной ошибки.

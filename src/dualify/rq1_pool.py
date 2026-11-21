@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+import math
 from dataclasses import asdict
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from dualify.rq1_attempt import (
     Channel,
     LogicalCall,
     run_extraction_attempt,
+    validate_sampling_client,
 )
 from dualify.types import BenchmarkCase, ExtractionResult
 
@@ -44,6 +47,7 @@ def _config(
     temperature: float,
     retries: int | None,
     create: bool,
+    endpoint: str | None = None,
 ) -> dict:
     path = directory / "pool_config.json"
     expected = {
@@ -54,29 +58,82 @@ def _config(
     }
     if retries is not None:
         expected["max_transient_retries"] = retries
+    if endpoint is not None:
+        # Сверяем endpoint при resume, сохраняя только его отпечаток.
+        expected["endpoint_sha256"] = hashlib.sha256(endpoint.encode()).hexdigest()
 
     if not path.exists():
         if not create:
             raise PoolIntegrityError("Отсутствует конфигурация пула")
-        path.write_text(json.dumps(expected, ensure_ascii=False), encoding="utf-8")
+        _write_json_atomically(path, expected)
         return expected
 
     try:
         stored = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
         raise PoolIntegrityError("Некорректная конфигурация пула") from exc
-    if not isinstance(stored, dict) or any(
-        stored.get(key) != value for key, value in expected.items()
-    ):
-        raise PoolIntegrityError("Конфигурация пула не совпадает")
+    if not isinstance(stored, dict):
+        raise PoolIntegrityError("Некорректная конфигурация пула")
+    for key, value in expected.items():
+        if stored.get(key) != value:
+            raise PoolIntegrityError(f"Конфигурация пула не совпадает: {key}")
     if not isinstance(stored.get("max_transient_retries"), int):
         raise PoolIntegrityError("В конфигурации нет max_transient_retries")
     return stored
 
 
+def _require_types(value: object, **fields: type | tuple[type, ...]) -> None:
+    if not isinstance(value, dict):
+        raise ValueError("ожидался JSON-объект")
+    for name, kinds in fields.items():
+        allowed = kinds if isinstance(kinds, tuple) else (kinds,)
+        if type(value.get(name)) not in allowed:
+            raise ValueError(f"неверный тип или отсутствует поле {name}")
+
+
 def _load_attempt(path: Path) -> AttemptRecord:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
+        # Dataclass проверяет имена полей, но не их типы. Scorer ожидает строки формул.
+        _require_types(
+            data, slot_id=str, channel=str, model=str, status=str,
+            initial_temperature=(int, float), repair_temperature=(int, float),
+            max_transient_retries=int, extraction=dict, calls=list, errors=list,
+            elapsed_seconds=(int, float),
+        )
+        if not math.isfinite(data["elapsed_seconds"]) or data["elapsed_seconds"] < 0:
+            raise ValueError("неверное значение elapsed_seconds")
+        extraction = data["extraction"]
+        _require_types(
+            extraction, benchmark_id=str, args=list, return_type=str,
+            domain_constraints=list, postcondition=str, confidence=str, notes=str,
+        )
+        for field in ("args", "domain_constraints"):
+            if any(not isinstance(item, str) for item in extraction[field]):
+                raise ValueError(f"{field} должен содержать строки")
+        _require_types(
+            {"degraded": False, "degraded_reason": "", "extraction_trace": None, **extraction},
+            degraded=bool, degraded_reason=str, extraction_trace=(dict, type(None)),
+        )
+        output_errors = set()
+        for error in data["errors"]:
+            _require_types(
+                error, call_index=int, dispatch_index=int, category=str,
+                error_type=str, message=str, status_code=(int, type(None)),
+                response_body=(str, type(None)),
+            )
+            if error["category"] == "model_output_format":
+                output_errors.add((error["call_index"], error["dispatch_index"]))
+        for call in data["calls"]:
+            _require_types(call, index=int, stage=str, temperature=(int, float), dispatch_count=int)
+            dispatches = call["dispatch_count"]
+            if not 1 <= dispatches <= data["max_transient_retries"] + 1:
+                raise ValueError("неверное значение dispatch_count")
+            # Без response допустима наблюдаемая ошибка формата последнего вызова.
+            if not isinstance(call.get("response"), dict) and (
+                call.get("response") is not None or (call["index"], dispatches) not in output_errors
+            ):
+                raise ValueError("нет response или подтверждённой ошибки формата")
         return AttemptRecord(
             slot_id=data["slot_id"],
             channel=data["channel"],
@@ -85,13 +142,13 @@ def _load_attempt(path: Path) -> AttemptRecord:
             repair_temperature=data["repair_temperature"],
             max_transient_retries=data["max_transient_retries"],
             status=data["status"],
-            extraction=ExtractionResult(**data["extraction"]),
+            extraction=ExtractionResult(**extraction),
             calls=[LogicalCall(**call) for call in data["calls"]],
             errors=[AttemptError(**error) for error in data["errors"]],
             elapsed_seconds=data["elapsed_seconds"],
         )
-    except (OSError, ValueError, KeyError, TypeError) as exc:
-        raise PoolIntegrityError(f"Повреждённый candidate record: {path}") from exc
+    except (OSError, ValueError, KeyError, TypeError, OverflowError) as exc:
+        raise PoolIntegrityError(f"Повреждённый candidate record {path}: {exc}") from exc
 
 
 def _validate_record(
@@ -121,7 +178,6 @@ def _validate_record(
         call.index != index
         or call.stage != ("initial" if index == 0 else "repair")
         or call.temperature != (temperature if index == 0 else 0.0)
-        or call.dispatch_count < 1
         for index, call in enumerate(record.calls)
     ):
         raise PoolIntegrityError(f"Slot {slot_id}: нет достоверных logical calls")
@@ -129,6 +185,14 @@ def _validate_record(
 
 def _result_path(directory: Path, slot_id: str) -> Path:
     return directory / slot_id.replace(":", "__") / "result.json"
+
+
+def _write_json_atomically(path: Path, payload: object) -> None:
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8",
+    )
+    temporary.replace(path)
 
 
 def run_candidate_pool(
@@ -145,6 +209,7 @@ def run_candidate_pool(
     specs = _slot_specs(case, treatment_temperature)
     if max_transient_retries < 0:
         raise ValueError("max_transient_retries must be nonnegative")
+    endpoint = validate_sampling_client(client, model=model, live=provider != "fake")
     artifact_dir.mkdir(parents=True, exist_ok=True)
     _config(
         artifact_dir,
@@ -154,6 +219,7 @@ def run_candidate_pool(
         temperature=treatment_temperature,
         retries=max_transient_retries,
         create=True,
+        endpoint=endpoint,
     )
 
     records: list[AttemptRecord] = []
@@ -177,16 +243,12 @@ def run_candidate_pool(
                 initial_temperature=temperature,
                 max_transient_retries=max_transient_retries,
             )
-            if record.status != "completed":
-                records.append(record)
-                return records
             path.parent.mkdir(parents=True, exist_ok=True)
-            temporary = path.with_suffix(".tmp")
-            temporary.write_text(
-                json.dumps(asdict(record), ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-            temporary.replace(path)
+            if record.status != "completed":
+                # Диагностика последнего сбоя остаётся доступной и после resume.
+                _write_json_atomically(path.with_name("failure.json"), asdict(record))
+                return [*records, record]
+            _write_json_atomically(path, asdict(record))
         records.append(record)
     return records
 
@@ -222,8 +284,14 @@ def verify_candidate_pool(
 
     if expected != set(loaded):
         missing = sorted(expected - set(loaded))
+        incomplete = [
+            slot_id for slot_id in missing
+            if _result_path(artifact_dir, slot_id).with_name("failure.json").is_file()
+        ]
         extra = sorted(set(loaded) - expected)
-        raise PoolIntegrityError(f"Неверный набор slots: missing={missing}, extra={extra}")
+        raise PoolIntegrityError(
+            f"Неверный набор slots: missing={missing}, incomplete={incomplete}, extra={extra}"
+        )
 
     result: list[AttemptRecord] = []
     for slot_id, channel, temperature in specs:

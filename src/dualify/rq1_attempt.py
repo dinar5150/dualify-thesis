@@ -11,9 +11,10 @@ from typing import Literal
 
 import requests
 
-from dualify.ollama_client import LLMClient
+from dualify.ollama_client import LLMClient, OllamaClient, OpenAICompatibleClient
 from dualify.phases.p01_spec_to_logic import extract_spec_logic
 from dualify.phases.p02_code_to_logic import extract_code_logic
+from dualify.transcript import RecordingLLMClient, ReplayLLMClient, ResumingLLMClient
 from dualify.types import BenchmarkCase, ExtractionResult
 
 Channel = Literal["spec", "code"]
@@ -58,6 +59,10 @@ class AttemptRecord:
         return len(self.calls)
 
 
+class _ModelOutputError(ValueError):
+    """Ответ модели не соответствует формату, ожидаемому extractor."""
+
+
 class _AttemptClient:
     """Передаёт T>0 только в первый вызов, не вмешиваясь в native repair."""
 
@@ -96,6 +101,8 @@ class _AttemptClient:
             call.dispatch_count += 1
             try:
                 response = self.inner.generate_json(prompt, temperature=call_temperature)
+                if not isinstance(response, dict):
+                    raise _ModelOutputError("Ответ модели должен быть JSON-объектом")
                 call.response = deepcopy(response)
                 return response
             except Exception as exc:
@@ -130,6 +137,30 @@ class _AttemptClient:
         self.inner.healthcheck()
 
 
+def validate_sampling_client(
+    client: LLMClient, *, model: str, live: bool = False,
+) -> str | None:
+    """Проверяет источник ответов и возвращает фиксированный endpoint live-клиента."""
+    while isinstance(client, RecordingLLMClient):
+        if live and type(client) is not RecordingLLMClient:
+            raise ValueError("Live RQ1 sampling требует штатный HTTP client")
+        client = client.inner
+    if isinstance(client, (ReplayLLMClient, ResumingLLMClient)):
+        raise ValueError("RQ1 sampling не принимает replay/resume clients")
+    if isinstance(client, OpenAICompatibleClient) and client.fixed_chat_mode is None:
+        raise ValueError("RQ1 sampling требует явно заданный fixed_chat_mode")
+    if isinstance(client, (OllamaClient, OpenAICompatibleClient)) and client.model != model:
+        raise ValueError("model не совпадает с моделью HTTP client")
+    if not live:
+        return None
+    if type(client) is OpenAICompatibleClient:
+        mode = "chat/completions" if client.fixed_chat_mode else "completions"
+        return f"{client.base_url}/v1/{mode}"
+    if type(client) is OllamaClient:
+        return f"{client.base_url}/api/generate"
+    raise ValueError("Live RQ1 sampling требует штатный HTTP client")
+
+
 def run_extraction_attempt(
     client: LLMClient,
     *,
@@ -141,6 +172,7 @@ def run_extraction_attempt(
     max_transient_retries: int = 0,
 ) -> AttemptRecord:
     """Запускает один штатный p01/p02 extractor и записывает доступную телеметрию."""
+    validate_sampling_client(client, model=model)
     attempt_client = _AttemptClient(client, initial_temperature, max_transient_retries)
     started_at = time.perf_counter()
 
@@ -220,7 +252,7 @@ def _classify_error(exc: Exception) -> tuple[str, int | None]:
         return "transient_infrastructure", None
     if isinstance(exc, requests.RequestException):
         return "ambiguous_provider_failure", None
-    if isinstance(exc, json.JSONDecodeError):
+    if isinstance(exc, (json.JSONDecodeError, _ModelOutputError)):
         return "model_output_format", None
     return "ambiguous_provider_failure", None
 
