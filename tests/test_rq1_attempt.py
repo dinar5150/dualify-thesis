@@ -7,6 +7,7 @@ from typing import Literal
 import pytest
 import requests
 
+from dualify.ollama_client import OllamaClient, OpenAICompatibleClient
 from dualify.phases.p01_spec_to_logic import extract_spec_logic
 from dualify.phases.p02_code_to_logic import extract_code_logic
 from dualify.rq1_attempt import run_extraction_attempt
@@ -299,6 +300,69 @@ def test_http_output_validation_error_is_not_retried_as_infrastructure(
     assert client.temperatures == [0.7, 0.0]
     assert record.errors[0].category == "model_output_format"
     assert record.errors[0].status_code == 400
+
+
+def test_openai_output_error_goes_to_native_repair_at_fixed_endpoint(
+    benchmark_case: BenchmarkCase, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[tuple[str, float]] = []
+
+    def post(url: str, *, json: dict, **kwargs: object) -> requests.Response:
+        calls.append((url, json["temperature"]))
+        if len(calls) == 1:
+            response = requests.Response()
+            response.status_code = 400
+            response._content = b'{"error":{"failed_generation":"bad output"}}'
+            return response
+        response = requests.Response()
+        response.status_code = 200
+        response._content = completion
+        return response
+
+    completion = json.dumps({
+        "choices": [{"message": {"content": json.dumps(VALID_RESPONSE)},
+                     "text": json.dumps(VALID_RESPONSE)}],
+    }).encode()
+    monkeypatch.setenv("DUALIFY_OPENAI_USE_CHAT", "0")
+    monkeypatch.setattr(requests, "post", post)
+    base_url = "https://provider.invalid"
+    client = OpenAICompatibleClient("fake-model", base_url, fixed_chat_mode=True)
+
+    record = run_extraction_attempt(
+        client, slot_id="increment:spec:treatment:1", channel="spec",
+        case=benchmark_case, model="fake-model", initial_temperature=0.7,
+    )
+
+    assert record.status == "completed"
+    assert record.extraction.postcondition == "ret == x + 1"
+    assert calls == [(f"{base_url}/v1/chat/completions", t) for t in (0.7, 0.0)]
+    assert [e.category for e in record.errors] == ["model_output_format"]
+
+
+def test_ollama_non_object_output_goes_to_native_repair(
+    benchmark_case: BenchmarkCase, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    temperatures = []
+
+    def post(url: str, *, json: dict, **kwargs: object) -> requests.Response:
+        temperatures.append(json["options"]["temperature"])
+        response = requests.Response()
+        response.status_code = 200
+        response._content = next(bodies)
+        return response
+
+    repair = json.dumps({"response": json.dumps(VALID_RESPONSE)}).encode()
+    bodies = iter([b'{"response":"[]"}', repair])
+    monkeypatch.setattr(requests, "post", post)
+    record = run_extraction_attempt(
+        OllamaClient("fake-model"), slot_id="increment:spec:treatment:1", channel="spec",
+        case=benchmark_case, model="fake-model", initial_temperature=0.7,
+    )
+
+    assert record.status == "completed"
+    assert record.extraction.postcondition == "ret == x + 1"
+    assert temperatures == [0.7, 0.0]
+    assert [error.category for error in record.errors] == ["model_output_format"]
 
 
 def test_request_validation_error_is_permanent_config_failure(

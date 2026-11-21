@@ -46,6 +46,6 @@ Gold-текст не используется для назначения split 
   на исходном `main` сообщает 172 ранее существовавших нарушения в benchmark/
   result fixtures и старых scripts; они не относятся к Ticket 01.
 - Две генерации во временных каталогах byte-identical и совпадают с committed
-  manifest (`SHA-256 394535502580d91c2d5363c165b3a6f6319cff15185bce952e6962384c392bfa`).
+  manifest (`SHA-256 7ab71167ec212f85f824819be6126ab0e25870c24d300a2f60e52d6e55cdc6c3`).
 - `git diff --exit-code origin/main -- benchmark/lifted_auto_eval benchmark/lifted`
   завершился без diff: исходные 40 input и 40 gold не изменены.

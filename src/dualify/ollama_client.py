@@ -66,6 +66,7 @@ class OpenAICompatibleClient:
     max_retries: int = 6
     backoff_base_sec: float = 2.0
     max_backoff_sec: float = 60.0
+    fixed_chat_mode: bool | None = None
 
     def _headers(self) -> dict[str, str]:
         headers = {"Content-Type": "application/json"}
@@ -166,8 +167,12 @@ class OpenAICompatibleClient:
         )
 
     def generate_json(self, prompt: str, temperature: float = 0.0) -> dict:
-        prefer_chat = self._prefers_chat_mode()
-        attempts = [True, False] if prefer_chat else [False, True]
+        # Для RQ1 режим фиксируют заранее: ошибка формата должна попасть в native repair.
+        if self.fixed_chat_mode is not None:
+            attempts = [self.fixed_chat_mode]
+        else:
+            prefer_chat = self._prefers_chat_mode()
+            attempts = [True, False] if prefer_chat else [False, True]
         last_exc: Exception | None = None
 
         for chat_mode in attempts:
