@@ -18,7 +18,7 @@
 
 Добавить **тонкий исследовательский слой оркестрации** поверх оригинальных p01/p02 и gold scoring. Для каждой зафиксированной benchmark-задачи и канала: получить один исходный baseline при T=0; отдельно записать четыре полные extraction attempts с фиксированной положительной температурой **только initial generation** и штатным repair при T=0; оценить финальные контракты offline; вывести комбинаторные pass@1, pass@2, pass@4, консервативную и unknown-sensitive границы, парный прирост coverage, неопределённость, разнообразие и затраты. Сохранять исходные extraction traces, объяснения solver и сведения об ошибках провайдера в проверяемых артефактах.
 
-До любых live-запросов фиксируются простой воспроизводимый split 10 dev / 30 test, краткая проверка очевидных рисков утечки и конфигурация модели. Реализация начинается с fake/mock тестов и strict offline replay. После **одного полного dev-этапа**, проверки и freeze нужно **остановиться** и запросить отдельное разрешение на held-out test.
+До любых live-запросов фиксируются простой воспроизводимый split 10 dev / 30 test, краткая проверка очевидных рисков утечки и конфигурация модели. Реализация начинается с fake/mock тестов и записи отдельных attempts; offline scorer пересчитывает результаты по сохранённым финальным кандидатам без новых LLM-вызовов. Полный strict replay внутренней последовательности LLM calls не является требованием. После **одного полного dev-этапа**, проверки и freeze нужно **остановиться** и запросить отдельное разрешение на held-out test.
 
 ## Минимальная реализация
 
@@ -26,18 +26,18 @@
 - Не смешивай каналы spec/code, не применяй gold или self-consistency для выбора/исправления кандидатов, не вводи RQ2/RQ3 заранее.
 - Одна attempt — полный штатный extractor с validation, repair и degraded fallback, **не один HTTP-вызов**. Baseline: T=0. Treatment: 4 отдельные attempts с T>0 только для initial generation, repair при T=0.
 - Статусы equivalent / non_equivalent / invalid / inconclusive различаются по исходным доказательствам, а не только по булевому результату.
-- Сохраняй собственные slot IDs, исходные ответы, причину ошибки, параметры и измеримые затраты; строго проверяй replay без новых model calls.
+- Сохраняй уникальные slot IDs, факт отдельных native attempts, итоговый результат, доступные исходные ответы, причину ошибки, параметры и измеримые затраты в простом JSONL или файлах по slot. Offline scoring перечитывает сохранённые результаты без новых model calls; полный внутренний strict replay необязателен.
 - Для фиксированного набора из 40 примеров **не создавай** универсальный dataset framework, сложное разбиение или автоматический quality audit. Риски похожих задач описывай как ограничение интерпретации.
-- Тестируй fake/replay клиентами и малым числом synthetic fixtures, включая граничные формулы pass@k. Не проводи held-out до отдельного допуска.
+- Тестируй fake clients и небольшими synthetic fixtures, включая граничные формулы pass@k и проверку полноты отдельных attempts. Покажи один понятный сквозной пример «benchmark → candidates → original Z3 → pass@k». Не проводи held-out до отдельного допуска.
 
 ## Этапы реализации
 
 | Тикет | Критерий выхода |
 | --- | --- |
 | [01 — Подготовка benchmark](tickets/01-benchmark-split-and-audit.md) | 40 корректных пар, фиксированный 10/30 split и короткая заметка о рисках |
-| [02 — Native attempt](tickets/02-native-attempt-and-telemetry.md) | Штатные initial/repair и диагностика одной попытки |
-| [03 — Pool и replay](tickets/03-candidate-pool-and-replay.md) | Четыре независимых slots, запись и strict replay |
-| [04 — Offline oracle](tickets/04-offline-oracle-and-analytics.md) | pass@k, paired delta, границы unknown и расходы |
+| [02 — Native attempt](tickets/02-native-attempt-and-telemetry.md) | Штатные initial/repair, температура и минимальная классификация сбоев |
+| [03 — Sampling runner](tickets/03-candidate-pool-and-replay.md) | Четыре отдельных slots, запись кандидатов, простой resume и offline-read |
+| [04 — Offline oracle](tickets/04-offline-oracle-and-analytics.md) | Исходный gold scoring, pass@k, paired delta, границы unknown, простой отчёт и расходы |
 | [05 — Dev + freeze](tickets/05-dev-campaign-and-freeze.md) | Dev green, review и STOP до отдельного разрешения test |
 | [06 — Held-out](tickets/06-heldout-test-and-report.md) | Один замороженный test-прогон и отчёт |
 
@@ -63,39 +63,39 @@
 
 1. Выполни одну **полную исходную extraction attempt** для baseline с температурой 0 при начальной генерации и штатном repair.
 2. Выполни **четыре** treatment attempts с индексами 1–4; каждая независимо вызывает полный исходный extractor с initial temperature T>0 и штатными repair/safe subset при T=0.
-3. Назначь уникальный slot `(case_id, channel, arm, sample_index)`; для каждой завершённой попытки сохрани итоговый результат, stage trace, degraded, формулы, журнал logical calls, elapsed time и ссылки на записанные LLM messages.
+3. Назначь уникальный slot `(case_id, channel, arm, sample_index)`; для каждой завершённой попытки сохрани итоговый контракт/result, факт отдельного вызова, доступные prompts/outputs/trace, status, observed logical calls и elapsed time. Используй один простой файловый формат; полный transcript внутренних вызовов не обязателен.
 4. Сохраняй одинаковые по тексту формулы: **четыре попытки не обязаны давать четыре уникальных контракта**. Ни gold, ни предыдущий кандидат, ни self-consistency, ни selector не должны влиять на следующую генерацию.
 
 Объём полных extraction attempts: **10 × 2 × 5 = 100** для полной dev campaign; **30 × 2 × 5 = 300** для будущего отдельно разрешённого held-out test; **400** вместе. Штатный repair, API retries и preflight могут увеличить фактическое количество HTTP-вызовов. Число attempts **не равно** числу LLM calls.
 
 Treatment требует n=4 **завершённых слота** на задачу/канал; недостающие слоты означают, что кампания не может считаться завершённой оценкой pass@k.
 
-## 4. Ошибки провайдера и state machine восстановления
+## 4. Минимальная обработка ошибок провайдера
 
-**Состояния:** planned → running → completed; либо running → retriable_infrastructure_failure → retry/resume_same_slot → completed; либо running → permanent_config_failure (abort); либо running → unresolved_infrastructure_failure (incomplete campaign).
+- **Результат модели/extraction:** валидный, invalid либо degraded финальный результат штатного extractor — одна завершённая attempt. Malformed JSON, unsupported formula и model-generated structured-output validation error (в том числе HTTP 4xx) не дают бесплатного повторного sampling; исходная validation/repair сохраняется.
+- **Временный инфраструктурный сбой:** network timeout, 429 или временный 5xx. Используй исходные retries клиента, если они подходят; иначе минимальную конечную политику retry того же slot. При неустранённом сбое slot остаётся incomplete, запуск не считается полным.
+- **Постоянная ошибка конфигурации:** auth, неправильный endpoint/model или неподдерживаемые параметры — остановка с причиной, без скрытой смены модели.
+- Если оригинальный extractor перехватывает сетевую ошибку и возвращает degraded output, наблюдай сбой на границе клиента и не учитывай результат как завершённую model attempt без достоверного ответа.
+- При неоднозначности сохраняй исходный error/status и останавливайся с понятным диагностическим сообщением. Не считай retry по одному только HTTP-коду.
+- Сохраняй уже завершённые slots; простой resume пропускает проверенные completed и повторяет только incomplete. Универсальная state machine, низкоуровневая transport telemetry и event sourcing не требуются.
 
-- **Временная инфраструктурная ошибка (ограниченные retries):** network/connection timeout, 429, временный 5xx и аналогичные состояния с подтверждением причины. Записывай backoff и конечное максимальное количество попыток; учитывай рекомендации провайдера по retry при наличии.
-- **Постоянная ошибка конфигурации:** authentication/permission, недоступная модель, неверный endpoint, несовместимые API parameters, отсутствующий ключ либо неподдерживаемая возможность. Останавливайся, не переключая молча модель или конфигурацию.
-- **Ошибка модели/extraction:** malformed JSON, неподдерживаемые формулы, native validation errors, weak/degraded fallback и ошибка ответа провайдера, прямо вызванная невалидным сгенерированным structured output (в том числе с HTTP 4xx). **Не определяй категорию только по коду HTTP.** Сохраняй штатные repair/degradation и учитывай завершённую попытку как результат; не выдавай дополнительные бесплатные попытки до получения валидного ответа.
-- **Неоднозначная ошибка:** сохраняй исходный status/message; классифицируй на dev и документируй решение до test. Не выбирай по умолчанию retriable infrastructure.
-- **Перехваченные внутри extractor ошибки:** поскольку native extraction может перехватывать исключения, wrapper должен наблюдать сбой клиента и сопоставлять его со slot. Degraded результат после исчерпанного инфраструктурного сбоя **не является достоверно завершённым кандидатом**. Сохраняй уже полученные сообщения и готовые slots при resume. После timeout запроса нельзя гарантировать byte-identical повторную генерацию — записывай это, а не утверждай, что старый ответ восстановлен.
-- **Неполные slots:** не сокращай n, не подставляй последний cached response и не превращай отсутствие ответа провайдера в gold failure. Возобнови в рамках политики либо остановись со статусом incomplete.
+## 5. Запись candidates и воспроизводимый offline-scoring
 
-## 5. Offline transcripts и целостность gold scores
+Для каждого отдельного live attempt сохраняй собственный slot ID, настройки/model, final native extraction, статус/причину, доступный LLM output или существующий transcript, наблюдаемое количество logical calls и elapsed time. Достаточно JSONL или одного файла на slot с простой проверкой на дублирование. API-ключи не сохраняй.
 
-В append-only журнале для каждого логического запроса сохраняй точный **slot ID**, порядковый номер вызова, prompt hash, sampling parameters, provider/model, ответ JSON либо класс ошибки, итоговую формулу/кандидата и исходный extraction trace. Не записывай API keys.
+**Происхождение кандидатов:** четыре разных ID не доказывают четыре фактических генерации. В тестах проверяй отдельные реальные обращения к fake client, в live сохраняй доступную provenance. Дословно одинаковые результаты разных вызовов допустимы. `ReplayLLMClient(match_by_prompt=True)` может повторно выдавать один ответ; cached/replayed ответ нельзя считать новой выборкой.
 
-Оригинальный `ReplayLLMClient(match_by_prompt=True)` способен повторить последний записанный ответ, если одинаковый prompt встретился чаще, чем ответов в transcript. **В RQ1 требуется строго последовательный replay с внешней проверкой ожидаемого числа слотов/вызовов и полного расходования записей**. Reject при неверных prompt hashes, недостающих/лишних сообщениях и фиктивных candidate identities. Повторы ответа из *разных live calls* допустимы, но replay — проверка, а не источник новых samples.
+**Воспроизводимость для RQ1:** после фиксации финальных candidates проверяй их количество и уникальность slots, затем пересчитывай gold scores **offline, без генерации**. Полный strict replay prompt hashes, transcript exhaustion и восстановление внутреннего хода p01/p02 не требуются; существующие transcript helpers можно переиспользовать, если это уменьшает код.
 
-Используй существующий `score_extraction_against_gold` и исходные semantics/timeout `check_equivalence` **без изменения оригинального Z3-подхода**. Если поведение исходного solver кажется неправильным, сначала изучи [KNOWN_DUALIFY_LIMITATIONS.md](../agent/KNOWN_DUALIFY_LIMITATIONS.md); зафиксируй влияние и обсуди с научным руководителем, не меняя oracle. Отрицательного bool недостаточно для вывода о неэквивалентности: проверяй `reason`, diagnostics и ошибки type/parse.
+Используй существующий `score_extraction_against_gold` и исходные semantics/timeout `check_equivalence` **без изменения оригинального Z3-подхода**. При неожиданном поведении обращайся к [KNOWN_DUALIFY_LIMITATIONS.md](../agent/KNOWN_DUALIFY_LIMITATIONS.md) и документируй влияние для встречи с научным руководителем. Одного `equivalent=False` недостаточно: проверяй `reason` и diagnostics.
 
-Каждый завершённый кандидат получает один из статусов:
-- `equivalent`: доказана эквивалентность оригинальному gold внутри формального фрагмента;
-- `non_equivalent`: доказана неэквивалентность / найден counterexample;
-- `invalid`: некорректный или непригодный для проверки кандидат, отдельно от unknown;
-- `inconclusive`: solver вернул `unknown` либо проверка осталась формально неопределённой.
+Статусы итоговых candidates:
+- `equivalent` — доказанная эквивалентность исходному gold во фрагменте;
+- `non_equivalent` — доказанная неэквивалентность / counterexample;
+- `invalid` — некорректный или непригодный контракт;
+- `inconclusive` — `unknown` solver либо формально неопределённая проверка.
 
-Если исходных данных checker не хватает для однозначной классификации, указывай **unclassified + evidence**, останавливай scoring gate и добавляй наблюдение на самой узкой необходимой границе интерфейса. Не угадывай.
+Если доказательств не хватает для категории, выдай `unclassified` + первичные diagnostics и `BLOCKED`, не угадывай.
 
 ## 6. Статистическая оценка и формулы
 
@@ -117,40 +117,30 @@ Treatment требует n=4 **завершённых слота** на зада
 
 **Монотонность — не открытие:** комбинаторный pass@k математически не убывает с k для одного фиксированного пула. Измеряем величину прироста, его неопределённость, долю задач со смешанными исходами (0<c<4) и затраты.
 
-## 7. Обязательные диагностики и оговорки про latency
+## 7. Минимальные диагностики и latency
 
-**Обязательные, непосредственно наблюдаемые данные:**
-- статус эквивалентности кандидата, исходные reason/diagnostics, c/u на задачу и канал;
-- распределение degraded, weak-postcondition, used-fallback, initial/repair stages;
-- число уникальных финальных формул на 4 slots и доля duplicates (proxy разнообразия, но не доказательство семантической независимости);
-- полное **elapsed time extraction attempt** с определением времени и timestamps, wall-clock всей campaign, completed/incomplete slots;
-- logical LLM calls и фактически переданные температуры там, где client adapter может их наблюдать;
-- частоты extraction, validation, provider и oracle ошибок, попытки восстановления и терминальные статусы;
-- успех baseline, treatment pass@k low/high, delta, 95% интервал, first-k diagnostic.
+**Нужно измерять:** статусы `equivalent/non_equivalent/invalid/inconclusive` и исходные oracle reasons; c/u, pass@1/2/4 low/high, paired delta и 95% interval отдельно для spec/code; долю одинаковых final formulas, native degraded/repair counts, время полной extraction attempt и число наблюдаемых logical calls. Покажи число completed/incomplete slots и итоговое wall-clock время кампании.
 
-**Только при наличии непосредственно измеренных данных:** физическое количество HTTP-запросов (включая скрытые transport retries и переключения endpoints), реальные response tokens, Groq inference-only latency, разделение backoff и compute. Если не инструментировано, укажи NA и степень покрытия; **не называй время всей попытки «чистым inference latency модели».** Оно может включать retries и ожидание rate limit. Quotas бесплатного Groq и доступность модели — внешние факторы, не прямые характеристики алгоритмического качества.
+**Только если напрямую наблюдается:** физические HTTP requests, transport retries, response tokens и чистое inference latency. Если недоступны — `NA` с короткой причиной. Полное время attempt включает ожидания/backoff и **не равно** чистому inference time. Не выдумывай стоимость бесплатного тарифа.
 
-Для cost указывай число candidate attempts и наблюдаемых logical API calls; не придумывай стоимость в долларах для бесплатного тарифа и не рассчитывай токены по неполной телеметрии.
+Не нужны отдельная система мониторинга Groq, dashboard, универсальная telemetry schema или сбор всех низкоуровневых событий.
 
-## 8. Артефакты, reviewer checks и freeze
+## 8. Артефакты, проверки и freeze
 
-Будущий завершённый запуск должен предоставить:
-1. manifest с исходными путями, хешами, seed и фиксированным split 10/30;
-2. краткую заметку об очевидных рисках утечек и известных ограничениях;
-3. упорядоченный candidate ledger — одна запись на planned slot, статус и неизменяемые IDs;
-4. transcript логических запросов/ответов и manifest проверки replay;
-5. gold oracle scores для каждого кандидата, reason, diagnostics и raw statuses;
-6. per-task/per-channel pass@1,2,4 low/high и diagnostics ошибок/retries;
-7. общие агрегаты, paired delta с интервалами, latency/calls/diversity и декларацию отсутствующей телеметрии;
-8. воспроизводимую процедуру offline-проверки без credentials и выводы независимого reviewer.
+Минимальный набор:
+1. зафиксированный split/manifest 10/30, hashes, seed и короткая заметка о рисках;
+2. реальные saved candidate records с unique slot IDs, параметрами, финальными outputs/ошибками и проверкой полноты;
+3. offline scores с исходными reasons и отдельными per-task/spec/code pass@k;
+4. один небольшой CSV/JSON и понятный итоговый отчёт с paired delta, 95% interval, ошибками, временем и отсутствующей телеметрией;
+5. одна offline-команда воспроизведения расчёта и результаты независимого code review.
 
-**Gate A — offline green:** исходные regression tests и новые RQ1 fake-client/replay тесты проходят; случайных запросов Groq — ноль; проверки целостности и граничных pass@k случаев проходят.
+**Gate A — offline green:** все относящиеся regression/fake-client tests, integrity и pass@k boundary tests проходят. Генерация и анализ тестовых fixtures не обращаются к Groq.
 
-**Gate B — dev complete:** один полный 10-case dev run со 100 завершёнными slots, без необъяснённых ambiguous ошибок, с воспроизводимыми offline scores и review корректности метрик/аудита. Объективные дефекты можно исправлять по dev и повторять оправданные проверки с документированием; по held-out ничего не настраивается.
+**Gate B — dev complete:** один dev run на 10 задачах и 100 attempts, полные saved records, повторяемый offline scoring. Reviewer проверяет: (1) четыре отдельных попытки, (2) отсутствие gold leakage, (3) неизменный original Z3, (4) правильный pass@k/unknown. Короткая демонстрация «вход → candidates → original Z3 → pass@k» обязательна; line-by-line review вспомогательных функций не требуется.
 
-**Gate C — freeze + STOP:** сохрани точный implementation commit, model/config, manifest/split, scorer settings и hashes; проверь доказательства против acceptance criteria; установи **READY FOR HELD-OUT TEST** или **BLOCKED**. **Остановись.** Без отдельного разрешения пользователя held-out experiment запрещён.
+**Gate C — freeze + STOP:** запиши точный implementation commit, model/config, split/manifest hashes и версии scorer; итоговый статус `READY FOR HELD-OUT TEST` или `BLOCKED`. **Остановись.** Test требует отдельного разрешения после dev.
 
-**Gate D — held-out (будущий этап с отдельным допуском):** одна test campaign по 30 задачам и 300 attempts и offline-анализ с замороженной конфигурацией. Никаких изменений scoring policy или настройки по результатам test. При потере/порче данных зафиксируй ошибку и получи явное решение до повторного запуска.
+**Gate D — held-out (отдельное разрешение):** один зафиксированный test run 30 задач / 300 attempts, offline-анализ по сохранённым candidates, отчёт по основным метрикам и ограничениям. По результатам test протокол не меняется; при необходимости повторного запуска требуется явное решение.
 
 ## 9. Угрозы валидности и обязательные оговорки
 
@@ -183,7 +173,7 @@ Treatment требует n=4 **завершённых слота** на зада
 | **Invalid candidate** | Результат завершённого extraction, не допускающий корректную проверку как well-formed contract. Не равен автоматически oracle-unknown. |
 | **Infrastructure failure** | Неустранённый сбой сети, rate limit или сервера, мешающий достоверно завершить назначенный slot; отличается от ошибки ответа модели. |
 | **Provider attempt** | Один физический HTTP-запрос. В рамках одного логического LLM-вызова или extraction attempt их может быть несколько. |
-| **Transcript** | Упорядоченная запись prompts, настроек и ответов LLM для offline replay extraction. Replay не является новой генерацией. |
+| **Transcript** | Доступная упорядоченная запись prompts/ответов/настроек для проверки происхождения attempt; её наличие полезно, но полный strict replay внутренних вызовов для RQ1 не обязателен. Replay не является новой генерацией. |
 | **pass@k** | Оценка вероятности обнаружить хотя бы один подтверждённый gold-equivalent контракт среди k выборок из пула n независимо полученных extraction attempts. |
 | **Coverage gain (delta_4_1)** | Разница pass@4 − pass@1 внутри одной sampling-серии; вычисляется отдельно для spec и code. |
 | **Dev set** | Десять заранее зафиксированных задач benchmark, доступных для инженерной проверки. |

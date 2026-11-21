@@ -1,48 +1,62 @@
-# 03 — Пул из четырёх кандидатов с безопасным resume и strict replay
+# 03 — Простой sampling runner и запись четырёх независимых кандидатов
 
 **Статус:** ready-for-agent (НЕ НАЧАТ)  
-**Blocked by:** [02 — Native attempt и telemetry](02-native-attempt-and-telemetry.md).  
-**Результат:** сквозной **offline** пример: один benchmark case, baseline и четыре отдельно идентифицируемых treatment attempts для каждого канала; запись результатов, безопасный resume и проверка через replay.
+**Blocked by:** [02 — Native attempt](02-native-attempt-and-telemetry.md).  
+**Результат:** один небольшой offline-проверяемый runner: на задачу и канал — baseline ×1, treatment ×4, сохранение отдельных кандидатов и возможность повторить **offline-анализ** по этим данным.
 
 ## Problem
-Повтор одинакового prompt не доказывает независимость sampling, если нет подтверждения отдельной live attempt для каждого кандидата. Original prompt-matching transcript replay может вернуть старый ответ, когда сохранённые responses закончились. Сбои и перезапуски также создают недостающие или дублированные slots. Без надёжного candidate ledger pass@k нельзя считать достоверным.
+
+Для pass@k необходимо достоверно знать, что четыре результата получены из четырёх разных полных extraction attempts, а не четырёх чтений одного cached ответа. Исходный `ReplayLLMClient(match_by_prompt=True)` способен повторять сохранённый ответ; использовать его как источник новых candidates нельзя. Ранее тикет требовал сложный crash-safe ledger, exactly-once resume и strict replay **всех внутренних LLM calls**. Для небольшого RQ1-прототипа это несоразмерно цели: достаточно сохранять реальные результаты и повторять **scoring без LLM**.
 
 ## Known facts
-- Оригинальные `RecordingLLMClient`, `ReplayLLMClient`, `ResumingLLMClient` реализуют transcript с prompt hashes и replay.
-- В `ReplayLLMClient(match_by_prompt=True)` последний записанный ответ может выдаваться повторно после исчерпания подходящих записей; это **не новый sample**.
-- Upstream strict sequential replay проверяет упорядоченные prompt hashes, но native extractors могут перехватывать replay exceptions; нужна внешняя проверка завершённости.
-- Утверждённый эксперимент требует ровно четыре treatment **slots** на case/channel плюс один baseline; одинаковые формулы допустимы.
-- Infrastructure recovery допускается только в рамках **того же** incomplete slot; успешно завершённые, но неправильные slots не заменяются.
+
+- Оригинальные p01/p02 создают итоговый контракт за одну full extraction attempt с возможными native repairs.
+- Для каждого case/channel согласованы **четыре treatment attempts** с одинаковой initial T>0 и одна отдельная baseline attempt при T=0.
+- Одинаковые финальные формулы допустимы, если действительно сделаны независимые вызовы; требование уникальности относится к **slot IDs**, а не к тексту.
+- В исходном Dualify уже есть `RecordingLLMClient` и другие transcript helpers. Их можно использовать, если это сокращает реализацию, но строгая реконструкция всего выполнения extractor больше **не является обязательным результатом**.
+- Replay или cached answers не считаются дополнительными live samples.
 
 ## Constraints
-- Назначь стабильные IDs вида (task, channel, arm, sample-index) и отдельный порядок logical calls внутри каждого slot.
-- Сохраняй raw prompts/temperatures, final native extraction traces и достаточные данные для offline verification без API credentials.
-- Переиспользуй исходные transcript interfaces там, где это безопасно; enforce strict ordered replay, соответствие prompt hashes, cardinality calls и exhaustion **над** extraction layer.
-- Не создавай samples из replay/cache. Одинаковые формулы считаются разными кандидатами **только при наличии записей об отдельных фактических attempts**.
-- Используй append-only запись либо atomic slots; crash не должен незаметно дублировать готовый slot или завершать повреждённую запись.
-- Missing/exhausted infrastructure slots остаются incomplete. Сохраняй успешный префикс и retry history; n не сокращается.
-- Тикет должен запускаться с fake responses, **без Groq**.
+
+- Вызывай полный extractor отдельно для каждого `(case_id, channel, arm, sample_index)`. Зафиксируй уникальный slot ID и сведения о **фактическом вызове**, не только сгенерированный порядковый номер.
+- Сохраняй простой JSONL или файлы на slot (выбери **один** удобный формат): slot ID, model, initial/repair temperatures, final contract / native result, статус/причину ошибки, elapsed time, наблюдаемые logical calls и исходные LLM outputs / transcript, если клиент уже их возвращает. Не создавай новый универсальный storage framework.
+- Записывай результат сразу после завершения попытки; при ошибке последующие результаты не должны затирать ранее сохранённые. Для resume достаточно **пропускать проверенные completed slots** и продолжать только incomplete slots без дублирования. Полноценная транзакционная crash-recovery система не требуется.
+- Проверяй полноту: на задачу/канал ровно четыре completed treatment slots и отдельный baseline. При пропуске или повторе ID — остановить campaign, а не уменьшать n/подставлять прошлый response.
+- Контракты могут совпадать по тексту. Запись нескольких разных ID без нескольких реально выполненных attempts **не доказывает** независимость: в fake tests считай реальные вызовы, а в live run сохраняй доступную provenance.
+- Используй существующие transcript utilities только при необходимости; `match_by_prompt=True` нельзя применять для получения «новых» samples. Offline analysis должен читать **записанные финальные кандидаты без обращения к модели**.
+- Все тесты Ticket 03 работают с fake clients и локальными файлами.
 
 ## Hypotheses
-- **Инженерная гипотеза:** candidate ledger и внешний replay verifier позволяют использовать исходные transcript возможности и обеспечивают exactly-once **учёт слотов** после crash/resume без обещания детерминированного live sampling.
+
+- Минимальный цикл native extractor с простым файловым сохранением и проверкой полноты достаточен для достоверного RQ1 pass@k и повторного offline-scoring.
+- Повторная реконструкция всех prompt hashes и внутренних repair calls через собственный strict replay verifier не добавляет необходимой для RQ1 научной информации.
 
 ## Expected outcome
-- Воспроизводимая fixture: одна задача, оба канала, по одному baseline и четырём treatment slots, уникальные IDs и связанные extraction/transcript records.
-- Успешный offline replay восстанавливает те же финальные candidate records и доказывает, что все записанные LLM calls израсходованы.
-- Negative-тесты: отсутствующий/лишний LLM record, неправильный prompt hash, повтор последнего ответа, повторный slot ID, interrupted slot и resume этого же slot.
+
+- Понятная сквозная fixture для одной задачи и двух каналов: 1 baseline + 4 treatment attempts на канал, все результаты записаны в доступном для просмотра формате.
+- Повторный offline-read даёт те же candidate records без API. Простая проверка отличает missing, duplicate, incomplete и ошибочно закэшированные attempts.
+- Минимальная демонстрация безопасного продолжения после прерывания: completed не перезаписываются, incomplete явно видны.
 
 ## Acceptance criteria
-- [ ] Для каждого case/channel присутствуют четыре **завершённых уникальных slot IDs** и отдельный baseline; одинаковый текст кандидатов не уменьшает счётчик.
-- [ ] Каждый completed slot связан с реальными записанными model responses (или fake responses в тестах) и ровно одним финальным native extractor result.
-- [ ] Strict replay проверяет порядок prompts, temperatures, counts, identity responses и полное exhaustion; все повреждённые fixtures приводят к fail-closed.
-- [ ] Replay mismatch, перехваченный native extractor, всё равно обнаруживается внешней проверкой и не превращается в допустимый degraded candidate.
-- [ ] Replay и offline resume не вызывают сеть.
-- [ ] Interrupted slot можно возобновить на том же месте, сохранив completed slots; повторный resume идемпотентен в тестируемых случаях.
-- [ ] Invalid/degraded, но завершённый model output сохраняется; неустранённая инфраструктурная ошибка блокирует campaign.
-- [ ] Оригинальные transcript regression tests проходят.
+
+- [ ] Fake client подтверждает **четыре отдельных вызова полного extractor** на каждый канал плюс один baseline, с уникальными IDs.
+- [ ] Полные candidate records содержат достаточно результатов и provenance, чтобы позже повторить **gold scoring без повторной генерации**.
+- [ ] Одинаковые текстовые outputs из отдельных фактических calls допустимы; попытка заполнить slot cached/replayed ответом не проходит проверку.
+- [ ] Missing, duplicate или incomplete slot выявляется до pass@k, а завершённый invalid/degraded candidate сохраняется.
+- [ ] После простого resume completed slots не меняются и не дублируются; новый вызов возможен только для incomplete.
+- [ ] Один реальный пример сохранённой структуры и tests на перечисленные риски понятны; offline-read не вызывает Groq.
+
+## Упрощение для исследовательского прототипа
+
+**Оставить:** n=4 отдельных attempts; trace/provenance отдельного вызова; запись всех финальных outputs; проверку наличия n=4; элементарный resume; возможность повторно пересчитать оценки offline.  
+**Убрать:** обязательный strict replay **внутренней** последовательности LLM calls, полное восстановление prompt hashes, проверку transcript exhaustion, универсальный append-only ledger, exactly-once event accounting и исчерпывающий набор corruption fixtures. Тотальный replay — опционален, только если уже реализован в исходном Dualify без дополнительной сложности.
+
+**Важно:** мы ослабляем требование воспроизвести ход генерации, **не** требование получить четыре отдельных кандидата и сохранить доказательства их происхождения.
 
 ## Stopping criteria
-**STOP, когда:** offline fixture для двух каналов подтверждает полные n=4 pools, resume и strict replay без сети, а все corruption fixtures стабильно проваливаются. Если точную идентичность нельзя доказать по transcript, укажи `BLOCKED`; не ослабляй контроль молча. Не генерируй реальные candidates и не реализуй gold scoring сверх заглушки интерфейса.
+
+**STOP**, когда одна fixture для двух каналов создаёт пять отдельно учитываемых attempts на канал, записи читаются offline, полнота/повтор IDs проверяются и простой resume сохраняет completed results. При невозможности отличить фактический вызов от cached sample — `BLOCKED`. Не реализуй универсальный transcript/replay framework, gold scorer Ticket 04 или live Groq campaign.
 
 ## Out of scope
-Gold oracle pass@k, доверительные интервалы, настоящие Groq campaigns и общие рефакторинги transcript.
+
+Full strict replay всех internal calls, сложная crash-safe state machine, профессиональная система хранения, pass@k math, dev/test sampling и рефакторинг оригинальных transcript helpers.

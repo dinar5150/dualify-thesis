@@ -24,7 +24,7 @@
 
 ## Hypotheses
 - **Описательный научный вопрос:** можно оценить размер oracle coverage gain от k=1 к k=4 на held-out задачах вместе с uncertainty и дополнительной стоимостью. Монотонность pass@k следует из математики и сама по себе не доказывает новизну.
-- **Целостность:** одну frozen test campaign можно воспроизвести и проверить offline без доступа к Groq.
+- **Целостность:** сохранённые финальные candidates и их gold scores можно проверить и пересчитать offline без доступа к Groq. Повторять внутреннюю генерацию для этого не требуется.
 
 ## Expected outcome
 - Ровно 300 зафиксированных и проверенных held-out slots либо прозрачный отчёт `INCOMPLETE` (никакой фиктивной полноты).
@@ -35,12 +35,17 @@
 ## Acceptance criteria
 - [ ] Отдельное письменное разрешение и соответствие frozen hashes/config зафиксированы **до первого test request**.
 - [ ] Есть все 30 ожидаемых test case IDs; ровно 300 planned full attempt slots завершены либо эксперимент отмечен `INCOMPLETE` с прозрачными diagnostics.
-- [ ] Все treatment pools имеют n=4; strict replay проверяет cardinality запросов/ответов, prompt settings и identities кандидатов.
+- [ ] Все treatment pools имеют n=4; по сохранённым записям проверяются отдельные реальные attempts, уникальные slot IDs, доступные prompts/settings и финальные outputs. Полный strict replay внутренних LLM calls не требуется.
 - [ ] Oracle scores сохраняют различие unknown/invalid; offline analytics не обращается к live API.
 - [ ] Оба канала содержат pass@1/2/4, per-task results, low/high, paired delta с 95% intervals, first-k diagnostic и число задач с оговоркой о возможной зависимости близких примеров.
 - [ ] В отчёте явно различаются performance costs, observed attempt latency, доступная HTTP telemetry, retries/rate-limit ожидания и отсутствующие метрики.
 - [ ] Дипломный вывод не содержит необоснованных утверждений о causal effects, selection или полной Python-семантике; test results не повлекли неутверждённой настройки.
-- [ ] Review report и инструкции воспроизведения указывают точные неизменяемые artifacts.
+- [ ] Review и инструкции по offline scoring указывают сохранённые results, фиксированный manifest/config и конкретные команды пересчёта; пример одного случая позволяет объяснить результат на защите.
+
+## Упрощение для исследовательского прототипа
+
+**Оставить:** один frozen held-out run из 300 attempts, проверку полноты, сохранённые кандидаты, offline gold scoring, основные статистики и честные ограничения.  
+**Убрать:** обязательный strict replay хода генерации и инфраструктурные проверки, не влияющие на достоверность pass@k. Отчёт должен быть понятен исследователю; новые подсистемы не создаются ради одного запуска.
 
 ## Stopping criteria
 **STOP, когда:** единственная frozen held-out campaign, offline reproduction и RQ1 report удовлетворяют acceptance criteria. Если обязательный slot не завершить в пределах заявленных лимитов, **STOP со статусом `INCOMPLETE`**, сохрани audit trail и запросив новое решение. Не повторяй run и не меняй протокол самостоятельно, не начинай RQ2 и не занимайся полировкой после обоснованного вывода.
