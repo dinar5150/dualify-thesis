@@ -21,7 +21,7 @@ from dualify.gold_scoring import (
     load_gold_benchmark,
     score_extraction_against_gold,
 )
-from dualify.phases.p03_smt_checking import CaseSpec
+from dualify.phases.p03_smt_checking import CaseSpec, is_parseable
 from dualify.rq1_attempt import AttemptRecord
 from dualify.rq1_pool import PoolIntegrityError, read_candidate_pool
 
@@ -44,33 +44,26 @@ def _candidate(record: AttemptRecord, gold: GoldContract) -> dict[str, Any]:
             case_spec=case, gold=gold, extraction=record.extraction, include_diagnostics=True,
         )
         reason = score.reason.partition(":")[0]
-        reference_parse_error = False
+        invalid = False
         if reason == "formula_parse_error":
-            # Oracle разбирает обе стороны вместе. Проверяем, что сам эталон читается.
-            reference = score_extraction_against_gold(
-                case_spec=case,
-                gold=gold,
-                extraction=replace(
-                    record.extraction,
-                    domain_constraints=gold.domain_constraints,
-                    postcondition=gold.postcondition,
-                ),
+            # Общий разбор может упасть из-за вывода типа одного символа из двух формул.
+            reference = replace(
+                record.extraction,
+                domain_constraints=gold.domain_constraints,
+                postcondition=gold.postcondition,
             )
-            reference_parse_error = reference.reason.startswith("formula_parse_error:")
+            invalid = is_parseable(case, reference) and not is_parseable(case, record.extraction)
     except z3.Z3Exception as exc:
         raise AnalysisBlockedError(f"{record.slot_id}: unclassified: {exc}") from exc
 
     smt = score.smt
     # Отрицательный флаг scorer сам по себе не доказывает наличие контрпримера.
-    invalid = reason == "vacuous_equivalence" or (
-        reason == "formula_parse_error" and not reference_parse_error
-    )
     status = "unclassified"
     if smt is not None:
         if score.contract_equivalent:
             if reason == "equivalent_no_mismatch":
                 status = "equivalent"
-        elif reason == "solver_unknown":
+        elif reason in ("solver_unknown", "vacuous_equivalence"):
             status = "inconclusive"
         elif invalid:
             status = "invalid"
@@ -208,7 +201,10 @@ def analyze_candidate_pools(
             raise AnalysisBlockedError(f"Повторная задача: {case_id}")
         pools[case_id] = records
 
-    gold_contracts = load_gold_benchmark(gold_dir)
+    try:
+        gold_contracts = load_gold_benchmark(gold_dir, require_unique_ids=True)
+    except (OSError, ValueError) as exc:
+        raise AnalysisBlockedError(f"Ошибка загрузки gold: {exc}") from exc
     tasks: list[dict[str, Any]] = []
     for case_id, records in sorted(pools.items()):
         gold = gold_contracts.get(case_id)
@@ -225,7 +221,7 @@ def analyze_candidate_pools(
     return tasks, {
         "sampling": sampling_config,
         "method": {
-            "pass_at_k": "low учитывает доказанные успехи, high также считает unknown успехами.",
+            "pass_at_k": "low учитывает доказанные успехи, high добавляет inconclusive как успехи.",
             "oracle_scope": "Эквивалентность gold в поддерживаемом фрагменте Dualify.",
             "elapsed_seconds": "Сумма наблюдаемого времени полных attempts с ожиданиями.",
             "logical_calls": "Наблюдаемые вызовы generate_json, включая repair.",

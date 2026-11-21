@@ -25,9 +25,12 @@ class PoolIntegrityError(RuntimeError):
     """Записанные данные не позволяют честно оценить полный пул."""
 
 
-def _slot_specs(case_id: str, temperature: float) -> list[tuple[str, Channel, float]]:
+def _validate_treatment_temperature(temperature: float) -> None:
     if not math.isfinite(temperature) or temperature <= 0:
         raise ValueError("treatment_temperature must be positive")
+
+
+def _slot_specs(case_id: str, temperature: float) -> list[tuple[str, Channel, float]]:
     specs: list[tuple[str, Channel, float]] = []
     channels: tuple[Channel, Channel] = ("spec", "code")
     for channel in channels:
@@ -84,9 +87,7 @@ def _read_config(directory: Path) -> dict:
             stored, benchmark_id=str, model=str, provider=str,
             treatment_temperature=(int, float), max_transient_retries=int,
         )
-        temperature = stored["treatment_temperature"]
-        if not math.isfinite(temperature) or temperature <= 0:
-            raise ValueError("некорректная treatment_temperature")
+        _validate_treatment_temperature(stored["treatment_temperature"])
         if stored["max_transient_retries"] < 0:
             raise ValueError("некорректное значение max_transient_retries")
     except (OSError, ValueError, OverflowError) as exc:
@@ -222,6 +223,7 @@ def run_candidate_pool(
     max_transient_retries: int = 0,
 ) -> list[AttemptRecord]:
     """Пять отдельных attempts на канал; completed slots повторно не генерируются."""
+    _validate_treatment_temperature(treatment_temperature)
     specs = _slot_specs(case.benchmark_id, treatment_temperature)
     if max_transient_retries < 0:
         raise ValueError("max_transient_retries must be nonnegative")
@@ -278,6 +280,7 @@ def verify_candidate_pool(
     treatment_temperature: float,
 ) -> list[AttemptRecord]:
     """Читает финальные candidates offline; НЕ воспроизводит генерацию через LLM."""
+    _validate_treatment_temperature(treatment_temperature)
     config = _config(
         artifact_dir,
         case=case,

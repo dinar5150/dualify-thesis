@@ -107,7 +107,9 @@ def _load_arg_types(record: dict[str, Any]) -> dict[str, str]:
     return parsed
 
 
-def load_gold_benchmark(gold_dir: Path = DEFAULT_GOLD_DIR) -> dict[str, GoldContract]:
+def load_gold_benchmark(
+    gold_dir: Path = DEFAULT_GOLD_DIR, *, require_unique_ids: bool = False,
+) -> dict[str, GoldContract]:
     """Load gold contracts keyed by ``benchmark_id``.
 
     Keying by ``benchmark_id`` (which is globally unique) rather than
@@ -129,6 +131,9 @@ def load_gold_benchmark(gold_dir: Path = DEFAULT_GOLD_DIR) -> dict[str, GoldCont
         pre, post = _gold_formulas(record)
         arg_types = _load_arg_types(record)
         benchmark_id = str(record.get("benchmark_id", qualname))
+        if require_unique_ids and benchmark_id in contracts:
+            previous = contracts[benchmark_id].safe_id
+            raise ValueError(f"Повторный gold benchmark_id {benchmark_id}: {previous}.yaml, {path}")
         contracts[benchmark_id] = GoldContract(
             benchmark_id=benchmark_id,
             qualname=qualname,

@@ -9,7 +9,7 @@ import pytest
 
 from dualify import gold_scoring
 from dualify.phases.p03_smt_checking import CaseSpec
-from dualify.rq1_attempt import AttemptRecord, LogicalCall
+from dualify.rq1_attempt import AttemptRecord, Channel, LogicalCall
 from dualify.rq1_report import analyze_candidate_pools, main
 from dualify.types import ExtractionResult, SmtResult
 
@@ -35,7 +35,8 @@ def save_pool(
         }),
         encoding="utf-8",
     )
-    for channel, formulas in (("spec", spec), ("code", code)):
+    channels: tuple[Channel, Channel] = ("spec", "code")
+    for channel, formulas in zip(channels, (spec, code), strict=True):
         for index, postcondition in enumerate(formulas):
             arm = "treatment" if index else "baseline"
             slot = f"{case_id}:{channel}:{arm}:{index}"
@@ -136,6 +137,32 @@ def test_unknown_only_expands_high_and_invalid_keeps_original_reason(
     assert summary["spec"]["treatment"]["inconclusive"] == 1
 
 
+def test_vacuous_comparison_does_not_mark_a_valid_formula_invalid(tmp_path: Path) -> None:
+    right, alternative = "ret == x + 1", "ret == y + 1"
+    pool = save_pool(tmp_path, "increment", [right, alternative, right, right, right], [right] * 5)
+    gold_dir = tmp_path / "gold"
+    gold = gold_dir / "increment.yaml"
+    gold.write_text(
+        gold.read_text(encoding="utf-8").replace("x: int)", "x: int, y: int)")
+        + 'reference_pre: ["x == y"]\n',
+        encoding="utf-8",
+    )
+    slot = pool / "increment__spec__treatment__1" / "result.json"
+    record = json.loads(slot.read_text(encoding="utf-8"))
+    record["extraction"]["args"] = ["x", "y"]
+    record["extraction"]["domain_constraints"] = ["x == y"]
+    slot.write_text(json.dumps(record), encoding="utf-8")
+
+    tasks, _ = analyze_candidate_pools([pool], gold_dir=gold_dir)
+    spec = tasks[0]["spec"]
+    verdict = spec["candidates"][0]
+    assert verdict["reason"] == "vacuous_equivalence"
+    assert verdict["well_formedness"] == "disjoint_post_vocab"
+    assert verdict["status"] == "inconclusive"
+    assert spec["low"]["4"] == 0.0
+    assert spec["high"]["4"] == 1.0
+
+
 @pytest.mark.parametrize("damage", ["missing", "duplicate", "extra", "incomplete", "other_channel"])
 def test_blocks_inconsistent_slots(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], damage: str,
@@ -178,6 +205,43 @@ def test_blocks_parse_error_in_gold_without_counting_candidate_as_invalid(
     assert "BLOCKED" in error
     assert "unclassified" in error
     assert "formula_parse_error:" in error
+    assert not output.exists()
+
+
+def test_joint_parse_error_with_two_parseable_formulas_blocks(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    right, conflicting = "ret == y + 1", "ret == Length(y)"
+    pool = save_pool(tmp_path, "increment", [right, conflicting, right, right, right], [right] * 5)
+    gold_dir = tmp_path / "gold"
+    gold = gold_dir / "increment.yaml"
+    gold.write_text(
+        gold.read_text(encoding="utf-8").replace("ret == x + 1", right),
+        encoding="utf-8",
+    )
+    output = tmp_path / "report"
+    assert main([str(pool), "--gold-dir", str(gold_dir), "--output-dir", str(output)]) == 1
+    error = capsys.readouterr().err
+    assert "BLOCKED: increment:spec:treatment:1: unclassified" in error
+    assert "formula_parse_error:" in error
+    assert not output.exists()
+
+
+def test_duplicate_gold_id_blocks_instead_of_selecting_last_file(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str],
+) -> None:
+    right = "ret == x + 1"
+    pool = save_pool(tmp_path, "increment", [right] * 5, [right] * 5)
+    gold_dir = tmp_path / "gold"
+    original = (gold_dir / "increment.yaml").read_text(encoding="utf-8")
+    (gold_dir / "zz-duplicate.yaml").write_text(
+        original.replace(right, "ret == x + 2"), encoding="utf-8",
+    )
+    output = tmp_path / "report"
+    assert main([str(pool), "--gold-dir", str(gold_dir), "--output-dir", str(output)]) == 1
+    error = capsys.readouterr().err
+    assert "BLOCKED" in error
+    assert "increment.yaml" in error and "zz-duplicate.yaml" in error
     assert not output.exists()
 
 
