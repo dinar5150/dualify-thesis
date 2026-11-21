@@ -1,6 +1,6 @@
 # 03 — Пул из четырёх кандидатов с безопасным resume и strict replay
 
-**Статус:** ready-for-agent (НЕ НАЧАТ)  
+**Статус:** выполнен 2026-11-20
 **Blocked by:** [02 — Native attempt и telemetry](02-native-attempt-and-telemetry.md).  
 **Результат:** сквозной **offline** пример: один benchmark case, baseline и четыре отдельно идентифицируемых treatment attempts для каждого канала; запись результатов, безопасный resume и проверка через replay.
 
@@ -32,14 +32,31 @@
 - Negative-тесты: отсутствующий/лишний LLM record, неправильный prompt hash, повтор последнего ответа, повторный slot ID, interrupted slot и resume этого же slot.
 
 ## Acceptance criteria
-- [ ] Для каждого case/channel присутствуют четыре **завершённых уникальных slot IDs** и отдельный baseline; одинаковый текст кандидатов не уменьшает счётчик.
-- [ ] Каждый completed slot связан с реальными записанными model responses (или fake responses в тестах) и ровно одним финальным native extractor result.
-- [ ] Strict replay проверяет порядок prompts, temperatures, counts, identity responses и полное exhaustion; все повреждённые fixtures приводят к fail-closed.
-- [ ] Replay mismatch, перехваченный native extractor, всё равно обнаруживается внешней проверкой и не превращается в допустимый degraded candidate.
-- [ ] Replay и offline resume не вызывают сеть.
-- [ ] Interrupted slot можно возобновить на том же месте, сохранив completed slots; повторный resume идемпотентен в тестируемых случаях.
-- [ ] Invalid/degraded, но завершённый model output сохраняется; неустранённая инфраструктурная ошибка блокирует campaign.
-- [ ] Оригинальные transcript regression tests проходят.
+- [x] Для каждого case/channel присутствуют четыре **завершённых уникальных slot IDs** и отдельный baseline; одинаковый текст кандидатов не уменьшает счётчик.
+- [x] Каждый completed slot связан с реальными записанными model responses (или fake responses в тестах) и ровно одним финальным native extractor result.
+- [x] Strict replay проверяет порядок prompts, temperatures, counts, identity responses и полное exhaustion; все повреждённые fixtures приводят к fail-closed.
+- [x] Replay mismatch, перехваченный native extractor, всё равно обнаруживается внешней проверкой и не превращается в допустимый degraded candidate.
+- [x] Replay и offline resume не вызывают сеть.
+- [x] Interrupted slot можно возобновить на том же месте, сохранив completed slots; повторный resume идемпотентен в тестируемых случаях.
+- [x] Invalid/degraded, но завершённый model output сохраняется; неустранённая инфраструктурная ошибка блокирует campaign.
+- [x] Оригинальные transcript regression tests проходят.
+
+## Реализация
+
+- `dualify.rq1_pool.run_candidate_pool` создаёт фиксированные baseline/treatment slots для
+  каналов spec и code, сохраняет отдельный transcript каждого slot и атомарно публикует
+  только завершённый `result.json`.
+- При повторном запуске завершённые slots пропускаются, а незавершённый slot использует
+  сохранённый transcript prefix и дописывает только недостающие вызовы. Незавершённая
+  инфраструктурная ошибка останавливает campaign на текущем slot. Конфигурация пула и
+  каждого slot проверяется до resume, а transcript append-only сохраняет как ответы, так
+  и классы ошибок предыдущих запусков. В metadata фиксируются provider, model и sampling
+  settings; retry-события возобновляемого префикса переносятся в финальный replay run.
+  Завершённый result фиксирует digest всего transcript, включая предыдущие resume runs;
+  сообщения и тела provider errors сохраняются с удалением credential-like значений.
+- `verify_candidate_pool` последовательно воспроизводит pool offline и проверяет slot IDs,
+  prompt hashes, температуры, порядок и количество вызовов, identity ответов, финальный
+  native result и полное расходование transcript.
 
 ## Stopping criteria
 **STOP, когда:** offline fixture для двух каналов подтверждает полные n=4 pools, resume и strict replay без сети, а все corruption fixtures стабильно проваливаются. Если точную идентичность нельзя доказать по transcript, укажи `BLOCKED`; не ослабляй контроль молча. Не генерируй реальные candidates и не реализуй gold scoring сверх заглушки интерфейса.
