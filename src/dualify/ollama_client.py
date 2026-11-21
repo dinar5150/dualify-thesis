@@ -1,6 +1,7 @@
 import json
 import os
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -67,6 +68,9 @@ class OpenAICompatibleClient:
     backoff_base_sec: float = 2.0
     max_backoff_sec: float = 60.0
     fixed_chat_mode: bool | None = None
+    reasoning_effort: str | None = None
+    max_tokens: int = 1024
+    post: Callable[..., requests.Response] | None = None
 
     def _headers(self) -> dict[str, str]:
         headers = {"Content-Type": "application/json"}
@@ -117,7 +121,7 @@ class OpenAICompatibleClient:
         last_response: requests.Response | None = None
         for attempt in range(self.max_retries):
             try:
-                response = requests.post(
+                response = (self.post or requests.post)(
                     url,
                     json=payload,
                     headers=self._headers(),
@@ -188,15 +192,17 @@ class OpenAICompatibleClient:
                         },
                         {"role": "user", "content": prompt},
                     ],
-                    "max_tokens": 1024,
+                    "max_tokens": self.max_tokens,
                     "temperature": temperature,
                     "response_format": {"type": "json_object"},
                 }
+                if self.reasoning_effort is not None:
+                    payload["reasoning_effort"] = self.reasoning_effort
             else:
                 payload = {
                     "model": self.model,
                     "prompt": prompt,
-                    "max_tokens": 1024,
+                    "max_tokens": self.max_tokens,
                     "temperature": temperature,
                 }
             try:
