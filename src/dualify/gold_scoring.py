@@ -11,7 +11,7 @@ import yaml  # type: ignore[import-untyped]
 from dualify.formula_parser import normalize_formula
 from dualify.phases.p03_smt_checking import CaseSpec, check_equivalence
 from dualify.relation import contract_relation
-from dualify.types import ExtractionResult
+from dualify.types import ExtractionResult, SmtResult
 
 DEFAULT_GOLD_DIR = Path(__file__).resolve().parents[2] / "benchmark" / "lifted"
 
@@ -42,9 +42,14 @@ class GoldScoreResult:
     post_relation: str = ""
     skipped: bool = False
     skip_reason: str = ""
+    # Для RQ1 сохраняем исходное решение solver вместе с диагностикой.
+    smt: SmtResult | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        if self.smt is None:
+            payload.pop("smt")
+        return payload
 
 
 def _signature_arg_names(signature: str) -> list[str]:
@@ -208,6 +213,7 @@ def score_extraction_against_gold(
     case_spec: CaseSpec,
     gold: GoldContract,
     extraction: ExtractionResult,
+    include_diagnostics: bool = False,
 ) -> GoldScoreResult:
     if not gold.in_fragment:
         return GoldScoreResult(
@@ -238,6 +244,7 @@ def score_extraction_against_gold(
         reason=smt.reason,
         pre_relation=relation["pre"],
         post_relation=relation["post"],
+        smt=smt if include_diagnostics else None,
     )
 
 

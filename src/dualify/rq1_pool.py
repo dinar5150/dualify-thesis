@@ -25,16 +25,16 @@ class PoolIntegrityError(RuntimeError):
     """Записанные данные не позволяют честно оценить полный пул."""
 
 
-def _slot_specs(case: BenchmarkCase, temperature: float) -> list[tuple[str, Channel, float]]:
-    if temperature <= 0:
+def _slot_specs(case_id: str, temperature: float) -> list[tuple[str, Channel, float]]:
+    if not math.isfinite(temperature) or temperature <= 0:
         raise ValueError("treatment_temperature must be positive")
     specs: list[tuple[str, Channel, float]] = []
     channels: tuple[Channel, Channel] = ("spec", "code")
     for channel in channels:
-        specs.append((f"{case.benchmark_id}:{channel}:baseline:0", channel, 0.0))
+        specs.append((f"{case_id}:{channel}:baseline:0", channel, 0.0))
         for index in range(1, 5):
             specs.append(
-                (f"{case.benchmark_id}:{channel}:treatment:{index}", channel, temperature)
+                (f"{case_id}:{channel}:treatment:{index}", channel, temperature)
             )
     return specs
 
@@ -69,18 +69,29 @@ def _config(
         _write_json_atomically(path, expected)
         return expected
 
-    try:
-        stored = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as exc:
-        raise PoolIntegrityError("Некорректная конфигурация пула") from exc
-    if not isinstance(stored, dict):
-        raise PoolIntegrityError("Некорректная конфигурация пула")
+    stored = _read_config(directory)
     for key, value in expected.items():
         if stored.get(key) != value:
             raise PoolIntegrityError(f"Конфигурация пула не совпадает: {key}")
-    if not isinstance(stored.get("max_transient_retries"), int):
-        raise PoolIntegrityError("В конфигурации нет max_transient_retries")
-    if provider != "fake":
+    return stored
+
+
+def _read_config(directory: Path) -> dict:
+    path = directory / "pool_config.json"
+    try:
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        _require_types(
+            stored, benchmark_id=str, model=str, provider=str,
+            treatment_temperature=(int, float), max_transient_retries=int,
+        )
+        temperature = stored["treatment_temperature"]
+        if not math.isfinite(temperature) or temperature <= 0:
+            raise ValueError("некорректная treatment_temperature")
+        if stored["max_transient_retries"] < 0:
+            raise ValueError("некорректное значение max_transient_retries")
+    except (OSError, ValueError, OverflowError) as exc:
+        raise PoolIntegrityError(f"Некорректная конфигурация пула {path}: {exc}") from exc
+    if stored["provider"] != "fake":
         fingerprint = stored.get("endpoint_sha256")
         if not isinstance(fingerprint, str) or not re.fullmatch("[0-9a-f]{64}", fingerprint):
             raise PoolIntegrityError(f"Нет корректного endpoint_sha256: {path}")
@@ -159,7 +170,7 @@ def _load_attempt(path: Path) -> AttemptRecord:
 def _validate_record(
     record: AttemptRecord,
     *,
-    case: BenchmarkCase,
+    case_id: str,
     slot_id: str,
     channel: Channel,
     model: str,
@@ -174,7 +185,7 @@ def _validate_record(
         or record.repair_temperature != 0.0
         or record.max_transient_retries != retries
         or record.status != "completed"
-        or record.extraction.benchmark_id != case.benchmark_id
+        or record.extraction.benchmark_id != case_id
     ):
         raise PoolIntegrityError(f"Slot {slot_id}: metadata не совпадает")
     # Отдельный slot ID не доказывает вызов модели; в записи должны быть
@@ -211,7 +222,7 @@ def run_candidate_pool(
     max_transient_retries: int = 0,
 ) -> list[AttemptRecord]:
     """Пять отдельных attempts на канал; completed slots повторно не генерируются."""
-    specs = _slot_specs(case, treatment_temperature)
+    specs = _slot_specs(case.benchmark_id, treatment_temperature)
     if max_transient_retries < 0:
         raise ValueError("max_transient_retries must be nonnegative")
     endpoint = validate_sampling_client(client, model=model, live=provider != "fake")
@@ -233,7 +244,7 @@ def run_candidate_pool(
         if path.exists():
             record = _load_attempt(path)
             _validate_record(
-                record, case=case, slot_id=slot_id, channel=channel,
+                record, case_id=case.benchmark_id, slot_id=slot_id, channel=channel,
                 model=model, temperature=temperature, retries=max_transient_retries,
             )
         else:
@@ -267,7 +278,6 @@ def verify_candidate_pool(
     treatment_temperature: float,
 ) -> list[AttemptRecord]:
     """Читает финальные candidates offline; НЕ воспроизводит генерацию через LLM."""
-    specs = _slot_specs(case, treatment_temperature)
     config = _config(
         artifact_dir,
         case=case,
@@ -277,6 +287,18 @@ def verify_candidate_pool(
         retries=None,
         create=False,
     )
+    return _read_slots(artifact_dir, config)
+
+
+def read_candidate_pool(artifact_dir: Path) -> tuple[dict, list[AttemptRecord]]:
+    """Проверяет slots по сохранённому pool_config без исходного кода задачи."""
+    config = _read_config(artifact_dir)
+    return config, _read_slots(artifact_dir, config)
+
+
+def _read_slots(artifact_dir: Path, config: dict) -> list[AttemptRecord]:
+    case_id = config["benchmark_id"]
+    specs = _slot_specs(case_id, config["treatment_temperature"])
     expected = {slot_id for slot_id, _, _ in specs}
     loaded: dict[str, AttemptRecord] = {}
     paths: dict[str, Path] = {}
@@ -304,8 +326,8 @@ def verify_candidate_pool(
         if _result_path(artifact_dir, slot_id).resolve() != paths[slot_id].resolve():
             raise PoolIntegrityError(f"Slot {slot_id}: unexpected path")
         _validate_record(
-            record, case=case, slot_id=slot_id, channel=channel,
-            model=model, temperature=temperature,
+            record, case_id=case_id, slot_id=slot_id, channel=channel,
+            model=config["model"], temperature=temperature,
             retries=config["max_transient_retries"],
         )
         result.append(record)
