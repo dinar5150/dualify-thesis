@@ -1,56 +1,66 @@
-# 02 — Одна штатная extraction attempt с температурой и учётом ошибок
+# 02 — Одна штатная extraction attempt и минимальная диагностика
 
 **Статус:** выполнен 2026-11-20
-**Blocked by:** [01 — Benchmark split и аудит](01-benchmark-split-and-audit.md).  
-**Результат:** одна offline-проверяемая полная попытка extractor по каждому каналу с неизменным native validation/repair, правильной температурой и наблюдаемым конечным статусом.
+**Blocked by:** [01 — Benchmark split](01-benchmark-split-and-audit.md).  
+**Результат:** компактный способ вызвать оригинальные p01/p02 с корректной температурой, получить финальный контракт и отличить результат генерации от сбоя инфраструктуры.
 
 ## Problem
-Оригинальные p01/p02 передают initial generation и repairs через интерфейс LLM client, который по умолчанию использует temperature 0. В sampling нужно менять температуру **только первого вызова**, сохранив prompts и recovery. При этом extractor может перехватить ошибку провайдера и вернуть degraded контракт, скрыв незавершённый инфраструктурный slot.
+
+Для RQ1 нужно получать кандидатов при ненулевой температуре **только первого** вызова модели. Штатные validation, repair и degraded fallback Dualify должны остаться без изменений. При этом инфраструктурная ошибка провайдера не должна незаметно превращаться в «неправильный контракт».
 
 ## Known facts
-- `LLMClient.generate_json(prompt, temperature=0.0)` допускает явную температуру, но начальные вызовы и repairs в p01/p02 обычно используют значение по умолчанию.
-- Оба extractors выполняют validation, возможные repair/safe-subset и degraded recovery; одна полная попытка включает несколько логических LLM calls.
-- Оригинальный OpenAI-compatible client может повторять HTTP-запросы и переключать completion endpoint; количество HTTP attempts отличается от logical LLM calls.
-- Утверждённый метод сохраняет repair ladder и T=0 для repair при фиксированной T>0 на первом treatment generation.
-- Malformed JSON от модели не является автоматически временным инфраструктурным сбоем.
+
+- Исходный `LLMClient.generate_json(prompt, temperature=0.0)` принимает температуру; в оригинальных p01/p02 initial generation и repair обычно используют T=0 по умолчанию.
+- Один полный extractor может сделать несколько LLM calls; результатом одной попытки считается итоговый контракт **после штатной обработки**.
+- Исходный клиент уже имеет собственные механизмы повторных HTTP-запросов. Дополнительный универсальный transport/retry framework для RQ1 не нужен.
+- Встроенные исключения extractor иногда превращаются в degraded result, поэтому причину инфраструктурного сбоя требуется наблюдать хотя бы на границе клиента.
 
 ## Constraints
-- Интегрируйся на **самой высокой безопасной границе client/orchestration**. Сохраняй signatures/prompts и формальную семантику extractors, пока конкретные доказательства не показывают необходимости минимального изменения.
-- Одна **полная** invocation extractor = один candidate attempt, даже при weak/degraded postcondition.
-- Baseline: initial и repair T=0; treatment: **initial** фиксированная T>0, все штатные repairs T=0. Сбрасывай состояние adapter между попытками.
-- По фактам различай transport/rate-limit/5xx, permanent config/auth/model, ошибку формата модели и ambiguous ответы. Сохраняй исходную причину, не классифицируя исключительно по HTTP status.
-- Retries разрешены только для временной инфраструктуры с конечным и записанным лимитом; invalid JSON/formulas не дают бесплатного resampling. Ошибку инфраструктуры, скрытую degraded fallback, отмечай как incomplete slot.
-- API credentials не попадают в logs. Все тесты используют fake clients. Не изменяй Z3/p03–p05.
+
+- Переиспользуй исходные extractors и существующий LLM client. Минимальный adapter допустим, только если он нужен для начальной T>0 и наблюдения ошибок; никаких изменений prompts, Z3, gold oracle и native repair.
+- Baseline: T=0 для initial и repair. Treatment: фиксированная T>0 для initial и T=0 для следующих repair calls. Состояние температуры не переносится между attempts.
+- Различай **три существенных исхода**: (1) extractor завершён с результатом модели, включая invalid/degraded; (2) временная инфраструктурная ошибка, slot incomplete и ограниченный retry; (3) permanent config/auth/model error, запуск остановлен.
+- Malformed JSON/unsupported formula, включая явно model-generated structured-output validation error с HTTP 4xx, не дают бесплатной новой генерации; используется штатная политика extractor. Причина важнее номера HTTP.
+- Для retries используй существующие возможности клиента, где это корректно. При их недостаточности — один простой, конечный retry policy вокруг того же slot с объяснением. Не создавай собственную сложную state machine, систему event sourcing или transport instrumentation.
+- Сохраняй лишь доступные поля: результат, статус/причина, фактически переданные температуры, число **наблюдаемых logical calls**, elapsed time. Не называй их физическими HTTP requests или чистым inference latency.
+- Тестируй fake clients. Этот тикет не использует live Groq.
 
 ## Hypotheses
-- **Инженерная гипотеза:** per-attempt client adapter способен различать initial и repair calls, не меняя штатный repair ladder, и сохранять достаточные сведения об ошибках для честного учёта slots.
-- Если исходный API не раскрывает нужный статус, документируй границу наблюдаемости и предлагай минимальное проверяемое изменение, не выдумывая telemetry.
+
+- Можно обеспечить T>0 на начальной генерации и T=0 на repair с минимальным client adapter, не меняя исходный алгоритм Dualify.
+- Простого отличия инфраструктурной ошибки от результата модели достаточно для честного учёта attempts в RQ1.
 
 ## Expected outcome
-- По одному полному примеру spec и code на fake responses с проверкой температур, сохранением штатного результата и stage trace.
-- Нормализованная запись attempt: slot ID, model/settings, final extraction, temperature sequence, logical-call count, elapsed time и категория ошибки/её доказательства.
-- Тесты успешного initial extraction, штатного repair, degraded результата, ограниченных transient retries, non-retriable config failure и output-format ошибки как результата модели/extraction.
+
+- Один fake-client пример для spec и code с финальным extraction result и простой записью попытки.
+- Небольшое число тестов: initial/repair temperature, T=0 baseline, invalid/degraded output, transient infrastructure failure и permanent config failure.
+- Короткий пример входа/выхода и объяснение, где именно кончается один full attempt.
 
 ## Acceptance criteria
-- [x] Fake-client integration подтверждает **T>0 только для treatment initial** и T=0 для всех следующих native repairs в обоих каналах.
-- [x] T=0 baseline использует ровно оригинальный полный extractor; при одинаковых fake responses содержание/trace сохраняются.
-- [x] Invalid/degraded extraction вследствие ответа модели считается завершённым кандидатом, а не поводом повторять генерацию.
-- [x] Исчерпанная инфраструктурная ошибка, перехваченная внутри extractor, помечается incomplete, не incorrect candidate.
-- [x] Auth, unsupported model/endpoint и permanent config останавливают с объяснением; transient retries ограничены и логируются.
-- [x] Есть тесты на HTTP 4xx, вызванные output-validation: они не считаются обычной временной недоступностью.
-- [x] Существующие regression tests проходят; для проверки тикета Groq не нужен.
 
-## Реализация
+- [ ] В обоих каналах treatment initial использует T>0, repairs используют T=0; baseline всегда T=0.
+- [ ] Штатный extractor со своими validation/repair возвращает тот же результат при одинаковых fake responses; исходные prompts и Z3 не меняются.
+- [ ] Invalid/degraded итог вследствие генерации учитывается как одна **завершённая** attempt, а не повод для resampling.
+- [ ] Перехваченная инфраструктурная ошибка определяется как incomplete, если нет достоверно завершённого ответа; config/auth ошибки останавливают run с причиной.
+- [ ] Временная ошибка допускает лишь конечный retry того же slot; model-output HTTP 4xx не становится бесплатным retry.
+- [ ] Запись результата понятна без сложной telemetry schema; все необходимые тесты и исходные regression tests проходят offline.
 
-- `dualify.rq1_attempt.run_extraction_attempt` создаёт новый adapter на каждый slot и вызывает
-  неизменённый `extract_spec_logic` либо `extract_code_logic`.
-- Attempt record хранит slot/model/settings, native extraction, стадии и ответы logical calls,
-  видимые передачи в inner client, ошибки и полное wall-clock время вызова extractor.
-- Физические HTTP retries внутри provider client по-прежнему не наблюдаются и не выводятся из
-  `dispatch_count`; это ограничение сохранено как `RQ1-003`.
+## Упрощение для исследовательского прототипа
+
+**Оставить:** полную семантику native extraction; правильную температуру; причину сбоя; минимальное время/число logical calls.  
+**Убрать:** универсальный adapter framework, детальную классификацию всех HTTP-кодов, отдельный сложный retry engine, обязательные физические HTTP counters и низкоуровневую телеметрию. Диагностику углублять только при воспроизведённой проблеме, которая искажает результаты.
+
+## Реализация в main
+
+- `dualify.rq1_attempt.run_extraction_attempt` вызывает неизменённые p01/p02 через per-attempt client adapter.
+- Adapter передаёт treatment T>0 только на initial generation, T=0 на native repairs, различает завершённые model outputs и инфраструктурные/конфигурационные сбои.
+- `AttemptRecord` содержит наблюдаемые logical calls, статусы и elapsed time; физические HTTP retries и чистая inference latency не измеряются.
+- Небольшая существующая реализация уже удовлетворяет упрощённым требованиям, поэтому не переписывается без доказанной ошибки.
 
 ## Stopping criteria
-**STOP, когда:** оба канала проходят тесты полной attempt, маршрутизации temperature и классификации ошибок; существующий test suite зелёный; пример attempt record воспроизводим. Если adapter не может сохранить поведение оригинального extractor, укажи `BLOCKED`, минимальное воспроизведение и необходимое точечное изменение. Не создавай четырёхкандидатные пулы, не запускай live-модель и не улучшай несвязанные модули.
+
+**STOP**, когда оба канала и все перечисленные наблюдаемые сценарии проверены, исходные тесты проходят, пример результата понятен и добавлен минимальный код. При невозможности отличить инфраструктурный сбой от результата модели зафиксируй `BLOCKED` с конкретным примером. Не выполняй Ticket 03, live sampling и несвязанный refactoring.
 
 ## Out of scope
-Sampling n=4, финальный анализ pass@k, live dev/test и переписывание native repair.
+
+Пул n=4, финальная аналитика pass@k, полные dev/test campaigns, переписывание native repair и системы мониторинга Groq.
