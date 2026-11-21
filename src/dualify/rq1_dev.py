@@ -1,12 +1,15 @@
 """Preflight и dev campaign на фиксированном split RQ1."""
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
 import subprocess
 import sys
 import time
+from collections import Counter
+from collections.abc import Sequence
 from dataclasses import replace
 from importlib.metadata import distributions
 from pathlib import Path
@@ -16,8 +19,14 @@ import requests
 from dotenv import load_dotenv
 
 from dualify.discovery import discover_python_cases
-from dualify.ollama_client import OpenAICompatibleClient
-from dualify.rq1_pool import PoolIntegrityError, run_candidate_pool, verify_candidate_pool
+from dualify.ollama_client import OpenAICompatibleClient, _extract_json_object
+from dualify.rq1_attempt import AttemptRecord
+from dualify.rq1_pool import (
+    PoolIntegrityError,
+    read_candidate_pool,
+    run_candidate_pool,
+    verify_candidate_pool,
+)
 from dualify.rq1_report import (
     BOOTSTRAP_RESAMPLES,
     BOOTSTRAP_SEED,
@@ -161,9 +170,11 @@ class CampaignTransport:
         self.sent = len(list(directory.glob("*.json")))
         self.next_post = time.monotonic() + (THROTTLE_SECONDS if self.sent else 0)
         self.slot_id = ""
+        self.attempt = 0
 
     def start_slot(self, slot_id: str) -> None:
         self.slot_id = slot_id
+        self.attempt = self.sent + 1
 
     def post(self, url: str, *, json: dict, headers: dict, timeout: int) -> requests.Response:
         if self.sent >= HTTP_CAP:
@@ -172,7 +183,7 @@ class CampaignTransport:
         self.next_post = time.monotonic() + THROTTLE_SECONDS
         self.sent += 1
         path = self.directory / f"{self.sent:04d}.json"
-        evidence = {"slot_id": self.slot_id, "payload": json}
+        evidence = {"slot_id": self.slot_id, "attempt": self.attempt, "payload": json}
         _write(path, evidence)
         try:
             response = requests.post(
@@ -200,7 +211,22 @@ def _pool_dir(directory: Path, row: dict) -> Path:
     return directory / "pools" / Path(row["input_path"]).stem
 
 
+def _http_by_slot(directory: Path, manifest: dict) -> dict[str, list[dict]]:
+    paths = sorted((directory / "http").glob("*.json"))
+    if len(paths) > manifest["max_campaign_posts"]:
+        raise ValueError("Saved HTTP evidence exceeds the frozen campaign budget")
+    by_slot: dict[str, list[dict]] = {}
+    planned = set(manifest["planned_slots"])
+    for index, path in enumerate(paths, 1):
+        row = json.loads(path.read_text())
+        if path.name != f"{index:04d}.json" or row["slot_id"] not in planned:
+            raise ValueError(f"Unexpected HTTP evidence: {path}")
+        by_slot.setdefault(row["slot_id"], []).append(row)
+    return by_slot
+
+
 def _run(directory: Path, manifest: dict, api_key: str) -> None:
+    contacted = _http_by_slot(directory, manifest)
     transport = CampaignTransport(directory / "http", api_key)
     client = OpenAICompatibleClient(
         MODEL, BASE_URL, api_key, timeout_sec=TIMEOUT, max_retries=HTTP_ATTEMPTS,
@@ -217,11 +243,19 @@ def _run(directory: Path, manifest: dict, api_key: str) -> None:
         if len(matches) != 1:
             raise ValueError(f"Expected exactly one discovered entry for {case_id}")
         pool = _pool_dir(directory, row)
-        for failure in pool.glob("*/failure.json"):
-            if not failure.with_name("result.json").exists():
+        for slot in manifest["planned_slots"]:
+            if slot.rsplit(":", 3)[0] != case_id:
+                continue
+            slot_dir = pool / slot.replace(":", "__")
+            if (slot_dir / "result.json").exists():
+                continue
+            failure = slot_dir / "failure.json"
+            if failure.exists():
                 errors = json.loads(failure.read_text())["errors"]
                 if not errors or errors[-1]["category"] != "transient_infrastructure":
                     raise ValueError(f"Cannot resume non-infrastructure failure: {failure}")
+            elif slot in contacted:
+                raise ValueError(f"{slot}: HTTP evidence without infrastructure diagnosis")
         case = replace(matches[0], benchmark_id=case_id)
         records = run_candidate_pool(
             client, case=case, artifact_dir=pool, model=MODEL, provider="groq",
@@ -238,6 +272,89 @@ def _run(directory: Path, manifest: dict, api_key: str) -> None:
         print(f"Completed pool: {case_id}", flush=True)
 
 
+def verify_http(
+    directory: Path, manifest: dict, records: Sequence[AttemptRecord],
+) -> dict:
+    """Проверяет физические ответы Groq для сохранённых completed slots."""
+    by_slot = _http_by_slot(directory, manifest)
+    statuses = Counter(
+        str(row.get("status", "transport_error"))
+        for rows in by_slot.values() for row in rows
+    )
+    completions = set()
+    response_tokens = 0
+    token_observations = 0
+    for record in records:
+        slot = record.slot_id
+        rows = by_slot.get(slot, [])
+        if not rows:
+            raise ValueError(f"Missing HTTP evidence for {slot}")
+        # Старые записи одной непрерывной кампании не имеют индекса resume.
+        last_attempt = rows[-1].get("attempt")
+        latest = [row for row in rows if row.get("attempt") == last_attempt]
+        index_in_attempt = 0
+        for call in record.calls:
+            allowed_format_errors = {
+                error.status_code for error in record.errors
+                if error.call_index == call.index and error.category == "model_output_format"
+            }
+            for _ in range(manifest["max_http_attempts_per_call"]):
+                if index_in_attempt >= len(latest):
+                    raise ValueError(f"Missing HTTP evidence for {slot} call {call.index}")
+                row = latest[index_in_attempt]
+                index_in_attempt += 1
+                payload = row["payload"]
+                if (
+                    payload.get("model") != manifest["model"]
+                    or payload.get("temperature") != call.temperature
+                    or payload.get("reasoning_effort") != manifest["reasoning_effort"]
+                    or payload.get("max_tokens") != manifest["max_output_tokens"]
+                    or payload.get("response_format") != {"type": manifest["response_format"]}
+                ):
+                    raise ValueError(f"HTTP request differs from frozen settings: {slot}")
+                status = row.get("status")
+                if status == 200:
+                    body = json.loads(row["body"])
+                    completion_id = body.get("id")
+                    if not completion_id or body.get("model") != manifest["model"]:
+                        raise ValueError(f"Missing Groq completion ID or unexpected model: {slot}")
+                    if completion_id in completions:
+                        raise ValueError(f"Duplicate Groq completion ID: {completion_id}")
+                    completions.add(completion_id)
+                    try:
+                        content = body["choices"][0]["message"]["content"]
+                        parsed = _extract_json_object(content)
+                    except json.JSONDecodeError:
+                        if None not in allowed_format_errors or call.response is not None:
+                            raise ValueError(f"Unexpected malformed Groq output: {slot}") from None
+                    else:
+                        if parsed != call.response:
+                            raise ValueError(f"Groq response differs from saved candidate: {slot}")
+                    tokens = body.get("usage", {}).get("completion_tokens")
+                    if isinstance(tokens, int):
+                        token_observations += 1
+                        response_tokens += tokens
+                    break
+                if status in allowed_format_errors and call.response is None and status in (
+                    400, 422,
+                ):
+                    break
+                if "transport_error" not in row and status not in (429, 500, 502, 503, 504):
+                    raise ValueError(f"Unclassified HTTP evidence for {slot} call {call.index}")
+            else:
+                raise ValueError(f"Missing model response for {slot} call {call.index}")
+        if index_in_attempt != len(latest):
+            raise ValueError(f"Unexpected additional HTTP calls for {slot}")
+    return {
+        "verified_slots": len(records),
+        "http_posts": statuses.total(),
+        "http_statuses": dict(statuses),
+        "unique_groq_completion_ids": len(completions),
+        "observed_completion_tokens": response_tokens,
+        "completion_token_observations": token_observations,
+    }
+
+
 def _score(directory: Path, manifest: dict, output: Path) -> None:
     _, dev = _dev_split()
     if manifest["split_sha256"] != _sha256(SPLIT) or manifest["dev_cases"] != dev:
@@ -245,6 +362,11 @@ def _score(directory: Path, manifest: dict, output: Path) -> None:
     for path, digest in manifest["sha256"].items():
         if _sha256(ROOT / path) != digest:
             raise ValueError(f"Frozen source checksum mismatch: {path}")
+    if _dependencies().get("z3-solver") != manifest["dependencies"]["z3-solver"]:
+        raise ValueError("Installed Z3 version differs from the frozen campaign")
+    pools = [_pool_dir(directory, row) for row in dev]
+    records = [record for pool in pools for record in read_candidate_pool(pool)[1]]
+    http = verify_http(directory, manifest, records)
     # Даём исходному scorer только gold из dev, после сохранения generation records.
     with TemporaryDirectory() as gold:
         gold_dir = Path(gold)
@@ -253,9 +375,7 @@ def _score(directory: Path, manifest: dict, output: Path) -> None:
             if _sha256(path) != row["gold_sha256"]:
                 raise ValueError(f"Gold checksum mismatch: {path}")
             (gold_dir / path.name).symlink_to(path)
-        tasks, summary = analyze_candidate_pools(
-            [_pool_dir(directory, row) for row in dev], gold_dir=gold_dir,
-        )
+        tasks, summary = analyze_candidate_pools(pools, gold_dir=gold_dir)
     expected = {
         "model": manifest["model"],
         "provider": manifest["provider"],
@@ -268,24 +388,30 @@ def _score(directory: Path, manifest: dict, output: Path) -> None:
     output.mkdir(parents=True, exist_ok=True)
     _write(output / "tasks.json", tasks)
     _write(output / "summary.json", summary)
+    _write(output / "http-summary.json", http)
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("output", type=Path)
-    parser.add_argument("--offline", type=Path, metavar="REPORT_DIR")
-    args = parser.parse_args(argv)
-    directory = args.output
-    if args.offline:
+def _recorded_slots(directory: Path, planned: list[str]) -> tuple[set[str], list[str]]:
+    expected = set(planned)
+    completed = set()
+    invalid = []
+    for path in sorted(directory.glob("pools/*/*/result.json")):
         try:
-            saved_manifest = json.loads((directory / "preflight.json").read_text())
-            _score(directory, saved_manifest, args.offline)
-        except (OSError, ValueError, KeyError, AnalysisBlockedError, PoolIntegrityError) as exc:
-            print(f"BLOCKED: {exc}", file=sys.stderr)
-            return 1
-        return 0
+            record = json.loads(path.read_text())
+            slot = record["slot_id"]
+            if (
+                record["status"] != "completed" or slot not in expected or slot in completed
+                or path.parent.name != slot.replace(":", "__")
+            ):
+                raise ValueError("Unexpected completed slot")
+        except (OSError, ValueError, KeyError, TypeError):
+            invalid.append(str(path.relative_to(directory)))
+        else:
+            completed.add(slot)
+    return completed, invalid
 
-    directory.mkdir(parents=True, exist_ok=True)
+
+def _live(directory: Path) -> int:
     manifest: dict = {}
     started = time.monotonic()
     verdict = "BLOCKED"
@@ -311,21 +437,47 @@ def main(argv: list[str] | None = None) -> int:
         reason = str(exc)
         print(f"BLOCKED: {exc}", file=sys.stderr)
     finally:
-        completed = {
-            json.loads(path.read_text())["slot_id"]
-            for path in directory.glob("pools/*/*/result.json")
-        }
+        planned = manifest.get("planned_slots", [])
+        completed, invalid = _recorded_slots(directory, planned)
+        if invalid:
+            verdict = "BLOCKED"
+            reason = reason or "Invalid completed slot records"
         _write(directory / "gate.json", {
             "verdict": verdict,
             "reason": reason,
             "completed_slots": sorted(completed),
             "missing_slots": [
-                slot for slot in manifest.get("planned_slots", []) if slot not in completed
+                slot for slot in planned if slot not in completed
             ],
+            "invalid_result_paths": invalid,
             "http_posts": len(list(directory.glob("http/*.json"))),
             "invocation_elapsed_seconds": time.monotonic() - started,
         })
     return int(verdict == "BLOCKED")
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("output", type=Path)
+    parser.add_argument("--offline", type=Path, metavar="REPORT_DIR")
+    args = parser.parse_args(argv)
+    directory = args.output
+    try:
+        if args.offline:
+            manifest = json.loads((directory / "preflight.json").read_text())
+            _score(directory, manifest, args.offline)
+            return 0
+        directory.mkdir(parents=True, exist_ok=True)
+        with (directory / ".campaign.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return _live(directory)
+    except BlockingIOError:
+        print("BLOCKED: campaign directory is in use", file=sys.stderr)
+    except (
+        OSError, ValueError, KeyError, TypeError, AnalysisBlockedError, PoolIntegrityError,
+    ) as exc:
+        print(f"BLOCKED: {exc}", file=sys.stderr)
+    return 1
 
 
 if __name__ == "__main__":
