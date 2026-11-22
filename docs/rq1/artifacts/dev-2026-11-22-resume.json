@@ -1,0 +1,28 @@
+{
+  "verdict": "BLOCKED",
+  "original_freeze": "dev-2026-11-22-freeze.json",
+  "resume_commit": "9f9f307edf6ce5ca3fdb82069ab1a9d064bb8bf1",
+  "resume_preflight_sha256": "606521adee7f26aa0cc7fe45666a1d8a6a4c6e2794983f2876096e958fee7713",
+  "max_campaign_posts": null,
+  "completed_slots": 65,
+  "missing_slots": 35,
+  "total_generation_posts": 180,
+  "new_generation_posts": 1,
+  "blocked_slot": "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:baseline:0",
+  "generation_response": {
+    "status": 403,
+    "body": {
+      "error": {
+        "message": "Forbidden"
+      }
+    }
+  },
+  "catalogue_check": {
+    "status": 403,
+    "body": {
+      "error": {
+        "message": "Forbidden"
+      }
+    }
+  }
+}
