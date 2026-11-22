@@ -65,7 +65,7 @@ def _case() -> BenchmarkCase:
     )
 
 
-def _run(tmp_path: Path, client: LLMClient, **kwargs: int) -> list:
+def _run(tmp_path: Path, client: LLMClient) -> list:
     return run_candidate_pool(
         client,
         case=_case(),
@@ -73,7 +73,6 @@ def _run(tmp_path: Path, client: LLMClient, **kwargs: int) -> list:
         model="fake-model",
         provider="fake",
         treatment_temperature=0.7,
-        **kwargs,
     )
 
 

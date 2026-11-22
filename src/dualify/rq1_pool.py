@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import re
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
 
@@ -221,6 +222,7 @@ def run_candidate_pool(
     provider: str,
     treatment_temperature: float,
     max_transient_retries: int = 0,
+    on_slot_started: Callable[[str], None] | None = None,
 ) -> list[AttemptRecord]:
     """Пять отдельных attempts на канал; completed slots повторно не генерируются."""
     _validate_treatment_temperature(treatment_temperature)
@@ -250,6 +252,8 @@ def run_candidate_pool(
                 model=model, temperature=temperature, retries=max_transient_retries,
             )
         else:
+            if on_slot_started is not None:
+                on_slot_started(slot_id)
             # Исходный extractor выполняет полный validation/repair. При crash
             # без итогового result.json slot остаётся incomplete и будет перезапущен.
             record = run_extraction_attempt(
