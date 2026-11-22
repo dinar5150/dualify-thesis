@@ -39,7 +39,8 @@
 | [03 — Sampling runner](tickets/03-candidate-pool-and-replay.md) | Четыре отдельных slots, запись кандидатов, простой resume и offline-read |
 | [04 — Offline oracle](tickets/04-offline-oracle-and-analytics.md) | Исходный gold scoring, pass@k, paired delta, границы unknown, простой отчёт и расходы |
 | [05 — Dev + freeze](tickets/05-dev-campaign-and-freeze.md) | Dev green, review и STOP до отдельного разрешения test |
-| [06 — Held-out](tickets/06-heldout-test-and-report.md) | Один замороженный test-прогон и отчёт |
+| [06 — Разбор dev с руководителем](tickets/06-dev-diagnostics-and-supervisor-review.md) | Отчёт о результатах и ограничениях, вопросы по правилу оценки и условиям запуска |
+| [Отложенный held-out](tickets/heldout-test-and-report-deferred.md) | Один замороженный test-прогон и отчёт после согласования и отдельного разрешения |
 
 ## Протокол эксперимента
 

@@ -1,7 +1,9 @@
-# 06 — Один зафиксированный held-out RQ1 experiment и результаты для диплома
+# Отложенный план — held-out RQ1 experiment и результаты для диплома
 
-**Статус:** ready-for-agent, **ЯВНЫЙ ЗАПРЕТ ЗАПУСКА БЕЗ РАЗРЕШЕНИЯ**  
-**Blocked by:** [05 — Dev campaign и freeze](05-dev-campaign-and-freeze.md) **И новое явное разрешение пользователя после dev gate**.  
+**Статус:** отложен до решения по оценке и отдельного разрешения на запуск.
+
+**Условия запуска:** [06 — Разбор dev с руководителем](06-dev-diagnostics-and-supervisor-review.md), [готовность dev и freeze](05-dev-campaign-and-freeze.md) и новое явное разрешение пользователя.
+
 **Результат:** одна полная held-out оценка 30 задач (spec + code), воспроизводимые отчёты и обоснованный вывод по дипломному RQ1.
 
 ## Problem
@@ -15,7 +17,7 @@
 - Test требует отдельного разрешения после Ticket 05; изменения протокола по test outcomes запрещены.
 
 ## Constraints
-- Не начинай без **актуального письменного согласия пользователя**, прямо относящегося к Ticket 06 и утверждённому frozen code/config/manifest из Ticket 05.
+- Не начинай без **актуального письменного согласия пользователя**, прямо относящегося к held-out-прогону и утверждённому frozen code/config/manifest из Ticket 05.
 - Проверь source hashes, assignment cases и provider/model settings по freeze. Нельзя скрыто менять модель, подбирать температуру, исправлять benchmark, менять retry policy, oracle или k.
 - Выполни только объявленные n=4 + baseline на case/channel. При неустранимой инфраструктурной/config ошибке остановись; resume разрешён в пределах исходной same-slot policy. Любое необходимое отклонение задокументируй и согласуй **до** повторного запуска.
 - Во время extraction test gold недоступен. Candidate pool фиксируется и записывается **до** offline scoring.

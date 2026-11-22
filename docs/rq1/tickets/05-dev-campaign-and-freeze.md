@@ -51,7 +51,7 @@ Unit tests проверяют интерфейсы, но не устойчиво
 **Убрать:** обязательную реконструкцию всех внутренних LLM calls, подробный line-by-line human review, многократные раунды независимых ревью без критических дефектов, промышленную систему observability и optimisation по dev pass@k. Review должен помогать **понять результат**, а не превращаться в аудит каждой вспомогательной функции.
 
 ## Stopping criteria
-**STOP сразу, когда** завершены 100 dev attempts, offline scoring и критические проверки, blocking review findings закрыты, а frozen настройки подтверждают `READY FOR HELD-OUT TEST`. Если quota, конфигурация или неоднозначная ошибка не дают выполнить критерии, **STOP со статусом `BLOCKED`** и описанием недостающих данных. Сообщи gate status и запроси отдельное разрешение на Ticket 06; **никогда не запускай его автоматически**. Никакой бесконечной полировки, sweeps или «ещё одного» post-dev sample.
+**STOP сразу, когда** завершены 100 dev attempts, offline scoring и критические проверки, blocking review findings закрыты, а frozen настройки подтверждают `READY FOR HELD-OUT TEST`. Если quota, конфигурация или неоднозначная ошибка не дают выполнить критерии, **STOP со статусом `BLOCKED`** и описанием недостающих данных. Сообщи gate status. Обсуждение результатов проводится в [Ticket 06](06-dev-diagnostics-and-supervisor-review.md). [Held-out запуск](heldout-test-and-report-deferred.md) требует отдельного разрешения после готовности dev. Никакой бесконечной полировки, sweeps или «ещё одного» post-dev sample.
 
 ## Out of scope
 Полный 30-case test, выводы по held-out эффектам, дополнительные модели и изменения ради максимального dev pass@k.
