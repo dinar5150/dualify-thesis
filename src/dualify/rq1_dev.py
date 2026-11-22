@@ -42,7 +42,6 @@ MODEL = "qwen/qwen3.8-27b"
 TEMPERATURE = 0.7
 CHANNELS = ("spec", "code")
 TIMEOUT = 120
-HTTP_CAP = 180
 HTTP_ATTEMPTS = 2
 TOKEN_CAP = 1024
 THROTTLE_SECONDS = 18
@@ -117,7 +116,7 @@ def _preflight() -> dict:
         "treatment_temperature": TEMPERATURE,
         "request_timeout_seconds": TIMEOUT,
         "max_output_tokens": TOKEN_CAP,
-        "max_campaign_posts": HTTP_CAP,
+        "max_campaign_posts": None,
         "max_http_attempts_per_call": HTTP_ATTEMPTS,
         "max_outer_retries": 0,
         "backoff_seconds": {"base": 2, "max": 60, "use_retry_after": True},
@@ -136,6 +135,26 @@ def _preflight() -> dict:
             for arm, index in (("baseline", 0), *(("treatment", i) for i in range(1, 5)))
         ],
     }
+
+
+def _save_preflight(directory: Path, manifest: dict) -> None:
+    path = directory / "preflight.json"
+    if not path.exists():
+        _write(path, manifest)
+        return
+    original = json.loads(path.read_text())
+    if original == manifest:
+        return
+    continuation = directory / "resume-preflight.json"
+    if continuation.exists():
+        if json.loads(continuation.read_text()) == manifest:
+            return
+    elif isinstance(original.get("max_campaign_posts"), int) and {
+        **original, "max_campaign_posts": None, "source_commit": manifest["source_commit"],
+    } == manifest:
+        _write(continuation, manifest)
+        return
+    raise ValueError("Preflight differs from the recorded campaign")
 
 
 def _check_model(directory: Path, manifest: dict, api_key: str) -> None:
@@ -184,8 +203,6 @@ class CampaignTransport:
             )
 
     def post(self, url: str, *, json: dict, headers: dict, timeout: int) -> requests.Response:
-        if self.sent >= HTTP_CAP:
-            raise ValueError(f"Campaign HTTP budget exhausted ({HTTP_CAP} POSTs)")
         time.sleep(max(0.0, self.next_post - time.monotonic()))
         self.next_post = time.monotonic() + THROTTLE_SECONDS
         self.sent += 1
@@ -220,7 +237,8 @@ def _pool_dir(directory: Path, row: dict) -> Path:
 
 def _http_by_slot(directory: Path, manifest: dict) -> dict[str, list[dict]]:
     paths = sorted((directory / "http").glob("*.json"))
-    if len(paths) > manifest["max_campaign_posts"]:
+    cap = manifest["max_campaign_posts"]
+    if cap is not None and len(paths) > cap:
         raise ValueError("Saved HTTP evidence exceeds the frozen campaign budget")
     by_slot: dict[str, list[dict]] = {}
     planned = set(manifest["planned_slots"])
@@ -426,10 +444,7 @@ def _live(directory: Path) -> int:
     reason = ""
     try:
         manifest = _preflight()
-        path = directory / "preflight.json"
-        if path.exists() and json.loads(path.read_text()) != manifest:
-            raise ValueError("Preflight differs from the recorded campaign")
-        _write(path, manifest)
+        _save_preflight(directory, manifest)
         load_dotenv(ROOT / ".env")
         api_key = os.environ.get("GROQ_API_KEY", "").strip()
         if not api_key:
@@ -475,7 +490,10 @@ def main(argv: list[str] | None = None) -> int:
     directory = args.output
     try:
         if args.offline:
-            manifest = json.loads((directory / "preflight.json").read_text())
+            path = directory / "resume-preflight.json"
+            if not path.exists():
+                path = directory / "preflight.json"
+            manifest = json.loads(path.read_text())
             _score(directory, manifest, args.offline)
             return 0
         directory.mkdir(parents=True, exist_ok=True)

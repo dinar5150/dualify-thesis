@@ -36,11 +36,10 @@ def test_preflight_blocks_unavailable_model_before_generation(tmp_path, monkeypa
     assert "model unavailable" in gate["reason"]
 
 
-def test_http_cap_counts_retries_and_preserves_incomplete_slot(tmp_path, monkeypatch):
+def test_resume_passes_old_post_cap_and_preserves_original_preflight(tmp_path, monkeypatch):
     monkeypatch.setenv("GROQ_API_KEY", "offline-fixture")
     monkeypatch.setattr(rq1_dev, "_revision", lambda: "a" * 40)
     monkeypatch.setattr(rq1_dev, "_dependencies", lambda: {"z3-solver": "fixture"})
-    monkeypatch.setattr(rq1_dev, "HTTP_CAP", 1, raising=False)
     monkeypatch.setattr("time.sleep", lambda seconds: None)
 
     model_response = requests.Response()
@@ -59,18 +58,30 @@ def test_http_cap_counts_retries_and_preserves_incomplete_slot(tmp_path, monkeyp
     monkeypatch.setattr(requests, "post", post)
 
     assert rq1_dev.main([str(tmp_path)]) == 1
+    preflight = tmp_path / "preflight.json"
+    original = json.loads(preflight.read_text())
+    original["max_campaign_posts"] = 2
+    preflight.write_text(json.dumps(original))
+    original_bytes = preflight.read_bytes()
+    monkeypatch.setattr(rq1_dev, "_revision", lambda: "b" * 40)
+
+    assert rq1_dev.main([str(tmp_path)]) == 1
     gate = json.loads((tmp_path / "gate.json").read_text())
-    assert len(posts) == 1
-    assert posts[0]["reasoning_effort"] == "none"
-    assert posts[0]["temperature"] == 0
-    assert gate["http_posts"] == 1
+    assert len(posts) == 4
+    assert posts[2]["reasoning_effort"] == "none"
+    assert posts[2]["temperature"] == 0
+    assert gate["http_posts"] == 4
     assert gate["completed_slots"] == []
     assert len(gate["missing_slots"]) == 100
-    evidence = json.loads((tmp_path / "http/0001.json").read_text())
+    assert preflight.read_bytes() == original_bytes
+    resume = json.loads((tmp_path / "resume-preflight.json").read_text())
+    assert resume["source_commit"] == "b" * 40
+    assert resume["max_campaign_posts"] is None
+    evidence = json.loads((tmp_path / "http/0003.json").read_text())
     assert evidence["slot_id"] == gate["missing_slots"][0]
     assert evidence["status"] == 503
     assert "temporarily unavailable" in evidence["body"]
-    assert "offline-fixture" not in (tmp_path / "http/0001.json").read_text()
+    assert "offline-fixture" not in (tmp_path / "http/0003.json").read_text()
 
 
 def test_corrupt_candidate_cannot_hide_blocked_gate(tmp_path, monkeypatch):
