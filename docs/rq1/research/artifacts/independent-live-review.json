@@ -1,0 +1,796 @@
+{
+  "availability": {
+    "baseline": 16,
+    "both": 16,
+    "fresh": 16,
+    "initial": 16,
+    "revision": 16,
+    "witness": 16
+  },
+  "exact_candidate_execution": {
+    "band_distance-code:both": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-code:fresh": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-code:initial": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-code:revision": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-code:witness": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-spec:both": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-spec:fresh": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-spec:initial": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "band_distance-spec:witness": {
+      "counts": {
+        "actual_returns": 288,
+        "inputs": 512,
+        "wrong_returns": 744
+      },
+      "first_failure": null
+    },
+    "between_exclusive-code:both": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-code:fresh": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-code:initial": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-code:revision": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-code:witness": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-spec:both": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-spec:initial": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-spec:revision": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "between_exclusive-spec:witness": {
+      "counts": {
+        "actual_returns": 512,
+        "inputs": 512,
+        "wrong_returns": 512
+      },
+      "first_failure": null
+    },
+    "bounded_payment-code:both": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "bounded_payment-code:fresh": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "bounded_payment-code:initial": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "bounded_payment-code:revision": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "bounded_payment-code:witness": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "bounded_payment-spec:both": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "bounded_payment-spec:witness": {
+      "counts": {
+        "actual_returns": 16,
+        "inputs": 64,
+        "wrong_returns": 48
+      },
+      "first_failure": null
+    },
+    "index_class-code:both": {
+      "counts": {
+        "actual_returns": 32,
+        "inputs": 64,
+        "wrong_returns": 32
+      },
+      "first_failure": null
+    },
+    "index_class-code:fresh": {
+      "counts": {
+        "actual_returns": 32,
+        "inputs": 64,
+        "wrong_returns": 32
+      },
+      "first_failure": null
+    },
+    "index_class-code:initial": {
+      "counts": {
+        "actual_returns": 32,
+        "inputs": 64,
+        "wrong_returns": 32
+      },
+      "first_failure": null
+    },
+    "index_class-code:revision": {
+      "counts": {
+        "actual_returns": 32,
+        "inputs": 64,
+        "wrong_returns": 32
+      },
+      "first_failure": null
+    },
+    "index_class-code:witness": {
+      "counts": {
+        "actual_returns": 32,
+        "inputs": 64,
+        "wrong_returns": 32
+      },
+      "first_failure": null
+    },
+    "late_fee-code:both": {
+      "counts": {
+        "actual_returns": 4,
+        "inputs": 8,
+        "wrong_returns": 12
+      },
+      "first_failure": null
+    },
+    "late_fee-code:fresh": {
+      "counts": {
+        "actual_returns": 4,
+        "inputs": 8,
+        "wrong_returns": 12
+      },
+      "first_failure": null
+    },
+    "late_fee-code:initial": {
+      "counts": {
+        "actual_returns": 4,
+        "inputs": 8,
+        "wrong_returns": 12
+      },
+      "first_failure": null
+    },
+    "late_fee-code:revision": {
+      "counts": {
+        "actual_returns": 4,
+        "inputs": 8,
+        "wrong_returns": 12
+      },
+      "first_failure": null
+    },
+    "late_fee-code:witness": {
+      "counts": {
+        "actual_returns": 4,
+        "inputs": 8,
+        "wrong_returns": 12
+      },
+      "first_failure": null
+    },
+    "late_fee-spec:fresh": {
+      "counts": {
+        "actual_returns": 4,
+        "inputs": 8,
+        "wrong_returns": 12
+      },
+      "first_failure": null
+    },
+    "wrap_shift-code:fresh": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-code:initial": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-code:revision": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-code:witness": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-spec:fresh": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-spec:initial": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-spec:revision": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    },
+    "wrap_shift-spec:witness": {
+      "counts": {
+        "actual_returns": 48,
+        "inputs": 512,
+        "wrong_returns": 135
+      },
+      "first_failure": null
+    }
+  },
+  "feedback_modes": {
+    "code:concrete_witness_verified": 2,
+    "code:identical_to_revision": 6,
+    "spec:concrete_witness_verified": 4,
+    "spec:identical_to_revision": 3,
+    "spec:typed_error": 1
+  },
+  "independence": "Candidate terms and verdicts use the study's typed parser. Ground truth for the additional checks is actual execution of the public new scalar fixtures. This finite grid excludes repair feedback inputs and authored sample inputs.",
+  "independent_grid_values": [
+    -36028797018963968,
+    -223,
+    -17,
+    -9,
+    9,
+    17,
+    223,
+    36028797018963968
+  ],
+  "native_pairs": {
+    "band_distance-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": 1,
+        "alternative_return_verdict": "True",
+        "args": [
+          -36028797018963968,
+          -36028797018963968,
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": 0,
+        "reason": "wrong_return_not_excluded"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == If(Or(value < lower, value > upper), If(value < lower, lower - value, value - upper), 0)",
+      "corrected_preconditions": [
+        "lower <= upper"
+      ]
+    },
+    "band_distance-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": 1,
+        "alternative_return_verdict": "True",
+        "args": [
+          -36028797018963968,
+          -36028797018963968,
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": 0,
+        "reason": "wrong_return_not_excluded"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == If(And(lower <= value, value <= upper), 0, If(value < lower, lower - value, value - upper))",
+      "corrected_preconditions": [
+        "lower <= upper"
+      ]
+    },
+    "between_exclusive-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": true,
+        "alternative_return_verdict": "True",
+        "args": [
+          -36028797018963968,
+          -36028797018963968,
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": false,
+        "reason": "wrong_return_not_excluded"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == Or(And(a < b, b < c), And(c < b, b < a))",
+      "corrected_preconditions": []
+    },
+    "between_exclusive-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": true,
+        "alternative_return_verdict": "True",
+        "args": [
+          -36028797018963968,
+          -36028797018963968,
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": false,
+        "reason": "wrong_return_not_excluded"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == Or(And(a < b, b < c), And(c < b, b < a))",
+      "corrected_preconditions": []
+    },
+    "bounded_payment-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": 10,
+        "alternative_return_verdict": "True",
+        "args": [
+          9,
+          17
+        ],
+        "candidate_precondition": "True",
+        "python_return": 9,
+        "reason": "wrong_return_not_excluded"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == If(credit == bill, bill + 1, If(credit <= bill, credit, bill))",
+      "corrected_preconditions": [
+        "credit >= 0",
+        "bill >= 0"
+      ]
+    },
+    "bounded_payment-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition unsupported function calls: Min"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": null,
+        "alternative_return_verdict": null,
+        "args": [
+          -36028797018963968,
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": null,
+        "reason": "wrong_domain"
+      },
+      "corrected": "exact",
+      "corrected_calls": 2,
+      "corrected_postcondition": "ret == If(credit == bill, credit + 1, If(credit < bill, credit, bill))",
+      "corrected_preconditions": [
+        "credit >= 0",
+        "bill >= 0"
+      ]
+    },
+    "index_class-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": null,
+        "alternative_return_verdict": null,
+        "args": [
+          -36028797018963968,
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": null,
+        "reason": "wrong_domain"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == And(-width <= offset, offset <= width - 1)",
+      "corrected_preconditions": [
+        "width > 0"
+      ]
+    },
+    "index_class-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == And(width > 0, offset >= -width, offset < width)",
+      "corrected_preconditions": []
+    },
+    "late_fee-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": {
+        "alternative_return": null,
+        "alternative_return_verdict": null,
+        "args": [
+          -36028797018963968
+        ],
+        "candidate_precondition": "True",
+        "python_return": null,
+        "reason": "wrong_domain"
+      },
+      "corrected": "exact",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == min(9, 3 * max(0, days - 2))",
+      "corrected_preconditions": [
+        "days >= 0"
+      ]
+    },
+    "late_fee-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == If(days < 2, 0, If(days < 5, (days - 1) * 3, 9))",
+      "corrected_preconditions": [
+        "days >= 0"
+      ]
+    },
+    "signed_bucket-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == floor(value / step)",
+      "corrected_preconditions": [
+        "step != 0"
+      ]
+    },
+    "signed_bucket-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == floor(value / step)",
+      "corrected_preconditions": [
+        "step != 0"
+      ]
+    },
+    "signed_remainder-code": {
+      "baseline": "different",
+      "baseline_calls": 1,
+      "baseline_initial_errors": [],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == amount % scale",
+      "corrected_preconditions": [
+        "scale != 0"
+      ]
+    },
+    "signed_remainder-spec": {
+      "baseline": "different",
+      "baseline_calls": 1,
+      "baseline_initial_errors": [],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 1,
+      "corrected_postcondition": "ret == amount - scale * floor(amount / scale)",
+      "corrected_preconditions": [
+        "scale != 0"
+      ]
+    },
+    "wrap_shift-code": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 3,
+      "corrected_postcondition": "ret == ret",
+      "corrected_preconditions": []
+    },
+    "wrap_shift-spec": {
+      "baseline": "different",
+      "baseline_calls": 3,
+      "baseline_initial_errors": [
+        "postcondition/constraints fail Z3 type check"
+      ],
+      "code_witness_against_baseline": null,
+      "corrected": "different",
+      "corrected_calls": 3,
+      "corrected_postcondition": "ret == ret",
+      "corrected_preconditions": []
+    }
+  },
+  "numeric_factors": {
+    "signed_bucket-code:example": "different",
+    "signed_bucket-code:rounding": "different",
+    "signed_bucket-spec:example": "different",
+    "signed_bucket-spec:rounding": "different",
+    "signed_remainder-code:example": "different",
+    "signed_remainder-code:rounding": "different",
+    "signed_remainder-spec:example": "different",
+    "signed_remainder-spec:rounding": "different"
+  },
+  "second_arm_pairs": {
+    "band_distance-code": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "band_distance-spec": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "different",
+      "witness": "exact"
+    },
+    "between_exclusive-code": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "between_exclusive-spec": {
+      "feedback": "identical_to_revision",
+      "fresh": "invalid",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "bounded_payment-code": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "bounded_payment-spec": {
+      "feedback": "typed_error",
+      "fresh": "invalid",
+      "revision": "invalid",
+      "witness": "exact"
+    },
+    "index_class-code": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "index_class-spec": {
+      "feedback": "concrete_witness_verified",
+      "fresh": "different",
+      "revision": "different",
+      "witness": "different"
+    },
+    "late_fee-code": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "late_fee-spec": {
+      "feedback": "concrete_witness_verified",
+      "fresh": "exact",
+      "revision": "different",
+      "witness": "different"
+    },
+    "signed_bucket-code": {
+      "feedback": "concrete_witness_verified",
+      "fresh": "different",
+      "revision": "different",
+      "witness": "different"
+    },
+    "signed_bucket-spec": {
+      "feedback": "concrete_witness_verified",
+      "fresh": "different",
+      "revision": "different",
+      "witness": "different"
+    },
+    "signed_remainder-code": {
+      "feedback": "concrete_witness_verified",
+      "fresh": "different",
+      "revision": "different",
+      "witness": "different"
+    },
+    "signed_remainder-spec": {
+      "feedback": "concrete_witness_verified",
+      "fresh": "different",
+      "revision": "different",
+      "witness": "different"
+    },
+    "wrap_shift-code": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    },
+    "wrap_shift-spec": {
+      "feedback": "identical_to_revision",
+      "fresh": "exact",
+      "revision": "exact",
+      "witness": "exact"
+    }
+  },
+  "transport": {
+    "logical_records": 232,
+    "model_fingerprints": {
+      "openai/gpt-oss-20b": 27,
+      "qwen/qwen3.8-27b": 6
+    },
+    "physical_posts_in_saved_records": 234,
+    "unique_completions": 232
+  }
+}

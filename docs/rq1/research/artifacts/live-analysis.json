@@ -1,0 +1,5043 @@
+{
+  "fixture_checks": {
+    "late_fee": {
+      "inputs": 11,
+      "valid_inputs": 7,
+      "wrong_returns": 18
+    },
+    "band_distance": {
+      "inputs": 731,
+      "valid_inputs": 407,
+      "wrong_returns": 1019
+    },
+    "signed_bucket": {
+      "inputs": 82,
+      "valid_inputs": 73,
+      "wrong_returns": 171
+    },
+    "bounded_payment": {
+      "inputs": 83,
+      "valid_inputs": 27,
+      "wrong_returns": 65
+    },
+    "index_class": {
+      "inputs": 84,
+      "valid_inputs": 39,
+      "wrong_returns": 39
+    },
+    "wrap_shift": {
+      "inputs": 732,
+      "valid_inputs": 92,
+      "wrong_returns": 226
+    },
+    "signed_remainder": {
+      "inputs": 85,
+      "valid_inputs": 76,
+      "wrong_returns": 174
+    },
+    "between_exclusive": {
+      "inputs": 730,
+      "valid_inputs": 730,
+      "wrong_returns": 730
+    }
+  },
+  "generation_summary": {
+    "spec": {
+      "initial": {
+        "n": 8,
+        "planned": 8,
+        "exact": 3,
+        "invalid": 1,
+        "unknown": 0,
+        "historical": 3,
+        "historical_scored": 7,
+        "declared_signature_matches": 8
+      },
+      "fresh": {
+        "n": 8,
+        "planned": 8,
+        "exact": 3,
+        "invalid": 2,
+        "unknown": 0,
+        "historical": 3,
+        "historical_scored": 7,
+        "declared_signature_matches": 8,
+        "initial_or_second_exact": 4
+      },
+      "revision": {
+        "n": 8,
+        "planned": 8,
+        "exact": 2,
+        "invalid": 1,
+        "unknown": 0,
+        "historical": 2,
+        "historical_scored": 7,
+        "declared_signature_matches": 8,
+        "initial_or_second_exact": 3
+      },
+      "witness": {
+        "n": 8,
+        "planned": 8,
+        "exact": 4,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 4,
+        "historical_scored": 8,
+        "declared_signature_matches": 8,
+        "initial_or_second_exact": 4,
+        "delta_vs_fresh_95pct": [
+          -0.25,
+          0.5
+        ],
+        "delta_vs_revision_95pct": [
+          0.0,
+          0.625
+        ]
+      },
+      "baseline": {
+        "n": 8,
+        "planned": 8,
+        "exact": 0,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 0,
+        "historical_scored": 8,
+        "declared_signature_matches": 8
+      },
+      "both": {
+        "n": 8,
+        "planned": 8,
+        "exact": 3,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 3,
+        "historical_scored": 8,
+        "declared_signature_matches": 8,
+        "delta_vs_baseline_95pct": [
+          0.125,
+          0.75
+        ]
+      }
+    },
+    "code": {
+      "initial": {
+        "n": 8,
+        "planned": 8,
+        "exact": 6,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 6,
+        "historical_scored": 8,
+        "declared_signature_matches": 8
+      },
+      "fresh": {
+        "n": 8,
+        "planned": 8,
+        "exact": 6,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 6,
+        "historical_scored": 8,
+        "declared_signature_matches": 8,
+        "initial_or_second_exact": 6
+      },
+      "revision": {
+        "n": 8,
+        "planned": 8,
+        "exact": 6,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 6,
+        "historical_scored": 8,
+        "declared_signature_matches": 8,
+        "initial_or_second_exact": 6
+      },
+      "witness": {
+        "n": 8,
+        "planned": 8,
+        "exact": 6,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 6,
+        "historical_scored": 8,
+        "declared_signature_matches": 8,
+        "initial_or_second_exact": 6,
+        "delta_vs_fresh_95pct": [
+          0.0,
+          0.0
+        ],
+        "delta_vs_revision_95pct": [
+          0.0,
+          0.0
+        ]
+      },
+      "baseline": {
+        "n": 8,
+        "planned": 8,
+        "exact": 0,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 0,
+        "historical_scored": 8,
+        "declared_signature_matches": 8
+      },
+      "both": {
+        "n": 8,
+        "planned": 8,
+        "exact": 5,
+        "invalid": 0,
+        "unknown": 0,
+        "historical": 5,
+        "historical_scored": 8,
+        "declared_signature_matches": 8,
+        "delta_vs_baseline_95pct": [
+          0.25,
+          0.875
+        ]
+      }
+    }
+  },
+  "generation": [
+    {
+      "case": "late_fee",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "actual_return_disagreements": 2,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 2,
+          "wrong_returns": 5
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 2,
+          "wrong_returns": 5
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "actual_return_disagreements": 2,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 2,
+          "wrong_returns": 5
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "actual_return_disagreements": 2,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 2,
+          "wrong_returns": 5
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "witness"
+    },
+    {
+      "case": "late_fee",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 11,
+        "domain_disagreements": 4,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "domain_disagreements": 3,
+          "valid_inputs": 2,
+          "wrong_returns": 5,
+          "wrong_return_not_rejected": 5
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-late_fee-spec-initial",
+        "repair-late_fee-spec-f201e40aa179e10d",
+        "repair-late_fee-spec-534e759d7f2106ca"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "actual_return_disagreements": 2,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 2,
+          "wrong_returns": 5
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-late_fee-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "late_fee",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 3,
+          "wrong_returns": 9
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 3,
+          "wrong_returns": 9
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 3,
+          "wrong_returns": 9
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 3,
+          "wrong_returns": 9
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "late_fee",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 11,
+        "domain_disagreements": 4,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "domain_disagreements": 2,
+          "valid_inputs": 3,
+          "wrong_returns": 9,
+          "wrong_return_not_rejected": 9
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-late_fee-code-initial",
+        "repair-late_fee-code-1ee00de0bd285d6e",
+        "repair-late_fee-code-0139b90740ffec3a"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "late_fee",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 11,
+        "valid_inputs": 7,
+        "wrong_returns": 18,
+        "out_of_feedback": {
+          "inputs": 5,
+          "valid_inputs": 3,
+          "wrong_returns": 9
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-late_fee-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "band_distance",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 727,
+          "valid_inputs": 404,
+          "wrong_returns": 1012
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 727,
+          "valid_inputs": 404,
+          "wrong_returns": 1012
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "domain_disagreements": 324,
+        "out_of_feedback": {
+          "inputs": 727,
+          "valid_inputs": 404,
+          "wrong_returns": 1012,
+          "domain_disagreements": 323
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 727,
+          "valid_inputs": 404,
+          "wrong_returns": 1012
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "band_distance",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "wrong_return_not_rejected": 1019,
+        "domain_disagreements": 324,
+        "out_of_feedback": {
+          "inputs": 727,
+          "valid_inputs": 404,
+          "wrong_returns": 1012,
+          "wrong_return_not_rejected": 1012,
+          "domain_disagreements": 323
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-band_distance-spec-initial",
+        "repair-band_distance-spec-d93212062b86b21b",
+        "repair-band_distance-spec-3f1d7dc6b52b16b8"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 727,
+          "valid_inputs": 404,
+          "wrong_returns": 1012
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-band_distance-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "band_distance",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 330,
+          "wrong_returns": 844
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 330,
+          "wrong_returns": 844
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 330,
+          "wrong_returns": 844
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 330,
+          "wrong_returns": 844
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "band_distance",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_spec"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "wrong_return_not_rejected": 330,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 330,
+          "wrong_returns": 844,
+          "wrong_return_not_rejected": 260
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-band_distance-code-initial",
+        "repair-band_distance-code-2e9fbe55e166d790",
+        "repair-band_distance-code-30b93942983ebee0"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "band_distance",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 731,
+        "valid_inputs": 407,
+        "wrong_returns": 1019,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 330,
+          "wrong_returns": 844
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-band_distance-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 77,
+          "valid_inputs": 69,
+          "wrong_returns": 159,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 77,
+          "valid_inputs": 69,
+          "wrong_returns": 159,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 77,
+          "valid_inputs": 69,
+          "wrong_returns": 159,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 77,
+          "valid_inputs": 69,
+          "wrong_returns": 159,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "witness"
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "wrong_return_not_rejected": 171,
+        "domain_disagreements": 9,
+        "out_of_feedback": {
+          "inputs": 77,
+          "valid_inputs": 69,
+          "wrong_returns": 159,
+          "wrong_return_not_rejected": 159,
+          "domain_disagreements": 8
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_bucket-spec-initial",
+        "repair-signed_bucket-spec-c284be2bdfd6f644",
+        "repair-signed_bucket-spec-ee234ecb0ff45224"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 77,
+          "valid_inputs": 69,
+          "wrong_returns": 159,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_bucket-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 52,
+          "wrong_returns": 124,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 52,
+          "wrong_returns": 124,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 52,
+          "wrong_returns": 124,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 52,
+          "wrong_returns": 124,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "witness"
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 52,
+          "wrong_returns": 124,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_bucket-code-initial",
+        "repair-signed_bucket-code-e7142f5dfd9e63c0",
+        "repair-signed_bucket-code-f1a157c4e428ea8a"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "signed_bucket",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 82,
+        "valid_inputs": 73,
+        "wrong_returns": 171,
+        "actual_return_disagreements": 18,
+        "wrong_return_not_rejected": 18,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 52,
+          "wrong_returns": 124,
+          "actual_return_disagreements": 16,
+          "wrong_return_not_rejected": 16
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_bucket-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "invalid",
+      "reason": "unsupported formula node: Call",
+      "historical": {
+        "reason": "outside_historical_research_grammar"
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "invalid",
+      "reason": "unsupported formula node: Call",
+      "historical": {
+        "reason": "outside_historical_research_grammar"
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "invalid",
+      "reason": "unsupported formula node: Call",
+      "historical": {
+        "reason": "outside_historical_research_grammar"
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 78,
+          "valid_inputs": 24,
+          "wrong_returns": 58
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "type_error"
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 83,
+        "domain_disagreements": 56,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "wrong_return_not_rejected": 65,
+        "out_of_feedback": {
+          "inputs": 78,
+          "domain_disagreements": 54,
+          "valid_inputs": 24,
+          "wrong_returns": 58,
+          "wrong_return_not_rejected": 58
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-bounded_payment-spec-initial",
+        "repair-bounded_payment-spec-0c8d6e775193e4a2",
+        "repair-bounded_payment-spec-a4f579ad6c3285bd"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 78,
+          "valid_inputs": 24,
+          "wrong_returns": 58
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-bounded_payment-spec-initial",
+        "repair-bounded_payment-spec-0c8d6e775193e4a2"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 57,
+          "valid_inputs": 17,
+          "wrong_returns": 43
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 57,
+          "valid_inputs": 17,
+          "wrong_returns": 43
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 57,
+          "valid_inputs": 17,
+          "wrong_returns": 43
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 57,
+          "valid_inputs": 17,
+          "wrong_returns": 43
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_spec"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "wrong_return_not_rejected": 51,
+        "out_of_feedback": {
+          "inputs": 57,
+          "valid_inputs": 17,
+          "wrong_returns": 43,
+          "wrong_return_not_rejected": 37
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-bounded_payment-code-initial",
+        "repair-bounded_payment-code-5ef29bc75b2703bc",
+        "repair-bounded_payment-code-07c86d45bdeda5f9"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "bounded_payment",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 83,
+        "valid_inputs": 27,
+        "wrong_returns": 65,
+        "out_of_feedback": {
+          "inputs": 57,
+          "valid_inputs": 17,
+          "wrong_returns": 43
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-bounded_payment-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "index_class",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 80,
+          "domain_disagreements": 44,
+          "valid_inputs": 36,
+          "wrong_returns": 36
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "index_class",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 80,
+          "domain_disagreements": 44,
+          "valid_inputs": 36,
+          "wrong_returns": 36
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "index_class",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 80,
+          "domain_disagreements": 44,
+          "valid_inputs": 36,
+          "wrong_returns": 36
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "index_class",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 80,
+          "domain_disagreements": 44,
+          "valid_inputs": 36,
+          "wrong_returns": 36
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "witness"
+    },
+    {
+      "case": "index_class",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "wrong_return_not_rejected": 39,
+        "out_of_feedback": {
+          "inputs": 80,
+          "domain_disagreements": 44,
+          "valid_inputs": 36,
+          "wrong_returns": 36,
+          "wrong_return_not_rejected": 36
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-index_class-spec-initial",
+        "repair-index_class-spec-72ea6740cb458e32",
+        "repair-index_class-spec-0b82b322346ea498"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "index_class",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 80,
+          "domain_disagreements": 44,
+          "valid_inputs": 36,
+          "wrong_returns": 36
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-index_class-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "index_class",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 84,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 26,
+          "wrong_returns": 26
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "index_class",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 84,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 26,
+          "wrong_returns": 26
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "index_class",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 84,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 26,
+          "wrong_returns": 26
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "index_class",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 84,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 26,
+          "wrong_returns": 26
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "index_class",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 84,
+        "domain_disagreements": 45,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "wrong_return_not_rejected": 39,
+        "out_of_feedback": {
+          "inputs": 56,
+          "domain_disagreements": 30,
+          "valid_inputs": 26,
+          "wrong_returns": 26,
+          "wrong_return_not_rejected": 26
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-index_class-code-initial",
+        "repair-index_class-code-a4bf47c9120020eb",
+        "repair-index_class-code-f0f2a4391e588a85"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "index_class",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 84,
+        "valid_inputs": 39,
+        "wrong_returns": 39,
+        "out_of_feedback": {
+          "inputs": 56,
+          "valid_inputs": 26,
+          "wrong_returns": 26
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-index_class-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 728,
+          "valid_inputs": 90,
+          "wrong_returns": 221
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 728,
+          "valid_inputs": 90,
+          "wrong_returns": 221
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 728,
+          "valid_inputs": 90,
+          "wrong_returns": 221
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 728,
+          "valid_inputs": 90,
+          "wrong_returns": 221
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 732,
+        "domain_disagreements": 640,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "wrong_return_not_rejected": 226,
+        "out_of_feedback": {
+          "inputs": 728,
+          "domain_disagreements": 638,
+          "valid_inputs": 90,
+          "wrong_returns": 221,
+          "wrong_return_not_rejected": 221
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-wrap_shift-spec-initial",
+        "repair-wrap_shift-spec-c065fd28286cba29",
+        "repair-wrap_shift-spec-1a527c1285eede4b"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 732,
+        "domain_disagreements": 640,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "wrong_return_not_rejected": 226,
+        "out_of_feedback": {
+          "inputs": 728,
+          "domain_disagreements": 638,
+          "valid_inputs": 90,
+          "wrong_returns": 221,
+          "wrong_return_not_rejected": 221
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-wrap_shift-spec-initial",
+        "repair-wrap_shift-spec-c065fd28286cba29",
+        "repair-wrap_shift-spec-1a527c1285eede4b"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 75,
+          "wrong_returns": 191
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 75,
+          "wrong_returns": 191
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 75,
+          "wrong_returns": 191
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 732,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 75,
+          "wrong_returns": 191
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 732,
+        "domain_disagreements": 640,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "wrong_return_not_rejected": 226,
+        "out_of_feedback": {
+          "inputs": 604,
+          "domain_disagreements": 529,
+          "valid_inputs": 75,
+          "wrong_returns": 191,
+          "wrong_return_not_rejected": 191
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-wrap_shift-code-initial",
+        "repair-wrap_shift-code-b7de0e20ff6cbe6b",
+        "repair-wrap_shift-code-8ba993ba795e9c80"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "wrap_shift",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "sat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_pre_spec"
+      },
+      "execution": {
+        "inputs": 732,
+        "domain_disagreements": 640,
+        "valid_inputs": 92,
+        "wrong_returns": 226,
+        "wrong_return_not_rejected": 226,
+        "out_of_feedback": {
+          "inputs": 604,
+          "domain_disagreements": 529,
+          "valid_inputs": 75,
+          "wrong_returns": 191,
+          "wrong_return_not_rejected": 191
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-wrap_shift-code-initial",
+        "repair-wrap_shift-code-b7de0e20ff6cbe6b",
+        "repair-wrap_shift-code-8ba993ba795e9c80"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 80,
+          "valid_inputs": 72,
+          "wrong_returns": 164,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 80,
+          "valid_inputs": 72,
+          "wrong_returns": 164,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 80,
+          "valid_inputs": 72,
+          "wrong_returns": 164,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 80,
+          "valid_inputs": 72,
+          "wrong_returns": 164,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "witness"
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 80,
+          "valid_inputs": 72,
+          "wrong_returns": 164,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_remainder-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 80,
+          "valid_inputs": 72,
+          "wrong_returns": 164,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_remainder-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 60,
+          "valid_inputs": 56,
+          "wrong_returns": 134,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 60,
+          "valid_inputs": 56,
+          "wrong_returns": 134,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 60,
+          "valid_inputs": 56,
+          "wrong_returns": 134,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 60,
+          "valid_inputs": 56,
+          "wrong_returns": 134,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "witness"
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 60,
+          "valid_inputs": 56,
+          "wrong_returns": 134,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_remainder-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "signed_remainder",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_code"
+      },
+      "execution": {
+        "inputs": 85,
+        "valid_inputs": 76,
+        "wrong_returns": 174,
+        "actual_return_disagreements": 20,
+        "out_of_feedback": {
+          "inputs": 60,
+          "valid_inputs": 56,
+          "wrong_returns": 134,
+          "actual_return_disagreements": 18
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-signed_remainder-code-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "spec",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 726,
+          "valid_inputs": 726,
+          "wrong_returns": 726
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "spec",
+      "arm": "fresh",
+      "verdict": "invalid",
+      "reason": "invalid syntax (<unknown>, line 1)",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_spec"
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "spec",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 726,
+          "valid_inputs": 726,
+          "wrong_returns": 726
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "spec",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 726,
+          "valid_inputs": 726,
+          "wrong_returns": 726
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "spec",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_spec"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "wrong_return_not_rejected": 730,
+        "out_of_feedback": {
+          "inputs": 726,
+          "valid_inputs": 726,
+          "wrong_returns": 726,
+          "wrong_return_not_rejected": 726
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-between_exclusive-spec-initial",
+        "repair-between_exclusive-spec-408c0c0d4c630c95",
+        "repair-between_exclusive-spec-2862d871fe78b63a"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "spec",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 726,
+          "valid_inputs": 726,
+          "wrong_returns": 726
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-between_exclusive-spec-initial"
+      ],
+      "degraded": false
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "code",
+      "arm": "initial",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 604,
+          "wrong_returns": 604
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "code",
+      "arm": "fresh",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 604,
+          "wrong_returns": 604
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "code",
+      "arm": "revision",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 604,
+          "wrong_returns": 604
+        }
+      },
+      "declared_signature_matches": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "code",
+      "arm": "witness",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 604,
+          "wrong_returns": 604
+        }
+      },
+      "declared_signature_matches": true,
+      "feedback": "none"
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "code",
+      "arm": "baseline",
+      "verdict": "different",
+      "pre_xor": "unsat",
+      "post_xor": "sat",
+      "historical": {
+        "equivalent": false,
+        "reason": "case_post_spec"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "wrong_return_not_rejected": 730,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 604,
+          "wrong_returns": 604,
+          "wrong_return_not_rejected": 604
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-between_exclusive-code-initial",
+        "repair-between_exclusive-code-7f8b6e9fdfe5983c",
+        "repair-between_exclusive-code-d2f8715d94651aa2"
+      ],
+      "degraded": true
+    },
+    {
+      "case": "between_exclusive",
+      "channel": "code",
+      "arm": "both",
+      "verdict": "exact",
+      "pre_xor": "unsat",
+      "post_xor": "unsat",
+      "historical": {
+        "equivalent": true,
+        "reason": "equivalent_no_mismatch"
+      },
+      "execution": {
+        "inputs": 730,
+        "valid_inputs": 730,
+        "wrong_returns": 730,
+        "out_of_feedback": {
+          "inputs": 604,
+          "valid_inputs": 604,
+          "wrong_returns": 604
+        }
+      },
+      "declared_signature_matches": true,
+      "calls": [
+        "gen-between_exclusive-code-initial"
+      ],
+      "degraded": false
+    }
+  ],
+  "followup": {
+    "signed_factorial": [
+      {
+        "case": "signed_bucket",
+        "channel": "spec",
+        "arm": "rounding",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 82,
+          "valid_inputs": 73,
+          "wrong_returns": 171,
+          "actual_return_disagreements": 18,
+          "wrong_return_not_rejected": 18,
+          "out_of_feedback": {
+            "inputs": 77,
+            "valid_inputs": 69,
+            "wrong_returns": 159,
+            "actual_return_disagreements": 16,
+            "wrong_return_not_rejected": 16
+          }
+        }
+      },
+      {
+        "case": "signed_bucket",
+        "channel": "spec",
+        "arm": "example",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 82,
+          "valid_inputs": 73,
+          "wrong_returns": 171,
+          "actual_return_disagreements": 18,
+          "wrong_return_not_rejected": 18,
+          "out_of_feedback": {
+            "inputs": 77,
+            "valid_inputs": 69,
+            "wrong_returns": 159,
+            "actual_return_disagreements": 16,
+            "wrong_return_not_rejected": 16
+          }
+        }
+      },
+      {
+        "case": "signed_bucket",
+        "channel": "code",
+        "arm": "rounding",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 82,
+          "valid_inputs": 73,
+          "wrong_returns": 171,
+          "actual_return_disagreements": 18,
+          "wrong_return_not_rejected": 18,
+          "out_of_feedback": {
+            "inputs": 56,
+            "valid_inputs": 52,
+            "wrong_returns": 124,
+            "actual_return_disagreements": 16,
+            "wrong_return_not_rejected": 16
+          }
+        }
+      },
+      {
+        "case": "signed_bucket",
+        "channel": "code",
+        "arm": "example",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 82,
+          "valid_inputs": 73,
+          "wrong_returns": 171,
+          "actual_return_disagreements": 18,
+          "wrong_return_not_rejected": 18,
+          "out_of_feedback": {
+            "inputs": 56,
+            "valid_inputs": 52,
+            "wrong_returns": 124,
+            "actual_return_disagreements": 16,
+            "wrong_return_not_rejected": 16
+          }
+        }
+      },
+      {
+        "case": "signed_remainder",
+        "channel": "spec",
+        "arm": "rounding",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 85,
+          "valid_inputs": 76,
+          "wrong_returns": 174,
+          "actual_return_disagreements": 20,
+          "out_of_feedback": {
+            "inputs": 80,
+            "valid_inputs": 72,
+            "wrong_returns": 164,
+            "actual_return_disagreements": 18
+          }
+        }
+      },
+      {
+        "case": "signed_remainder",
+        "channel": "spec",
+        "arm": "example",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 85,
+          "valid_inputs": 76,
+          "wrong_returns": 174,
+          "actual_return_disagreements": 20,
+          "out_of_feedback": {
+            "inputs": 80,
+            "valid_inputs": 72,
+            "wrong_returns": 164,
+            "actual_return_disagreements": 18
+          }
+        }
+      },
+      {
+        "case": "signed_remainder",
+        "channel": "code",
+        "arm": "rounding",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 85,
+          "valid_inputs": 76,
+          "wrong_returns": 174,
+          "actual_return_disagreements": 20,
+          "out_of_feedback": {
+            "inputs": 60,
+            "valid_inputs": 56,
+            "wrong_returns": 134,
+            "actual_return_disagreements": 18
+          }
+        }
+      },
+      {
+        "case": "signed_remainder",
+        "channel": "code",
+        "arm": "example",
+        "verdict": "different",
+        "pre_xor": "unsat",
+        "post_xor": "sat",
+        "historical": {
+          "equivalent": false,
+          "reason": "case_post_code"
+        },
+        "execution": {
+          "inputs": 85,
+          "valid_inputs": 76,
+          "wrong_returns": 174,
+          "actual_return_disagreements": 20,
+          "out_of_feedback": {
+            "inputs": 60,
+            "valid_inputs": 56,
+            "wrong_returns": 134,
+            "actual_return_disagreements": 18
+          }
+        }
+      }
+    ],
+    "csv_unknown": [
+      {
+        "slot": "spec:treatment:1",
+        "judge": "qwen",
+        "verdict": "FAIL",
+        "witness": {
+          "lines": [
+            "a,b"
+          ],
+          "kind": "admits_wrong_return",
+          "ret": [
+            "a"
+          ]
+        },
+        "verified": false,
+        "checks": {
+          "pre": {
+            "status": "sat"
+          },
+          "not_pre": {
+            "status": "unsat"
+          },
+          "post": {
+            "status": "sat"
+          },
+          "not_post": {
+            "status": "unsat"
+          }
+        }
+      },
+      {
+        "slot": "spec:treatment:1",
+        "judge": "oss",
+        "verdict": "FAIL",
+        "witness": {
+          "lines": [
+            "a,b"
+          ],
+          "kind": "admits_wrong_return",
+          "ret": [
+            "a"
+          ]
+        },
+        "verified": false,
+        "checks": {
+          "pre": {
+            "status": "sat"
+          },
+          "not_pre": {
+            "status": "unsat"
+          },
+          "post": {
+            "status": "sat"
+          },
+          "not_post": {
+            "status": "unsat"
+          }
+        }
+      },
+      {
+        "slot": "code:treatment:1",
+        "judge": "qwen",
+        "verdict": "FAIL",
+        "witness": {
+          "lines": [
+            "a"
+          ],
+          "kind": "rejects_input",
+          "ret": null
+        },
+        "verified": false,
+        "checks": {}
+      },
+      {
+        "slot": "code:treatment:1",
+        "judge": "oss",
+        "verdict": "FAIL",
+        "witness": {
+          "lines": [
+            "a,b"
+          ],
+          "kind": "rejects_return",
+          "ret": [
+            "a"
+          ]
+        },
+        "verified": false,
+        "checks": {
+          "pre": {
+            "status": "unsat"
+          },
+          "not_pre": {
+            "status": "sat"
+          },
+          "post": {
+            "status": "sat"
+          },
+          "not_post": {
+            "status": "unsat"
+          }
+        }
+      }
+    ]
+  },
+  "source_compiler": {
+    "python": {
+      "coverage": {
+        "cases": 8,
+        "compiled": 8
+      },
+      "typed": {
+        "exact": 7,
+        "unknown": 1
+      },
+      "historical_equivalent": 7,
+      "execution": {
+        "inputs": 2538,
+        "valid_inputs": 1451,
+        "wrong_returns": 2442
+      },
+      "cases": [
+        {
+          "case": "late_fee",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not((days < 0))"
+            ],
+            "postcondition": "ret == If((days < 0), 0, min(9, (3 * max(0, (days - 2)))))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 11,
+            "valid_inputs": 7,
+            "wrong_returns": 18
+          }
+        },
+        {
+          "case": "band_distance",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not((lower > upper))"
+            ],
+            "postcondition": "ret == If((lower > upper), 0, max((lower - value), 0, (value - upper)))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 731,
+            "valid_inputs": 407,
+            "wrong_returns": 1019
+          }
+        },
+        {
+          "case": "signed_bucket",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "If((step == 0), False, (step != 0))"
+            ],
+            "postcondition": "ret == If((step == 0), 0, If((step > 0), (value / step), ((-value) / (-step))))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 82,
+            "valid_inputs": 73,
+            "wrong_returns": 171
+          }
+        },
+        {
+          "case": "bounded_payment",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not(If((credit < 0), True, (bill < 0)))"
+            ],
+            "postcondition": "ret == If(If((credit < 0), True, (bill < 0)), 0, If((credit == bill), (bill + 1), min(credit, bill)))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 83,
+            "valid_inputs": 27,
+            "wrong_returns": 65
+          }
+        },
+        {
+          "case": "index_class",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not((width <= 0))"
+            ],
+            "postcondition": "ret == If((width <= 0), False, If(((-width) <= offset), (offset < width), False))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 84,
+            "valid_inputs": 39,
+            "wrong_returns": 39
+          }
+        },
+        {
+          "case": "wrap_shift",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "If(If((size <= 0), True, Not(If((0 <= slot), (slot < size), False))), False, (size != 0))"
+            ],
+            "postcondition": "ret == If(If((size <= 0), True, Not(If((0 <= slot), (slot < size), False))), 0, If((size > 0), ((slot + delta) % size), (-((-(slot + delta)) % (-size)))))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 732,
+            "valid_inputs": 92,
+            "wrong_returns": 226
+          }
+        },
+        {
+          "case": "signed_remainder",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "If(Not((scale != 0)), False, (scale != 0))"
+            ],
+            "postcondition": "ret == If(Not((scale != 0)), 0, If((scale > 0), (amount % scale), (-((-amount) % (-scale)))))"
+          },
+          "verdict": "unknown",
+          "pre_xor": "unsat",
+          "post_xor": "unknown",
+          "historical": {
+            "equivalent": false,
+            "reason": "solver_unknown"
+          },
+          "execution": {
+            "inputs": 85,
+            "valid_inputs": 76,
+            "wrong_returns": 174
+          }
+        },
+        {
+          "case": "between_exclusive",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [],
+            "postcondition": "ret == If(If((a < b), (b < c), False), True, If((c < b), (b < a), False))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 730,
+            "valid_inputs": 730,
+            "wrong_returns": 730
+          }
+        }
+      ]
+    },
+    "raw_smt": {
+      "coverage": {
+        "cases": 8,
+        "compiled": 8
+      },
+      "typed": {
+        "exact": 6,
+        "different": 2
+      },
+      "historical_equivalent": 6,
+      "execution": {
+        "inputs": 2538,
+        "valid_inputs": 1451,
+        "wrong_returns": 2442,
+        "actual_return_disagreements": 38,
+        "wrong_return_not_rejected": 18
+      },
+      "cases": [
+        {
+          "case": "late_fee",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not((days < 0))"
+            ],
+            "postcondition": "ret == If((days < 0), 0, min(9, (3 * max(0, (days - 2)))))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 11,
+            "valid_inputs": 7,
+            "wrong_returns": 18
+          }
+        },
+        {
+          "case": "band_distance",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not((lower > upper))"
+            ],
+            "postcondition": "ret == If((lower > upper), 0, max((lower - value), 0, (value - upper)))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 731,
+            "valid_inputs": 407,
+            "wrong_returns": 1019
+          }
+        },
+        {
+          "case": "signed_bucket",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "If((step == 0), False, (step != 0))"
+            ],
+            "postcondition": "ret == If((step == 0), 0, (value / step))"
+          },
+          "verdict": "different",
+          "pre_xor": "unsat",
+          "post_xor": "sat",
+          "historical": {
+            "equivalent": false,
+            "reason": "case_post_code"
+          },
+          "execution": {
+            "inputs": 82,
+            "valid_inputs": 73,
+            "wrong_returns": 171,
+            "actual_return_disagreements": 18,
+            "wrong_return_not_rejected": 18
+          }
+        },
+        {
+          "case": "bounded_payment",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not(If((credit < 0), True, (bill < 0)))"
+            ],
+            "postcondition": "ret == If(If((credit < 0), True, (bill < 0)), 0, If((credit == bill), (bill + 1), min(credit, bill)))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 83,
+            "valid_inputs": 27,
+            "wrong_returns": 65
+          }
+        },
+        {
+          "case": "index_class",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "Not((width <= 0))"
+            ],
+            "postcondition": "ret == If((width <= 0), False, If(((-width) <= offset), (offset < width), False))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 84,
+            "valid_inputs": 39,
+            "wrong_returns": 39
+          }
+        },
+        {
+          "case": "wrap_shift",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "If(If((size <= 0), True, Not(If((0 <= slot), (slot < size), False))), False, (size != 0))"
+            ],
+            "postcondition": "ret == If(If((size <= 0), True, Not(If((0 <= slot), (slot < size), False))), 0, ((slot + delta) % size))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 732,
+            "valid_inputs": 92,
+            "wrong_returns": 226
+          }
+        },
+        {
+          "case": "signed_remainder",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [
+              "If(Not((scale != 0)), False, (scale != 0))"
+            ],
+            "postcondition": "ret == If(Not((scale != 0)), 0, (amount % scale))"
+          },
+          "verdict": "different",
+          "pre_xor": "unsat",
+          "post_xor": "sat",
+          "historical": {
+            "equivalent": false,
+            "reason": "case_post_code"
+          },
+          "execution": {
+            "inputs": 85,
+            "valid_inputs": 76,
+            "wrong_returns": 174,
+            "actual_return_disagreements": 20
+          }
+        },
+        {
+          "case": "between_exclusive",
+          "channel": "code",
+          "model_calls": 0,
+          "payload": {
+            "domain_constraints": [],
+            "postcondition": "ret == If(If((a < b), (b < c), False), True, If((c < b), (b < a), False))"
+          },
+          "verdict": "exact",
+          "pre_xor": "unsat",
+          "post_xor": "unsat",
+          "historical": {
+            "equivalent": true,
+            "reason": "equivalent_no_mismatch"
+          },
+          "execution": {
+            "inputs": 730,
+            "valid_inputs": 730,
+            "wrong_returns": 730
+          }
+        }
+      ]
+    }
+  },
+  "dev_compiler_coverage": [
+    {
+      "task": "swap",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "average",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "csv_first_column",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "zipped_pairs",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "next_departure",
+      "eligible": false,
+      "reason": "unsupported expression: Name"
+    },
+    {
+      "task": "extract_expression",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "parse_input",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "determine_column",
+      "eligible": false,
+      "reason": "unsupported signature"
+    },
+    {
+      "task": "solve",
+      "eligible": false,
+      "reason": "expected one annotated function definition"
+    },
+    {
+      "task": "duration",
+      "eligible": true,
+      "payload": {
+        "domain_constraints": [],
+        "postcondition": "ret == ((self_end - self_start) + 1)"
+      }
+    }
+  ],
+  "judge_summary": {
+    "qwen": {
+      "base": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 4
+      },
+      "swapped": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 5
+      },
+      "repeated": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 3
+      },
+      "style": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 4
+      },
+      "neutral_style": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 4
+      },
+      "cross_source": {
+        "n": 6,
+        "false_accept": 1,
+        "false_reject": 1,
+        "abstained": 0,
+        "correct_rank": 5,
+        "proposed_witness": 6,
+        "verified_witness": 5
+      }
+    },
+    "oss": {
+      "base": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 3
+      },
+      "swapped": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 3
+      },
+      "repeated": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 2
+      },
+      "style": {
+        "n": 6,
+        "false_accept": 0,
+        "false_reject": 0,
+        "abstained": 0,
+        "correct_rank": 6,
+        "proposed_witness": 6,
+        "verified_witness": 3
+      },
+      "neutral_style": {
+        "n": 6,
+        "false_accept": 1,
+        "false_reject": 1,
+        "abstained": 0,
+        "correct_rank": 5,
+        "proposed_witness": 6,
+        "verified_witness": 4
+      },
+      "cross_source": {
+        "n": 6,
+        "false_accept": 1,
+        "false_reject": 1,
+        "abstained": 0,
+        "correct_rank": 5,
+        "proposed_witness": 6,
+        "verified_witness": 3
+      }
+    }
+  },
+  "judge": [
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "base",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "base",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "swapped",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "swapped",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "repeated",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "repeated",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "neutral_style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "neutral_style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "cross_source",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "late_fee",
+      "defect": "missing cap",
+      "variant": "cross_source",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "base",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "base",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "swapped",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "swapped",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "repeated",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "repeated",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "neutral_style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "neutral_style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "cross_source",
+      "judge": "qwen",
+      "positive": "FAIL",
+      "negative": "PASS",
+      "correct_rank": false,
+      "correct_first": false,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "band_distance",
+      "defect": "narrow pre",
+      "variant": "cross_source",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "base",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "base",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "swapped",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "swapped",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "repeated",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "repeated",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "neutral_style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "neutral_style",
+      "judge": "oss",
+      "positive": "FAIL",
+      "negative": "PASS",
+      "correct_rank": false,
+      "correct_first": true,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "cross_source",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "signed_bucket",
+      "defect": "negative divisor semantics",
+      "variant": "cross_source",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "base",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "base",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "swapped",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "swapped",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "repeated",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "repeated",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "neutral_style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "neutral_style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "cross_source",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "bounded_payment",
+      "defect": "tautological post",
+      "variant": "cross_source",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "base",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "base",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "swapped",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "swapped",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "repeated",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "repeated",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "neutral_style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "neutral_style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "cross_source",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "index_class",
+      "defect": "vacuous pre",
+      "variant": "cross_source",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "base",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "base",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "swapped",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "swapped",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": true,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "repeated",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "repeated",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "neutral_style",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": false
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "neutral_style",
+      "judge": "oss",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "cross_source",
+      "judge": "qwen",
+      "positive": "PASS",
+      "negative": "FAIL",
+      "correct_rank": true,
+      "correct_first": false,
+      "prefer": "B",
+      "proposed_witness": true,
+      "verified_witness": true
+    },
+    {
+      "case": "between_exclusive",
+      "defect": "boundary error",
+      "variant": "cross_source",
+      "judge": "oss",
+      "positive": "FAIL",
+      "negative": "PASS",
+      "correct_rank": false,
+      "correct_first": false,
+      "prefer": "A",
+      "proposed_witness": true,
+      "verified_witness": false
+    }
+  ],
+  "crossed_provenance": [
+    {
+      "case": "late_fee",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "late_fee",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "late_fee",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "late_fee",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "band_distance",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "exact",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "band_distance",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "exact",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "band_distance",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "exact",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "band_distance",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "exact",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_bucket",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_bucket",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "TIE",
+      "oss_verdict": "TIE",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_bucket",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_bucket",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "TIE",
+      "oss_verdict": "TIE",
+      "preference": "TIE"
+    },
+    {
+      "case": "bounded_payment",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "invalid",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "bounded_payment",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "invalid",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "bounded_payment",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "invalid",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "bounded_payment",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "invalid",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "index_class",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "index_class",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "index_class",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "index_class",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "exact",
+      "qwen_verdict": "FAIL",
+      "oss_verdict": "PASS",
+      "preference": "oss"
+    },
+    {
+      "case": "wrap_shift",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "exact",
+      "oss_label": "invalid",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "FAIL",
+      "preference": "qwen"
+    },
+    {
+      "case": "wrap_shift",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "exact",
+      "oss_label": "invalid",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "wrap_shift",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "exact",
+      "oss_label": "invalid",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "FAIL",
+      "preference": "qwen"
+    },
+    {
+      "case": "wrap_shift",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "exact",
+      "oss_label": "invalid",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_remainder",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_remainder",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_remainder",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "signed_remainder",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "different",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "PASS",
+      "preference": "TIE"
+    },
+    {
+      "case": "between_exclusive",
+      "order": 0,
+      "judge": "qwen",
+      "qwen_label": "exact",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "FAIL",
+      "preference": "qwen"
+    },
+    {
+      "case": "between_exclusive",
+      "order": 0,
+      "judge": "oss",
+      "qwen_label": "exact",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "FAIL",
+      "preference": "qwen"
+    },
+    {
+      "case": "between_exclusive",
+      "order": 1,
+      "judge": "qwen",
+      "qwen_label": "exact",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "FAIL",
+      "preference": "qwen"
+    },
+    {
+      "case": "between_exclusive",
+      "order": 1,
+      "judge": "oss",
+      "qwen_label": "exact",
+      "oss_label": "different",
+      "qwen_verdict": "PASS",
+      "oss_verdict": "FAIL",
+      "preference": "qwen"
+    }
+  ],
+  "same_context": [
+    {
+      "case": "late_fee",
+      "variant": "fresh",
+      "label": "different",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "late_fee",
+      "variant": "same",
+      "label": "different",
+      "verdict": "PASS"
+    },
+    {
+      "case": "band_distance",
+      "variant": "fresh",
+      "label": "exact",
+      "verdict": "PASS"
+    },
+    {
+      "case": "band_distance",
+      "variant": "same",
+      "label": "exact",
+      "verdict": "PASS"
+    },
+    {
+      "case": "signed_bucket",
+      "variant": "fresh",
+      "label": "different",
+      "verdict": "PASS"
+    },
+    {
+      "case": "signed_bucket",
+      "variant": "same",
+      "label": "different",
+      "verdict": "PASS"
+    },
+    {
+      "case": "bounded_payment",
+      "variant": "fresh",
+      "label": "invalid",
+      "verdict": "PASS"
+    },
+    {
+      "case": "bounded_payment",
+      "variant": "same",
+      "label": "invalid",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "index_class",
+      "variant": "fresh",
+      "label": "different",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "index_class",
+      "variant": "same",
+      "label": "different",
+      "verdict": "PASS"
+    },
+    {
+      "case": "wrap_shift",
+      "variant": "fresh",
+      "label": "exact",
+      "verdict": "PASS"
+    },
+    {
+      "case": "wrap_shift",
+      "variant": "same",
+      "label": "exact",
+      "verdict": "PASS"
+    },
+    {
+      "case": "signed_remainder",
+      "variant": "fresh",
+      "label": "different",
+      "verdict": "PASS"
+    },
+    {
+      "case": "signed_remainder",
+      "variant": "same",
+      "label": "different",
+      "verdict": "FAIL"
+    },
+    {
+      "case": "between_exclusive",
+      "variant": "fresh",
+      "label": "exact",
+      "verdict": "PASS"
+    },
+    {
+      "case": "between_exclusive",
+      "variant": "same",
+      "label": "exact",
+      "verdict": "PASS"
+    }
+  ],
+  "cost": {
+    "by_stage": {
+      "context": {
+        "logical_calls": 16,
+        "posts": 16,
+        "seconds_http": 20.624,
+        "http_200": 16,
+        "prompt_tokens": 9355,
+        "completion_tokens": 202
+      },
+      "factor": {
+        "logical_calls": 8,
+        "posts": 8,
+        "seconds_http": 17.005999999999997,
+        "http_200": 8,
+        "prompt_tokens": 7440,
+        "completion_tokens": 881
+      },
+      "fallback": {
+        "logical_calls": 4,
+        "posts": 4,
+        "seconds_http": 3.8299999999999996,
+        "http_200": 4,
+        "prompt_tokens": 1073,
+        "completion_tokens": 538
+      },
+      "gen": {
+        "logical_calls": 64,
+        "posts": 64,
+        "seconds_http": 60.739000000000004,
+        "http_200": 64,
+        "prompt_tokens": 54334,
+        "completion_tokens": 7579
+      },
+      "judge": {
+        "logical_calls": 72,
+        "posts": 73,
+        "seconds_http": 67.819,
+        "http_200": 72,
+        "prompt_tokens": 25456,
+        "completion_tokens": 14528,
+        "http_429": 1
+      },
+      "origin": {
+        "logical_calls": 8,
+        "posts": 8,
+        "seconds_http": 6.520000000000001,
+        "http_200": 8,
+        "prompt_tokens": 6519,
+        "completion_tokens": 1691
+      },
+      "provenance": {
+        "logical_calls": 32,
+        "posts": 32,
+        "seconds_http": 22.279000000000003,
+        "http_200": 32,
+        "prompt_tokens": 11052,
+        "completion_tokens": 4924
+      },
+      "repair": {
+        "logical_calls": 28,
+        "posts": 29,
+        "seconds_http": 39.34999999999999,
+        "http_200": 28,
+        "prompt_tokens": 36175,
+        "completion_tokens": 3673,
+        "http_429": 1
+      }
+    },
+    "generation_arm_tokens": {
+      "fresh": {
+        "prompt_tokens": 12212,
+        "completion_tokens": 1857
+      },
+      "initial": {
+        "prompt_tokens": 12212,
+        "completion_tokens": 1765
+      },
+      "revision": {
+        "prompt_tokens": 14777,
+        "completion_tokens": 1913
+      },
+      "witness": {
+        "prompt_tokens": 15133,
+        "completion_tokens": 2044
+      }
+    },
+    "fingerprints_by_model": {
+      "qwen/qwen3.8-27b:fp_025e539c14": 121,
+      "qwen/qwen3.8-27b:fp_8999620a6e": 39,
+      "openai/gpt-oss-20b:fp_e11c8bbf69": 3,
+      "openai/gpt-oss-20b:fp_aef561cf8e": 4,
+      "qwen/qwen3.8-27b:fp_7238fa2be5": 3,
+      "openai/gpt-oss-20b:fp_a12402de73": 2,
+      "openai/gpt-oss-20b:fp_e99e93f2ac": 2,
+      "qwen/qwen3.8-27b:fp_aca61d1eac": 4,
+      "openai/gpt-oss-20b:fp_d23c14756c": 2,
+      "openai/gpt-oss-20b:fp_d3e146e1a5": 2,
+      "openai/gpt-oss-20b:fp_e189667b30": 10,
+      "openai/gpt-oss-20b:fp_487ff4efc6": 2,
+      "openai/gpt-oss-20b:fp_a4315eb300": 1,
+      "openai/gpt-oss-20b:fp_92d51d08e5": 1,
+      "openai/gpt-oss-20b:fp_565badff47": 1,
+      "openai/gpt-oss-20b:fp_ef00694abe": 1,
+      "openai/gpt-oss-20b:fp_75c733514d": 4,
+      "openai/gpt-oss-20b:fp_9b8528b477": 4,
+      "openai/gpt-oss-20b:fp_80501ff3a1": 2,
+      "openai/gpt-oss-20b:fp_8d13edce1d": 2,
+      "qwen/qwen3.8-27b:fp_c14f15bfae": 2,
+      "openai/gpt-oss-20b:fp_228717f27c": 3,
+      "openai/gpt-oss-20b:fp_996f667773": 2,
+      "openai/gpt-oss-20b:fp_a8c584dda7": 3,
+      "openai/gpt-oss-20b:fp_1d46a73b8b": 2,
+      "openai/gpt-oss-20b:fp_334cc21c60": 1,
+      "openai/gpt-oss-20b:fp_816fc87d18": 1,
+      "openai/gpt-oss-20b:fp_c5a89987dc": 3,
+      "openai/gpt-oss-20b:fp_8b41efc9a3": 1,
+      "openai/gpt-oss-20b:fp_ed70b23331": 1,
+      "openai/gpt-oss-20b:fp_f102a3179c": 1,
+      "qwen/qwen3.8-27b:fp_596c4e73bb": 1,
+      "openai/gpt-oss-20b:fp_976a85d17a": 1
+    },
+    "completion_ids": 232,
+    "unique_completion_ids": 232
+  },
+  "z3": "4.16.0"
+}

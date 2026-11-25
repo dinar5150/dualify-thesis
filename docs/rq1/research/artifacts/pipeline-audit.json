@@ -1,0 +1,1949 @@
+{
+  "ablation": {
+    "baseline": {
+      "censored": {},
+      "censored_slots": {},
+      "changed_identified_outcomes": {},
+      "identified_fewer_calls": 0,
+      "identified_final_stages": {
+        "initial": 21,
+        "recovered_safe_subset": 4,
+        "repair": 13,
+        "salvaged_partial_postcondition": 15,
+        "sanitize_after_validation_failure": 47
+      },
+      "identified_outcomes": {
+        "complete_exact_prompt_replay": 100
+      }
+    },
+    "benchmark_id": {
+      "censored": {
+        "repair:new_call": 2
+      },
+      "censored_slots": {
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:1": "repair:new_call",
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:2": "repair:new_call"
+      },
+      "changed_identified_outcomes": {
+        "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "Length(things) == 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == things[1], ret[1] == things[0])",
+          "prior_domain": [],
+          "prior_postcondition": "And(ret[0] == things[1], ret[1] == things[0])"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(s == ret * Length(numbers), ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i] - numbers[i]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:4": {
+          "calls": 2,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ForAll([i], Implies(And(0 <= i, i < Length(numbers)), ret == ret))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:baseline:0": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == max(0, Length(x) - 1), ForAll([i], Implies(And(0 <= i, i < Length(ret)), And(ret[i][0] == x[i], ret[i][1] == x[i + 1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:1": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == If(Length(x) < 2, 0, Length(x) - 1), ForAll([i], Implies(And(0 <= i, i < Length(ret)), And(ret[i][0] == x[i], ret[i][1] == x[i + 1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:2": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == max(0, Length(x) - 1), ForAll([i], And(Implies(i < Length(x) - 1, And(ret[i][0] == x[i], ret[i][1] == x[i + 1])), Implies(i >= Length(x) - 1, i >= Length(ret)))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "Length(x) >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == If(Length(x) >= 2, Length(x) - 1, 0), ForAll([i], And(0 <= i, i < Length(ret), Implies(Length(x) >= 2, And(ret[i][0] == x[i], ret[i][1] == x[i + 1])))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:3": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(x), ForAll([i], And(i >= 0, Implies(i < Length(x), And(ret[i][0] == x[i], ret[i][1] == x[i])))))",
+          "prior_domain": [
+            "Length(x) >= 0"
+          ],
+          "prior_postcondition": "Length(ret) == Length(x)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "Length(ret) == If(Length(x) >= 2, Length(x) - 1, 0)",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= min_time, ret - min_time < bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= min_time, ret - min_time < bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= min_time, ret - min_time < bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:spec:treatment:1": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 2,
+          "postcondition": "Exists([t], And(t >= min_time, ret == t))",
+          "prior_domain": [],
+          "prior_postcondition": "ret >= min_time"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(expr) >= 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(expr) - 2, ForAll([i], Implies(And(0 <= i, i < Length(expr) - 2), ret[i] == expr[i + 1])))",
+          "prior_domain": [
+            "Length(expr) >= 2"
+          ],
+          "prior_postcondition": "Length(ret) == Length(expr) - 2"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(expr) >= 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(expr) - 2, ForAll([i], Implies(And(0 <= i, i < Length(expr) - 2), ret[i] == expr[i + 1])))",
+          "prior_domain": [
+            "Length(expr) >= 2"
+          ],
+          "prior_postcondition": "Length(ret) == Length(expr) - 2"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "Length(identifier) == 3"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == If(And(Contains(identifier, 'B'), Contains(identifier, 'R')), 0, If(And(Contains(identifier, 'B'), Contains(identifier, 'L')), 1, If(And(Contains(identifier, 'F'), Contains(identifier, 'R')), 2, If(And(Contains(identifier, 'F'), Contains(identifier, 'L')), 3, If(And(Contains(identifier, 'M'), Contains(identifier, 'R')), 4, If(And(Contains(identifier, 'M'), Contains(identifier, 'L')), 5, If(And(Contains(identifier, 'L'), Contains(identifier, 'R')), 6, 7)))))))",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:treatment:2": {
+          "calls": 1,
+          "domain": [
+            "And(Length(identifier) > 0, Or(Contains(identifier, 'A'), Contains(identifier, 'B'), Contains(identifier, 'C'), Contains(identifier, 'D'), Contains(identifier, 'E'), Contains(identifier, 'F'), Contains(identifier, 'G')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= 0, ret <= 7)",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "Length(identifier) == 1"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == 1",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[ret[0] - preamble_length + i] + puzzle_input[ret[0] - preamble_length + j] == ret[1]))), ForAll([k], And(0 <= k, k < ret[0] - preamble_length, Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[k + i] + puzzle_input[k + j] == puzzle_input[k + preamble_length]))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([k], And(0 <= k, k < Length(puzzle_input) - preamble_length, Not(Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[k + i] + puzzle_input[k + j] == puzzle_input[k + preamble_length]))), And(ret[0] == k, ret[1] == puzzle_input[k + preamble_length])))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:treatment:2": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "If(Exists([i], And(i >= preamble_length, i < Length(puzzle_input), Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, puzzle_input[i] == puzzle_input[i - a] + puzzle_input[i - b])))))), Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, ret[1] == puzzle_input[ret[0] - a] + puzzle_input[ret[0] - b]))))), ForAll([k], Implies(And(k >= preamble_length, k < ret[0]), Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, puzzle_input[k] == puzzle_input[k - a] + puzzle_input[k - b]))))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:baseline:0": {
+          "calls": 2,
+          "domain": [
+            "preamble_length >= 1",
+            "Length(puzzle_input) >= preamble_length + 1"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, puzzle_input[ret[0]] == puzzle_input[i] + puzzle_input[j]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "Length(puzzle_input) > preamble_length",
+            "preamble_length >= 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= preamble_length, ret[1] == puzzle_input[ret[0]], Exists([k], And(k >= 1, k < preamble_length, puzzle_input[ret[0] - k] + puzzle_input[ret[0] - preamble_length + k] == ret[1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) > preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([j], And(j >= 0, j + preamble_length <= ret[0], Exists([k], And(k >= 0, k < preamble_length, puzzle_input[ret[0]] == puzzle_input[j + k])))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:3": {
+          "calls": 1,
+          "domain": [
+            "preamble_length > 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[1] >= 0, ret[1] < Length(puzzle_input), ret[0] == ret[1] + preamble_length, Exists([k], And(k >= 0, k < preamble_length, puzzle_input[ret[0]] == puzzle_input[ret[1] + k]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 1",
+            "Length(puzzle_input) > preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= 0, ret[1] > 0, ret[1] == puzzle_input[ret[0] + 1], Exists([i], And(i >= 0, i < Length(puzzle_input), ret[0] == i, puzzle_input[i] == puzzle_input[i - preamble_length] + puzzle_input[i - preamble_length + 1] + puzzle_input[i - preamble_length + 2] + puzzle_input[i - preamble_length + 3] + puzzle_input[i - preamble_length + 4] + puzzle_input[i - preamble_length + 5] + puzzle_input[i - preamble_length + 6] + puzzle_input[i - preamble_length + 7] + puzzle_input[i - preamble_length + 8] + puzzle_input[i - preamble_length + 9] + puzzle_input[i - preamble_length + 10] + puzzle_input[i - preamble_length + 11] + puzzle_input[i - preamble_length + 12] + puzzle_input[i - preamble_length + 13] + puzzle_input[i - preamble_length + 14]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        }
+      },
+      "identified_fewer_calls": 32,
+      "identified_final_stages": {
+        "initial": 32,
+        "recovered_safe_subset": 4,
+        "repair": 19,
+        "salvaged_partial_postcondition": 25,
+        "sanitize_after_validation_failure": 18
+      },
+      "identified_outcomes": {
+        "complete_exact_prompt_replay": 78,
+        "earlier_return": 20
+      }
+    },
+    "both": {
+      "censored": {
+        "repair:changed_prompt": 4,
+        "repair:new_call": 2
+      },
+      "censored_slots": {
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:1": "repair:new_call",
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:2": "repair:new_call",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:baseline:0": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:2": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:baseline:0": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:4": "repair:changed_prompt"
+      },
+      "changed_identified_outcomes": {
+        "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "Length(things) == 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == things[1], ret[1] == things[0])",
+          "prior_domain": [],
+          "prior_postcondition": "And(ret[0] == things[1], ret[1] == things[0])"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(s == ret * Length(numbers), ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i] - numbers[i]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:4": {
+          "calls": 2,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ForAll([i], Implies(And(0 <= i, i < Length(numbers)), ret == ret))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column:spec:baseline:0": {
+          "calls": 2,
+          "domain": [
+            "ForAll([i], And(0 <= i, i < Length(lines), Contains(lines[i], ',')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(lines), ForAll([i], And(0 <= i, i < Length(lines), Exists([k], And(0 <= k, k < Length(lines[i]), lines[i][k] == Char(','), ret[i] == Extract(lines[i], 0, k))))))",
+          "prior_domain": [
+            "ForAll([i], Implies(And(0 <= i, i < Length(lines)), Contains(lines[i], ',')))"
+          ],
+          "prior_postcondition": "Length(ret) == Length(lines)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column:spec:treatment:1": {
+          "calls": 2,
+          "domain": [
+            "ForAll([i], Implies(And(0 <= i, i < Length(lines)), Contains(lines[i], ',')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(lines), ForAll([i], Implies(And(0 <= i, i < Length(lines)), Exists([j], And(0 <= j, j < Length(lines[i]), lines[i][j] == Char(','), ForAll([k], Implies(And(0 <= k, k < j), ret[i][k] == lines[i][k])), Length(ret[i]) == j)))))",
+          "prior_domain": [
+            "ForAll([i], Implies(And(0 <= i, i < Length(lines)), Contains(lines[i], ',')))"
+          ],
+          "prior_postcondition": "Length(ret) == Length(lines)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:baseline:0": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == max(0, Length(x) - 1), ForAll([i], Implies(And(0 <= i, i < Length(ret)), And(ret[i][0] == x[i], ret[i][1] == x[i + 1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:1": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == If(Length(x) < 2, 0, Length(x) - 1), ForAll([i], Implies(And(0 <= i, i < Length(ret)), And(ret[i][0] == x[i], ret[i][1] == x[i + 1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:2": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == max(0, Length(x) - 1), ForAll([i], And(Implies(i < Length(x) - 1, And(ret[i][0] == x[i], ret[i][1] == x[i + 1])), Implies(i >= Length(x) - 1, i >= Length(ret)))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "Length(x) >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == If(Length(x) >= 2, Length(x) - 1, 0), ForAll([i], And(0 <= i, i < Length(ret), Implies(Length(x) >= 2, And(ret[i][0] == x[i], ret[i][1] == x[i + 1])))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:3": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(x), ForAll([i], And(i >= 0, Implies(i < Length(x), And(ret[i][0] == x[i], ret[i][1] == x[i])))))",
+          "prior_domain": [
+            "Length(x) >= 0"
+          ],
+          "prior_postcondition": "Length(ret) == Length(x)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "Length(ret) == If(Length(x) >= 2, Length(x) - 1, 0)",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= min_time, ret - min_time < bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= min_time, ret - min_time < bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= min_time, ret - min_time < bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:spec:treatment:1": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 2,
+          "postcondition": "Exists([t], And(t >= min_time, ret == t))",
+          "prior_domain": [],
+          "prior_postcondition": "ret >= min_time"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "Length(expr) > 0",
+            "expr[0] == Char('(')"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == Concat(expr, '')",
+          "prior_domain": [
+            "Length(expr) >= 2"
+          ],
+          "prior_postcondition": "Length(ret) == Length(expr) - 2"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:1": {
+          "calls": 2,
+          "domain": [
+            "Contains(expr, '(')",
+            "Contains(expr, ')')"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([i, j], And(0 <= i, i < Length(expr), expr[i] == Char('('), 0 <= j, j < Length(expr), expr[j] == Char(')'), i < j, ret == Extract(expr, i + 1, j - i - 1)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "And(Contains(expr, '('), Contains(expr, ')'))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([i, j], And(0 <= i, i < Length(expr), 0 <= j, j < Length(expr), expr[i] == Char('('), expr[j] == Char(')'), i < j, ret == Extract(expr, i + 1, j - i - 1)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:3": {
+          "calls": 2,
+          "domain": [
+            "Exists([i, j], And(0 <= i, i < Length(expr), expr[i] == Char('('), j > i, j < Length(expr), expr[j] == Char(')'), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char('('))))), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char(')')))))))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([i, j], And(0 <= i, i < Length(expr), expr[i] == Char('('), j > i, j < Length(expr), expr[j] == Char(')'), i + 1 < j, ret == Extract(expr, i + 1, j - i - 1), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char('('))))), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char(')')))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "Length(identifier) == 3"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == If(And(Contains(identifier, 'B'), Contains(identifier, 'R')), 0, If(And(Contains(identifier, 'B'), Contains(identifier, 'L')), 1, If(And(Contains(identifier, 'F'), Contains(identifier, 'R')), 2, If(And(Contains(identifier, 'F'), Contains(identifier, 'L')), 3, If(And(Contains(identifier, 'M'), Contains(identifier, 'R')), 4, If(And(Contains(identifier, 'M'), Contains(identifier, 'L')), 5, If(And(Contains(identifier, 'L'), Contains(identifier, 'R')), 6, 7)))))))",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "ForAll([i], Or(identifier[i] == Char('F'), And(identifier[i] != Char('F'), identifier[i] != Char('B'))))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(0 <= ret, ret <= 7, ret == If(Contains(identifier, 'F'), If(Contains(identifier, 'B'), 7, 0), If(Contains(identifier, 'B'), 0, 7)))",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:treatment:2": {
+          "calls": 1,
+          "domain": [
+            "And(Length(identifier) > 0, Or(Contains(identifier, 'A'), Contains(identifier, 'B'), Contains(identifier, 'C'), Contains(identifier, 'D'), Contains(identifier, 'E'), Contains(identifier, 'F'), Contains(identifier, 'G')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= 0, ret <= 7)",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "Length(identifier) == 1"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == 1",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[ret[0] - preamble_length + i] + puzzle_input[ret[0] - preamble_length + j] == ret[1]))), ForAll([k], And(0 <= k, k < ret[0] - preamble_length, Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[k + i] + puzzle_input[k + j] == puzzle_input[k + preamble_length]))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([k], And(0 <= k, k < Length(puzzle_input) - preamble_length, Not(Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[k + i] + puzzle_input[k + j] == puzzle_input[k + preamble_length]))), And(ret[0] == k, ret[1] == puzzle_input[k + preamble_length])))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:treatment:2": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "If(Exists([i], And(i >= preamble_length, i < Length(puzzle_input), Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, puzzle_input[i] == puzzle_input[i - a] + puzzle_input[i - b])))))), Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, ret[1] == puzzle_input[ret[0] - a] + puzzle_input[ret[0] - b]))))), ForAll([k], Implies(And(k >= preamble_length, k < ret[0]), Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, puzzle_input[k] == puzzle_input[k - a] + puzzle_input[k - b]))))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:baseline:0": {
+          "calls": 2,
+          "domain": [
+            "preamble_length >= 1",
+            "Length(puzzle_input) >= preamble_length + 1"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, puzzle_input[ret[0]] == puzzle_input[i] + puzzle_input[j]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "Length(puzzle_input) > preamble_length",
+            "preamble_length >= 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= preamble_length, ret[1] == puzzle_input[ret[0]], Exists([k], And(k >= 1, k < preamble_length, puzzle_input[ret[0] - k] + puzzle_input[ret[0] - preamble_length + k] == ret[1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) > preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([j], And(j >= 0, j + preamble_length <= ret[0], Exists([k], And(k >= 0, k < preamble_length, puzzle_input[ret[0]] == puzzle_input[j + k])))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:3": {
+          "calls": 1,
+          "domain": [
+            "preamble_length > 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[1] >= 0, ret[1] < Length(puzzle_input), ret[0] == ret[1] + preamble_length, Exists([k], And(k >= 0, k < preamble_length, puzzle_input[ret[0]] == puzzle_input[ret[1] + k]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 1",
+            "Length(puzzle_input) > preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= 0, ret[1] > 0, ret[1] == puzzle_input[ret[0] + 1], Exists([i], And(i >= 0, i < Length(puzzle_input), ret[0] == i, puzzle_input[i] == puzzle_input[i - preamble_length] + puzzle_input[i - preamble_length + 1] + puzzle_input[i - preamble_length + 2] + puzzle_input[i - preamble_length + 3] + puzzle_input[i - preamble_length + 4] + puzzle_input[i - preamble_length + 5] + puzzle_input[i - preamble_length + 6] + puzzle_input[i - preamble_length + 7] + puzzle_input[i - preamble_length + 8] + puzzle_input[i - preamble_length + 9] + puzzle_input[i - preamble_length + 10] + puzzle_input[i - preamble_length + 11] + puzzle_input[i - preamble_length + 12] + puzzle_input[i - preamble_length + 13] + puzzle_input[i - preamble_length + 14]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        }
+      },
+      "identified_fewer_calls": 41,
+      "identified_final_stages": {
+        "initial": 34,
+        "recovered_safe_subset": 4,
+        "repair": 24,
+        "salvaged_partial_postcondition": 20,
+        "sanitize_after_validation_failure": 12
+      },
+      "identified_outcomes": {
+        "complete_exact_prompt_replay": 67,
+        "earlier_return": 27
+      }
+    },
+    "both_with_nonzero_domain": {
+      "censored": {
+        "repair:changed_prompt": 4
+      },
+      "censored_slots": {
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:baseline:0": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:2": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:baseline:0": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:4": "repair:changed_prompt"
+      },
+      "changed_identified_outcomes": {
+        "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "Length(things) == 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == things[1], ret[1] == things[0])",
+          "prior_domain": [],
+          "prior_postcondition": "And(ret[0] == things[1], ret[1] == things[0])"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(s == ret * Length(numbers), ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i] - numbers[i]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([s], And(ForAll([i], Implies(And(0 <= i, i < Length(numbers)), s == s + numbers[i])), ret == s / Length(numbers)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::deal::correct_code::average.py::average:code:treatment:4": {
+          "calls": 2,
+          "domain": [
+            "Length(numbers) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ForAll([i], Implies(And(0 <= i, i < Length(numbers)), ret == ret))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column:spec:baseline:0": {
+          "calls": 2,
+          "domain": [
+            "ForAll([i], And(0 <= i, i < Length(lines), Contains(lines[i], ',')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(lines), ForAll([i], And(0 <= i, i < Length(lines), Exists([k], And(0 <= k, k < Length(lines[i]), lines[i][k] == Char(','), ret[i] == Extract(lines[i], 0, k))))))",
+          "prior_domain": [
+            "ForAll([i], Implies(And(0 <= i, i < Length(lines)), Contains(lines[i], ',')))"
+          ],
+          "prior_postcondition": "Length(ret) == Length(lines)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column:spec:treatment:1": {
+          "calls": 2,
+          "domain": [
+            "ForAll([i], Implies(And(0 <= i, i < Length(lines)), Contains(lines[i], ',')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(lines), ForAll([i], Implies(And(0 <= i, i < Length(lines)), Exists([j], And(0 <= j, j < Length(lines[i]), lines[i][j] == Char(','), ForAll([k], Implies(And(0 <= k, k < j), ret[i][k] == lines[i][k])), Length(ret[i]) == j)))))",
+          "prior_domain": [
+            "ForAll([i], Implies(And(0 <= i, i < Length(lines)), Contains(lines[i], ',')))"
+          ],
+          "prior_postcondition": "Length(ret) == Length(lines)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:baseline:0": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == max(0, Length(x) - 1), ForAll([i], Implies(And(0 <= i, i < Length(ret)), And(ret[i][0] == x[i], ret[i][1] == x[i + 1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:1": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == If(Length(x) < 2, 0, Length(x) - 1), ForAll([i], Implies(And(0 <= i, i < Length(ret)), And(ret[i][0] == x[i], ret[i][1] == x[i + 1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:2": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == max(0, Length(x) - 1), ForAll([i], And(Implies(i < Length(x) - 1, And(ret[i][0] == x[i], ret[i][1] == x[i + 1])), Implies(i >= Length(x) - 1, i >= Length(ret)))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:code:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "Length(x) >= 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == If(Length(x) >= 2, Length(x) - 1, 0), ForAll([i], And(0 <= i, i < Length(ret), Implies(Length(x) >= 2, And(ret[i][0] == x[i], ret[i][1] == x[i + 1])))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:3": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "And(Length(ret) == Length(x), ForAll([i], And(i >= 0, Implies(i < Length(x), And(ret[i][0] == x[i], ret[i][1] == x[i])))))",
+          "prior_domain": [
+            "Length(x) >= 0"
+          ],
+          "prior_postcondition": "Length(ret) == Length(x)"
+        },
+        "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "Length(ret) == If(Length(x) >= 2, Length(x) - 1, 0)",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "bus_id > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == If(min_time % bus_id == 0, min_time, min_time - min_time % bus_id + bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:3": {
+          "calls": 1,
+          "domain": [
+            "bus_id > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == min_time - min_time % bus_id + If(min_time % bus_id == 0, 0, bus_id)",
+          "prior_domain": [
+            "bus_id > 0",
+            "min_time >= 0"
+          ],
+          "prior_postcondition": "And(ret >= min_time, ret % bus_id == 0, ret - min_time < bus_id)"
+        },
+        "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:spec:treatment:1": {
+          "calls": 1,
+          "domain": [],
+          "historical_calls": 2,
+          "postcondition": "Exists([t], And(t >= min_time, ret == t))",
+          "prior_domain": [],
+          "prior_postcondition": "ret >= min_time"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "Length(expr) > 0",
+            "expr[0] == Char('(')"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == Concat(expr, '')",
+          "prior_domain": [
+            "Length(expr) >= 2"
+          ],
+          "prior_postcondition": "Length(ret) == Length(expr) - 2"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:1": {
+          "calls": 2,
+          "domain": [
+            "Contains(expr, '(')",
+            "Contains(expr, ')')"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([i, j], And(0 <= i, i < Length(expr), expr[i] == Char('('), 0 <= j, j < Length(expr), expr[j] == Char(')'), i < j, ret == Extract(expr, i + 1, j - i - 1)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "And(Contains(expr, '('), Contains(expr, ')'))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([i, j], And(0 <= i, i < Length(expr), 0 <= j, j < Length(expr), expr[i] == Char('('), expr[j] == Char(')'), i < j, ret == Extract(expr, i + 1, j - i - 1)))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:3": {
+          "calls": 2,
+          "domain": [
+            "Exists([i, j], And(0 <= i, i < Length(expr), expr[i] == Char('('), j > i, j < Length(expr), expr[j] == Char(')'), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char('('))))), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char(')')))))))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([i, j], And(0 <= i, i < Length(expr), expr[i] == Char('('), j > i, j < Length(expr), expr[j] == Char(')'), i + 1 < j, ret == Extract(expr, i + 1, j - i - 1), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char('('))))), ForAll([k], Implies(And(0 <= k, k < Length(expr)), Or(k <= i, k >= j, Not(expr[k] == Char(')')))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:code:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:baseline:0": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:1": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:2": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:3": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_3_toboggan_trajectory.py::parse_input:spec:treatment:4": {
+          "calls": 3,
+          "domain": [
+            "Length(lines) > 0"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret[0] == Length(lines[0]), ret[1] == Length(lines))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "Length(identifier) == 3"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == If(And(Contains(identifier, 'B'), Contains(identifier, 'R')), 0, If(And(Contains(identifier, 'B'), Contains(identifier, 'L')), 1, If(And(Contains(identifier, 'F'), Contains(identifier, 'R')), 2, If(And(Contains(identifier, 'F'), Contains(identifier, 'L')), 3, If(And(Contains(identifier, 'M'), Contains(identifier, 'R')), 4, If(And(Contains(identifier, 'M'), Contains(identifier, 'L')), 5, If(And(Contains(identifier, 'L'), Contains(identifier, 'R')), 6, 7)))))))",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "ForAll([i], Or(identifier[i] == Char('F'), And(identifier[i] != Char('F'), identifier[i] != Char('B'))))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(0 <= ret, ret <= 7, ret == If(Contains(identifier, 'F'), If(Contains(identifier, 'B'), 7, 0), If(Contains(identifier, 'B'), 0, 7)))",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:treatment:2": {
+          "calls": 1,
+          "domain": [
+            "And(Length(identifier) > 0, Or(Contains(identifier, 'A'), Contains(identifier, 'B'), Contains(identifier, 'C'), Contains(identifier, 'D'), Contains(identifier, 'E'), Contains(identifier, 'F'), Contains(identifier, 'G')))"
+          ],
+          "historical_calls": 3,
+          "postcondition": "And(ret >= 0, ret <= 7)",
+          "prior_domain": [
+            "Length(identifier) == 7"
+          ],
+          "prior_postcondition": "And(0 <= ret, ret <= 7)"
+        },
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "Length(identifier) == 1"
+          ],
+          "historical_calls": 3,
+          "postcondition": "ret == 1",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:baseline:0": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[ret[0] - preamble_length + i] + puzzle_input[ret[0] - preamble_length + j] == ret[1]))), ForAll([k], And(0 <= k, k < ret[0] - preamble_length, Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[k + i] + puzzle_input[k + j] == puzzle_input[k + preamble_length]))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Exists([k], And(0 <= k, k < Length(puzzle_input) - preamble_length, Not(Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, i != j, puzzle_input[k + i] + puzzle_input[k + j] == puzzle_input[k + preamble_length]))), And(ret[0] == k, ret[1] == puzzle_input[k + preamble_length])))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:code:treatment:2": {
+          "calls": 2,
+          "domain": [],
+          "historical_calls": 3,
+          "postcondition": "If(Exists([i], And(i >= preamble_length, i < Length(puzzle_input), Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, puzzle_input[i] == puzzle_input[i - a] + puzzle_input[i - b])))))), Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, ret[1] == puzzle_input[ret[0] - a] + puzzle_input[ret[0] - b]))))), ForAll([k], Implies(And(k >= preamble_length, k < ret[0]), Exists([a], And(a > 0, a < preamble_length, Exists([b], And(b > 0, b < preamble_length, a != b, puzzle_input[k] == puzzle_input[k - a] + puzzle_input[k - b]))))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:baseline:0": {
+          "calls": 2,
+          "domain": [
+            "preamble_length >= 1",
+            "Length(puzzle_input) >= preamble_length + 1"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Exists([i, j], And(0 <= i, i < preamble_length, 0 <= j, j < preamble_length, puzzle_input[ret[0]] == puzzle_input[i] + puzzle_input[j]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:1": {
+          "calls": 1,
+          "domain": [
+            "Length(puzzle_input) > preamble_length",
+            "preamble_length >= 2"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= preamble_length, ret[1] == puzzle_input[ret[0]], Exists([k], And(k >= 1, k < preamble_length, puzzle_input[ret[0] - k] + puzzle_input[ret[0] - preamble_length + k] == ret[1]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:2": {
+          "calls": 2,
+          "domain": [
+            "preamble_length >= 0",
+            "Length(puzzle_input) > preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[0] >= preamble_length, ret[0] < Length(puzzle_input), ret[1] == puzzle_input[ret[0]], Not(Exists([j], And(j >= 0, j + preamble_length <= ret[0], Exists([k], And(k >= 0, k < preamble_length, puzzle_input[ret[0]] == puzzle_input[j + k])))))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:3": {
+          "calls": 1,
+          "domain": [
+            "preamble_length > 0",
+            "Length(puzzle_input) >= preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(Length(ret) > 0, ret[1] >= 0, ret[1] < Length(puzzle_input), ret[0] == ret[1] + preamble_length, Exists([k], And(k >= 0, k < preamble_length, puzzle_input[ret[0]] == puzzle_input[ret[1] + k]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        },
+        "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve:spec:treatment:4": {
+          "calls": 1,
+          "domain": [
+            "preamble_length >= 1",
+            "Length(puzzle_input) > preamble_length"
+          ],
+          "historical_calls": 3,
+          "postcondition": "Or(Length(ret) == 0, And(ret[0] >= 0, ret[1] > 0, ret[1] == puzzle_input[ret[0] + 1], Exists([i], And(i >= 0, i < Length(puzzle_input), ret[0] == i, puzzle_input[i] == puzzle_input[i - preamble_length] + puzzle_input[i - preamble_length + 1] + puzzle_input[i - preamble_length + 2] + puzzle_input[i - preamble_length + 3] + puzzle_input[i - preamble_length + 4] + puzzle_input[i - preamble_length + 5] + puzzle_input[i - preamble_length + 6] + puzzle_input[i - preamble_length + 7] + puzzle_input[i - preamble_length + 8] + puzzle_input[i - preamble_length + 9] + puzzle_input[i - preamble_length + 10] + puzzle_input[i - preamble_length + 11] + puzzle_input[i - preamble_length + 12] + puzzle_input[i - preamble_length + 13] + puzzle_input[i - preamble_length + 14]))))",
+          "prior_domain": [],
+          "prior_postcondition": "ret == ret"
+        }
+      },
+      "identified_fewer_calls": 45,
+      "identified_final_stages": {
+        "initial": 38,
+        "recovered_safe_subset": 5,
+        "repair": 24,
+        "salvaged_partial_postcondition": 17,
+        "sanitize_after_validation_failure": 12
+      },
+      "identified_outcomes": {
+        "complete_exact_prompt_replay": 67,
+        "earlier_return": 29
+      }
+    },
+    "literals": {
+      "censored": {
+        "repair:changed_prompt": 6
+      },
+      "censored_slots": {
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:baseline:0": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:1": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:code:treatment:2": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:baseline:0": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression:spec:treatment:4": "repair:changed_prompt",
+        "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column:code:treatment:1": "repair:changed_prompt"
+      },
+      "changed_identified_outcomes": {},
+      "identified_fewer_calls": 0,
+      "identified_final_stages": {
+        "initial": 21,
+        "recovered_safe_subset": 4,
+        "repair": 13,
+        "salvaged_partial_postcondition": 12,
+        "sanitize_after_validation_failure": 44
+      },
+      "identified_outcomes": {
+        "complete_exact_prompt_replay": 94
+      }
+    }
+  },
+  "archive": "docs/rq1/artifacts/dev-2026-11-22-vpn.tar.gz",
+  "historical_scores": {
+    "equivalent": 13,
+    "inconclusive": 10,
+    "non_equivalent": 67,
+    "unclassified": 10
+  },
+  "initial_prompts_with_pre_or_post_annotations": [
+    "crosshair_examples::PEP316::correct_code::arith.py::swap:code:baseline:0",
+    "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:1",
+    "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:2",
+    "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:3",
+    "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:4"
+  ],
+  "repair_diagnostics": {
+    "distinct_safe_subset_prompts": 16,
+    "domain_drops_after_nonempty_initial_domain": {
+      "all": 42,
+      "initial_domain_parseable": 34
+    },
+    "repair_context": "Ordinary repair receives signature, errors, and normalized payload. It has no original code/spec section. Safe-subset repair receives original code/spec and extra context, and omits the earlier candidates and errors.",
+    "safe_subset_prompt_groups_with_different_initial_responses": 15
+  },
+  "replay_limit": "Historical replies are reused only for identical prompts. Changed or new repair prompts are censored. Earlier returns are deterministic counterfactuals on the saved responses. These counts measure validation and repair behavior, not accuracy.",
+  "semantic_witnesses": {
+    "next_departure": {
+      "code_output_on_bus_2_min_time_3": 4,
+      "guard_rejection": [
+        "unguarded_mod_denominator:bus_id"
+      ],
+      "nonzero_domain_ablation_smt_code_post_mismatch": "unsat",
+      "nonzero_domain_ablation_still_omits_gold_constraint": "min_time >= 0",
+      "slot": "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:3",
+      "wrong_result_accepted_after_salvage": 3
+    },
+    "zipped_pairs": {
+      "direct_smt_mismatch_with_slice_zip_length": "unsat",
+      "python_lengths_at_input_lengths_0_through_5": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "slot": "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4",
+      "unchanged_oracle_reasons": {
+        "corrected": "equivalent_no_mismatch",
+        "prior": "case_post_spec"
+      }
+    }
+  },
+  "strict_ablation": {
+    "method": "Original p03 and RQ1 status criteria. Unchanged final formulas retain archived verdicts. Changed identified finals are rescored. The same nine DEV tasks with parseable gold are used in every variant. Bounds treat inconclusive, unclassified and censored outcomes as failure/success, respectively.",
+    "nine_task_cohort": [
+      "crosshair_examples::PEP316::correct_code::arith.py::swap",
+      "crosshair_examples::deal::correct_code::average.py::average",
+      "crosshair_examples::icontract::correct_code::showcase.py::csv_first_column",
+      "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs",
+      "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure",
+      "python_by_contract::correct::aoc2020::day_18_operation_order.py::extract_expression",
+      "python_by_contract::correct::aoc2020::day_5_binary_boarding.py::determine_column",
+      "python_by_contract::correct::aoc2020::day_9_encoding_error.py::solve",
+      "python_by_contract::correct::ethz_eprog_2019::exercise_05::problem_04.py::Entry::duration"
+    ],
+    "variants": {
+      "baseline": {
+        "all_ten_task_sensitivity_bounds": {
+          "code": {
+            "1": [
+              0.15,
+              0.35
+            ],
+            "2": [
+              0.18333333333333335,
+              0.38333333333333336
+            ],
+            "4": [
+              0.2,
+              0.4
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1,
+              0.3
+            ],
+            "2": [
+              0.1,
+              0.3
+            ],
+            "4": [
+              0.1,
+              0.3
+            ]
+          }
+        },
+        "confirmed_slots": [
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:4",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:4",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:baseline:0",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:3",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:4"
+        ],
+        "pass_at_k_bounds": {
+          "code": {
+            "1": [
+              0.16666666666666666,
+              0.2777777777777778
+            ],
+            "2": [
+              0.20370370370370372,
+              0.3148148148148148
+            ],
+            "4": [
+              0.2222222222222222,
+              0.3333333333333333
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1111111111111111,
+              0.2222222222222222
+            ],
+            "2": [
+              0.1111111111111111,
+              0.2222222222222222
+            ],
+            "4": [
+              0.1111111111111111,
+              0.2222222222222222
+            ]
+          }
+        },
+        "statuses": {
+          "equivalent": 13,
+          "inconclusive": 10,
+          "non_equivalent": 67
+        }
+      },
+      "benchmark_id": {
+        "all_ten_task_sensitivity_bounds": {
+          "code": {
+            "1": [
+              0.075,
+              0.375
+            ],
+            "2": [
+              0.1,
+              0.4666666666666667
+            ],
+            "4": [
+              0.1,
+              0.5
+            ]
+          },
+          "spec": {
+            "1": [
+              0.125,
+              0.375
+            ],
+            "2": [
+              0.15,
+              0.4333333333333334
+            ],
+            "4": [
+              0.2,
+              0.5
+            ]
+          }
+        },
+        "confirmed_slots": [
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:4",
+          "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4"
+        ],
+        "pass_at_k_bounds": {
+          "code": {
+            "1": [
+              0.08333333333333333,
+              0.3055555555555556
+            ],
+            "2": [
+              0.1111111111111111,
+              0.40740740740740744
+            ],
+            "4": [
+              0.1111111111111111,
+              0.4444444444444444
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1388888888888889,
+              0.3055555555555556
+            ],
+            "2": [
+              0.16666666666666666,
+              0.3703703703703704
+            ],
+            "4": [
+              0.2222222222222222,
+              0.4444444444444444
+            ]
+          }
+        },
+        "statuses": {
+          "censored": 2,
+          "equivalent": 10,
+          "inconclusive": 16,
+          "non_equivalent": 62
+        }
+      },
+      "both": {
+        "all_ten_task_sensitivity_bounds": {
+          "code": {
+            "1": [
+              0.075,
+              0.4
+            ],
+            "2": [
+              0.1,
+              0.5166666666666667
+            ],
+            "4": [
+              0.1,
+              0.6
+            ]
+          },
+          "spec": {
+            "1": [
+              0.125,
+              0.425
+            ],
+            "2": [
+              0.15,
+              0.5166666666666667
+            ],
+            "4": [
+              0.2,
+              0.6
+            ]
+          }
+        },
+        "confirmed_slots": [
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:4",
+          "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4"
+        ],
+        "pass_at_k_bounds": {
+          "code": {
+            "1": [
+              0.08333333333333333,
+              0.3333333333333333
+            ],
+            "2": [
+              0.1111111111111111,
+              0.462962962962963
+            ],
+            "4": [
+              0.1111111111111111,
+              0.5555555555555556
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1388888888888889,
+              0.3611111111111111
+            ],
+            "2": [
+              0.16666666666666666,
+              0.462962962962963
+            ],
+            "4": [
+              0.2222222222222222,
+              0.5555555555555556
+            ]
+          }
+        },
+        "statuses": {
+          "censored": 6,
+          "equivalent": 10,
+          "inconclusive": 17,
+          "non_equivalent": 57
+        }
+      },
+      "both_with_nonzero_domain": {
+        "all_ten_task_sensitivity_bounds": {
+          "code": {
+            "1": [
+              0.1,
+              0.375
+            ],
+            "2": [
+              0.15,
+              0.4833333333333334
+            ],
+            "4": [
+              0.2,
+              0.6
+            ]
+          },
+          "spec": {
+            "1": [
+              0.125,
+              0.425
+            ],
+            "2": [
+              0.15,
+              0.5166666666666667
+            ],
+            "4": [
+              0.2,
+              0.6
+            ]
+          }
+        },
+        "confirmed_slots": [
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:4",
+          "crosshair_examples::icontract::correct_code::showcase.py::zipped_pairs:spec:treatment:4",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:4"
+        ],
+        "pass_at_k_bounds": {
+          "code": {
+            "1": [
+              0.1111111111111111,
+              0.3055555555555556
+            ],
+            "2": [
+              0.16666666666666666,
+              0.42592592592592593
+            ],
+            "4": [
+              0.2222222222222222,
+              0.5555555555555556
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1388888888888889,
+              0.3611111111111111
+            ],
+            "2": [
+              0.16666666666666666,
+              0.462962962962963
+            ],
+            "4": [
+              0.2222222222222222,
+              0.5555555555555556
+            ]
+          }
+        },
+        "statuses": {
+          "censored": 4,
+          "equivalent": 11,
+          "inconclusive": 17,
+          "non_equivalent": 58
+        }
+      },
+      "literals": {
+        "all_ten_task_sensitivity_bounds": {
+          "code": {
+            "1": [
+              0.15,
+              0.425
+            ],
+            "2": [
+              0.18333333333333335,
+              0.5166666666666667
+            ],
+            "4": [
+              0.2,
+              0.6
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1,
+              0.325
+            ],
+            "2": [
+              0.1,
+              0.35
+            ],
+            "4": [
+              0.1,
+              0.4
+            ]
+          }
+        },
+        "confirmed_slots": [
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:code:treatment:4",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:baseline:0",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:1",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:2",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:3",
+          "crosshair_examples::PEP316::correct_code::arith.py::swap:spec:treatment:4",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:baseline:0",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:3",
+          "python_by_contract::correct::aoc2020::day_13_shuttle_search.py::next_departure:code:treatment:4"
+        ],
+        "pass_at_k_bounds": {
+          "code": {
+            "1": [
+              0.16666666666666666,
+              0.3611111111111111
+            ],
+            "2": [
+              0.20370370370370372,
+              0.462962962962963
+            ],
+            "4": [
+              0.2222222222222222,
+              0.5555555555555556
+            ]
+          },
+          "spec": {
+            "1": [
+              0.1111111111111111,
+              0.25
+            ],
+            "2": [
+              0.1111111111111111,
+              0.2777777777777778
+            ],
+            "4": [
+              0.1111111111111111,
+              0.3333333333333333
+            ]
+          }
+        },
+        "statuses": {
+          "censored": 6,
+          "equivalent": 13,
+          "inconclusive": 10,
+          "non_equivalent": 61
+        }
+      }
+    }
+  },
+  "transport": {
+    "cache_field_observations": 0,
+    "finish_reasons": {
+      "stop": 243
+    },
+    "http_statuses": {
+      "200": 243,
+      "400": 2,
+      "429": 16
+    },
+    "logical_calls": 245,
+    "model": {
+      "qwen/qwen3.8-27b": 243
+    },
+    "model_format_error_http_files": [
+      "0023.json",
+      "0160.json"
+    ],
+    "physical_non_completion_retries": {
+      "initial": 5,
+      "repair": 5,
+      "safe_repair": 2,
+      "superseded_attempt": 4
+    },
+    "physical_posts": 261,
+    "repair_calls": 145,
+    "system_fingerprint_counts": {
+      "fp_025e539c14": 55,
+      "fp_21e59ac2de": 12,
+      "fp_424cb89518": 5,
+      "fp_43dd1ea4ee": 53,
+      "fp_7238fa2be5": 1,
+      "fp_8999620a6e": 112,
+      "fp_a1293f40b5": 5
+    },
+    "treatment_initial_text_repetition": {
+      "distinct_texts": 76,
+      "duplicate_text_groups": 2,
+      "successful_replies": 79
+    },
+    "unique_completion_ids": 243,
+    "usage_prompt_token_detail_observations": 0
+  }
+}
